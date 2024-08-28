@@ -15,8 +15,15 @@ class ControlPanel extends ConsumerStatefulWidget {
   ConsumerState<ControlPanel> createState() => _ControlPanelState();
 }
 
+class LogOutput {
+  final String message;
+  final Color colour;
+
+  LogOutput(this.message, this.colour);
+}
+
 class _ControlPanelState extends ConsumerState<ControlPanel> {
-  final List<String> output = [];
+  final List<LogOutput> output = [];
   Process? runningProcess;
 
   Future<void> start() async {
@@ -32,7 +39,15 @@ class _ControlPanelState extends ConsumerState<ControlPanel> {
     );
     process.stdout.transform(utf8.decoder).listen((event) {
       setState(() {
-        output.add(event);
+        final Color colour;
+        if (event.contains("ERR")) {
+          colour = Colors.red;
+        } else if (event.contains("WARN")) {
+          colour = Colors.yellow;
+        } else {
+          colour = Colors.white;
+        }
+        output.add(LogOutput(event, colour));
       });
     });
 
@@ -104,7 +119,8 @@ class _ControlPanelState extends ConsumerState<ControlPanel> {
                   reverse: true,
                   delegate: FlutterListViewDelegate(
                     (BuildContext context, int index) {
-                      return Text(output[output.length - 1 - index]);
+                      LogOutput entry = output[output.length - 1 - index];
+                      return Text(entry.message, style: TextStyle(color: entry.colour));
                     },
                     childCount: output.length,
                     keepPosition: true,
