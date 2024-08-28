@@ -20,3 +20,4 @@ Make sure you have **Java 16** or higher installed and on your PATH!
 		- world path
 		- map name
 		- dimension key
+- allow users to select which minecraft version the project is
