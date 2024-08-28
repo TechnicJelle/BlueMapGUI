@@ -6,6 +6,7 @@ import "package:flutter_code_editor/flutter_code_editor.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 
 import "dual_pane.dart";
+import "utils.dart";
 
 class ConfigEditor extends ConsumerStatefulWidget {
   final File openConfig;
@@ -66,7 +67,7 @@ class _ConfigEditorState extends ConsumerState<ConfigEditor> {
     return SingleChildScrollView(
       controller: vScrollController,
       child: CodeField(
-        textStyle: const TextStyle(fontFamily: "monospace"),
+        textStyle: pixelCode,
         controller: codeController,
         minLines: null,
         maxLines: null,

@@ -7,6 +7,7 @@ import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:url_launcher/url_launcher.dart";
 
 import "main.dart";
+import "utils.dart";
 
 class ControlPanel extends ConsumerStatefulWidget {
   const ControlPanel({super.key});
@@ -114,7 +115,7 @@ class _ControlPanelState extends ConsumerState<ControlPanel> {
                 borderRadius: BorderRadius.all(Radius.circular(8)),
               ),
               child: DefaultTextStyle(
-                style: const TextStyle(fontFamily: "monospace", color: Colors.white),
+                style: pixelCode,
                 child: FlutterListView(
                   reverse: true,
                   delegate: FlutterListViewDelegate(
