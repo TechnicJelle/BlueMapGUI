@@ -2,6 +2,8 @@ name: Build Flutter Desktop
 
 on:
   push:
+    paths-ignore:
+      - '**.md'
 
 jobs:
   linux:
