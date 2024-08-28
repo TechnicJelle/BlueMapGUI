@@ -20,4 +20,6 @@ Make sure you have **Java 16** or higher installed and on your PATH!
 		- world path
 		- map name
 		- dimension key
+		- button for adding a save (adds map configs for all dimensions in that save)
+		- button for adding a single dimension
 - allow users to select which minecraft version the project is
