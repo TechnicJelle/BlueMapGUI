@@ -39,6 +39,11 @@ class TechApp extends MaterialApp {
                       fontSizeFactor: fontSizeFactor ?? 1.0,
                       fontFamily: fontFamily,
                     ),
+                scrollbarTheme: Theme.of(context).scrollbarTheme.copyWith(
+                      radius: const Radius.circular(2),
+                      thumbVisibility: const WidgetStatePropertyAll(true),
+                      trackVisibility: const WidgetStatePropertyAll(true),
+                    ),
               ),
               child: child!,
             );
