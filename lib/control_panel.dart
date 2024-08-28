@@ -4,6 +4,7 @@ import "dart:io";
 import "package:flutter/material.dart";
 import "package:flutter_list_view/flutter_list_view.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:path/path.dart" as p;
 import "package:url_launcher/url_launcher.dart";
 
 import "main.dart";
@@ -29,12 +30,13 @@ class _ControlPanelState extends ConsumerState<ControlPanel> {
 
   Future<void> start() async {
     print("Starting Bluemap");
-    final Globals globals = ref.read(projectGlobals).requireValue;
+    final Directory projectDirectory = ref.read(projectDirectoryProvider)!;
+    final String bluemapJarPath = p.join(projectDirectory.path, blueMapCliJarName);
 
     Process process = await Process.start(
       "java",
-      ["-jar", globals.bluemapJar.path, "--render", "--watch", "--webserver"],
-      workingDirectory: globals.projectDirectory.path,
+      ["-jar", bluemapJarPath, "--render", "--watch", "--webserver"],
+      workingDirectory: projectDirectory.path,
       mode: ProcessStartMode.normal,
       runInShell: false,
     );

@@ -23,8 +23,8 @@ class _ConfigTreeState extends ConsumerState<ConfigTree> {
   @override
   void initState() {
     super.initState();
-    final Globals globals = ref.read(projectGlobals).requireValue;
-    final String projectPath = globals.projectDirectory.path;
+    final Directory projectDirectory = ref.read(projectDirectoryProvider)!;
+    final String projectPath = projectDirectory.path;
     final Directory configDir = Directory(p.join(projectPath, "config"));
     for (final FileSystemEntity entity in configDir.listSync()) {
       if (entity is File) {
