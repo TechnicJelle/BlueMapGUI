@@ -4,7 +4,6 @@ A GUI wrapper around the BlueMap CLI, mainly to make using BlueMap easier for si
 ![screenshot](.github/readme_assets/bmgui.png)
 
 ## TODO
-- check downloaded jar with hardcoded hash
 - make the console better
   - add a scroll down button (only visible if you scroll up)
   - fix the random line breaks (probably due to the stream)

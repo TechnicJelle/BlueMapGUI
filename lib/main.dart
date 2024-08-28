@@ -8,12 +8,15 @@ import "path_picker_button.dart";
 import "prefs.dart";
 import "tech_app.dart";
 
-const String commit = String.fromEnvironment("commit", defaultValue: "development");
-
+// == Hardcoded BlueMap CLI JAR download URL and hash ==
 const blueMapCliJarUrl = "https://github.com/BlueMap-Minecraft/BlueMap/releases/download/"
     "v5.3/BlueMap-5.3-cli.jar";
+const blueMapCliJarHash =
+    "a0be9a36325f3caabc6306e9c6dd306aeec464b8abe907e93b6589659c8751f5"; //SHA256
 
 String get blueMapCliJarName => blueMapCliJarUrl.split("/").last;
+
+const String commit = String.fromEnvironment("commit", defaultValue: "development");
 
 final projectDirectoryProvider = Provider<Directory?>((ref) {
   final String? bluemapJarPath = Prefs.instance.projectPath;
