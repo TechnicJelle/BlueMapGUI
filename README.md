@@ -3,6 +3,9 @@ A GUI wrapper around the BlueMap CLI, mainly to make using BlueMap easier for si
 
 ![screenshot](.github/readme_assets/bmgui.png)
 
+## Requirements
+Make sure you have **Java 16** or higher installed and on your PATH!
+
 ## TODO
 - make the console better
   - add a scroll down button (only visible if you scroll up)
