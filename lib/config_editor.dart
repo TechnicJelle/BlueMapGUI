@@ -9,6 +9,7 @@ import "dual_pane.dart";
 
 class ConfigEditor extends ConsumerStatefulWidget {
   final File openConfig;
+
   const ConfigEditor(this.openConfig, {super.key});
 
   @override
@@ -16,7 +17,8 @@ class ConfigEditor extends ConsumerStatefulWidget {
 }
 
 class _ConfigEditorState extends ConsumerState<ConfigEditor> {
-  final controller = CodeController();
+  final codeController = CodeController();
+  final vScrollController = ScrollController();
 
   late File openConfig;
   late final Timer autoSaveTimer;
@@ -27,7 +29,7 @@ class _ConfigEditorState extends ConsumerState<ConfigEditor> {
     super.initState();
     readFile(widget.openConfig);
 
-    controller.addListener(() => hasChanged = true);
+    codeController.addListener(() => hasChanged = true);
 
     autoSaveTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
       writeFile(openConfig);
@@ -38,11 +40,11 @@ class _ConfigEditorState extends ConsumerState<ConfigEditor> {
     if (!hasChanged) return;
 
     hasChanged = false;
-    file.writeAsString(controller.fullText);
+    file.writeAsString(codeController.fullText);
   }
 
   void readFile(File file) {
-    controller.fullText = file.readAsStringSync();
+    codeController.fullText = file.readAsStringSync();
     openConfig = file;
   }
 
@@ -51,7 +53,8 @@ class _ConfigEditorState extends ConsumerState<ConfigEditor> {
     super.dispose();
     writeFile(openConfig);
     autoSaveTimer.cancel();
-    controller.dispose();
+    codeController.dispose();
+    vScrollController.dispose();
   }
 
   @override
@@ -61,9 +64,10 @@ class _ConfigEditorState extends ConsumerState<ConfigEditor> {
       if (next != null) readFile(next);
     });
     return SingleChildScrollView(
+      controller: vScrollController,
       child: CodeField(
         textStyle: const TextStyle(fontFamily: "monospace"),
-        controller: controller,
+        controller: codeController,
         minLines: null,
         maxLines: null,
         // expands: true,
