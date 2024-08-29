@@ -8,9 +8,9 @@ Make sure you have **Java 16** or higher installed and on your PATH!
 
 ## TODO
 - make the console better
+  - fix the scroll; when you scroll up, new logs should not move the view (but it does, rn)
   - add a scroll down button (only visible if you scroll up)
   - fix the random line breaks (probably due to the stream)
-- make the start/stop buttons a single button
 - make it not lose the process (orphan) as easily
 	- when going to a config file without stopping the bluemap process, it loses it and you have to restart it
 	- when closing the program, it loses it
