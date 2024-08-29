@@ -14,6 +14,7 @@ Make sure you have **Java 16** or higher installed and on your PATH!
 - make it not lose the process (orphan) as easily
 	- when going to a config file without stopping the bluemap process, it loses it and you have to restart it
 	- when closing the program, it loses it
+- config editor: horizontal scroll bar
 - add gui for the (main) config options
 	- accept download
 	- adding & removing map configs
