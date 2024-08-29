@@ -1,76 +1,98 @@
 import "dart:convert";
 import "dart:io";
 
+import "package:async/async.dart";
 import "package:flutter/material.dart";
-import "package:flutter_list_view/flutter_list_view.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:path/path.dart" as p;
 import "package:url_launcher/url_launcher.dart";
 
+import "console.dart";
 import "main.dart";
-import "utils.dart";
 
-class ControlPanel extends ConsumerStatefulWidget {
-  const ControlPanel({super.key});
-
+class LogNotifier extends AsyncNotifier<String> {
   @override
-  ConsumerState<ControlPanel> createState() => _ControlPanelState();
+  String build() {
+    return "";
+  }
+
+  void log(String message) {
+    state = AsyncValue.data(message);
+  }
 }
 
-class LogOutput {
-  final String message;
-  final Color colour;
+final logProvider = AsyncNotifierProvider<LogNotifier, String>(() => LogNotifier());
 
-  LogOutput(this.message, this.colour);
-}
-
-class _ControlPanelState extends ConsumerState<ControlPanel> {
-  final List<LogOutput> output = [];
-  Process? runningProcess;
+class ProcessNotifier extends AsyncNotifier<Process?> {
+  @override
+  Future<Process?> build() {
+    return Future.value(null);
+  }
 
   Future<void> start() async {
-    print("Starting Bluemap");
+    state = const AsyncValue.loading();
+
     final Directory projectDirectory = ref.read(projectDirectoryProvider)!;
     final String bluemapJarPath = p.join(projectDirectory.path, blueMapCliJarName);
 
-    Process process = await Process.start(
-      "java",
-      ["-jar", bluemapJarPath, "--render", "--watch", "--webserver"],
-      workingDirectory: projectDirectory.path,
-      mode: ProcessStartMode.normal,
-      runInShell: false,
-    );
-    process.stdout.transform(utf8.decoder).listen((event) {
-      setState(() {
-        final Color colour;
-        if (event.contains("ERR")) {
-          colour = Colors.red;
-        } else if (event.contains("WARN")) {
-          colour = Colors.yellow;
-        } else {
-          colour = Colors.white;
-        }
-        output.add(LogOutput(event, colour));
+    state = await AsyncValue.guard(() async {
+      Process process = await Process.start(
+        "java",
+        ["-jar", bluemapJarPath, "--render", "--watch", "--webserver"],
+        workingDirectory: projectDirectory.path,
+        mode: ProcessStartMode.normal,
+        runInShell: false,
+      );
+      process.exitCode.then((value) {
+        print("Exit code: $value");
+        state = const AsyncValue.data(null);
+        return;
       });
-    });
 
-    runningProcess = process;
+      var mergedStream = StreamGroup.merge([
+        process.stdout.transform(utf8.decoder),
+        process.stderr.transform(utf8.decoder),
+      ]);
+
+      mergedStream.listen((String event) {
+        print("OUTPUT: $event");
+        ref.read(logProvider.notifier).log(event);
+      });
+
+      // bool hasWebserverStartedYet = false;
+      // process.stdout.transform(utf8.decoder).listen((String event) {
+      //   if (event.contains("WebServer started")) {
+      //     hasWebserverStartedYet = true;
+      //   }
+      // });
+      //
+      // while (!hasWebserverStartedYet) {
+      //   await Future.delayed(const Duration(milliseconds: 100));
+      // }
+
+      return process;
+    });
   }
 
   void stop() {
-    Process? process = runningProcess;
-    if (process != null) {
-      print("Stopping Bluemap...");
-      bool success = process.kill();
-      print("Success: $success");
-      process.exitCode.then((value) {
-        print("Exit code: $value");
-      });
-    }
+    state.whenData((Process? process) {
+      if (process == null) throw Exception("No process to stop!");
+      process.kill();
+    });
   }
+}
+
+final processProvider =
+    AsyncNotifierProvider<ProcessNotifier, Process?>(() => ProcessNotifier());
+
+class ControlPanel extends ConsumerWidget {
+  const ControlPanel({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final asyncProcess = ref.watch(processProvider);
+    final Process? process = asyncProcess.asData?.value;
+
     return Padding(
       padding: const EdgeInsets.only(top: 16),
       child: Column(
@@ -81,58 +103,31 @@ class _ControlPanelState extends ConsumerState<ControlPanel> {
             children: [
               ElevatedButton.icon(
                 onPressed: () {
-                  start();
+                  if (process == null) {
+                    ref.read(processProvider.notifier).start();
+                  } else {
+                    ref.read(processProvider.notifier).stop();
+                  }
                 },
-                label: const Text("Start"),
-                icon: const Icon(Icons.play_circle_outline),
-              ),
-              const SizedBox(width: 8),
-              ElevatedButton.icon(
-                onPressed: () {
-                  stop();
-                },
-                label: const Text("Stop"),
-                icon: const Icon(Icons.stop_circle_outlined),
+                label: Text(process == null ? "Start" : "Stop"),
+                icon: Icon(process == null ? Icons.play_arrow : Icons.stop),
               ),
               const SizedBox(width: 16),
               ElevatedButton.icon(
-                onPressed: () async {
-                  if (!await launchUrl(Uri.parse("http://localhost:8100"))) {
-                    throw Exception("Could not launch url!");
-                  }
-                },
+                onPressed: process == null
+                    ? null
+                    : () async {
+                        if (!await launchUrl(Uri.parse("http://localhost:8100"))) {
+                          throw Exception("Could not launch url!");
+                        }
+                      },
                 label: const Text("Open"),
                 icon: const Icon(Icons.open_in_browser),
               ),
             ],
           ),
           const SizedBox(height: 16),
-          Expanded(
-            child: Container(
-              margin: const EdgeInsets.only(bottom: 8, right: 8),
-              padding: const EdgeInsets.all(8),
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.all(Radius.circular(8)),
-              ),
-              child: DefaultTextStyle(
-                style: pixelCode,
-                child: FlutterListView(
-                  reverse: true,
-                  delegate: FlutterListViewDelegate(
-                    (BuildContext context, int index) {
-                      LogOutput entry = output[output.length - 1 - index];
-                      return Text(entry.message, style: TextStyle(color: entry.colour));
-                    },
-                    childCount: output.length,
-                    keepPosition: true,
-                    keepPositionOffset: 80,
-                  ),
-                ),
-              ),
-            ),
-          )
+          const Expanded(child: Console()),
         ],
       ),
     );
