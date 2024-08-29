@@ -1,3 +1,4 @@
+import "dart:async";
 import "dart:convert";
 import "dart:io";
 
@@ -10,23 +11,12 @@ import "package:url_launcher/url_launcher.dart";
 import "console.dart";
 import "main.dart";
 
-class LogNotifier extends AsyncNotifier<String> {
+class LogNotifier extends AutoDisposeAsyncNotifier<String?> {
+  Process? _process;
+  StreamSubscription? _streamSub;
   @override
-  String build() {
-    return "";
-  }
-
-  void log(String message) {
-    state = AsyncValue.data(message);
-  }
-}
-
-final logProvider = AsyncNotifierProvider<LogNotifier, String>(() => LogNotifier());
-
-class ProcessNotifier extends AsyncNotifier<Process?> {
-  @override
-  Future<Process?> build() {
-    return Future.value(null);
+  Future<String?> build() async {
+    return null;
   }
 
   Future<void> start() async {
@@ -35,63 +25,60 @@ class ProcessNotifier extends AsyncNotifier<Process?> {
     final Directory projectDirectory = ref.read(projectDirectoryProvider)!;
     final String bluemapJarPath = p.join(projectDirectory.path, blueMapCliJarName);
 
-    state = await AsyncValue.guard(() async {
-      Process process = await Process.start(
-        "java",
-        ["-jar", bluemapJarPath, "--render", "--watch", "--webserver"],
-        workingDirectory: projectDirectory.path,
-        mode: ProcessStartMode.normal,
-        runInShell: false,
-      );
-      process.exitCode.then((value) {
-        print("Exit code: $value");
-        state = const AsyncValue.data(null);
-        return;
-      });
+    final process = await Process.start(
+      "java",
+      ["-jar", bluemapJarPath, "--render", "--watch", "--webserver"],
+      workingDirectory: projectDirectory.path,
+      mode: ProcessStartMode.normal,
+      runInShell: false,
+    );
+    process.exitCode.then((value) {
+      print("Exit code: $value");
+      state = const AsyncValue.data(null);
+      return;
+    });
 
-      var mergedStream = StreamGroup.merge([
-        process.stdout.transform(utf8.decoder),
-        process.stderr.transform(utf8.decoder),
-      ]);
+    var mergedStream = StreamGroup.merge([
+      process.stdout.transform(utf8.decoder),
+      process.stderr.transform(utf8.decoder),
+    ]);
 
-      mergedStream.listen((String event) {
-        print("OUTPUT: $event");
-        ref.read(logProvider.notifier).log(event);
-      });
+    // bool hasWebserverStartedYet = false;
+    // process.stdout.transform(utf8.decoder).listen((String event) {
+    //   if (event.contains("WebServer started")) {
+    //     hasWebserverStartedYet = true;
+    //   }
+    // });
+    //
+    // while (!hasWebserverStartedYet) {
+    //   await Future.delayed(const Duration(milliseconds: 100));
+    // }
 
-      // bool hasWebserverStartedYet = false;
-      // process.stdout.transform(utf8.decoder).listen((String event) {
-      //   if (event.contains("WebServer started")) {
-      //     hasWebserverStartedYet = true;
-      //   }
-      // });
-      //
-      // while (!hasWebserverStartedYet) {
-      //   await Future.delayed(const Duration(milliseconds: 100));
-      // }
-
-      return process;
+    _process = process;
+    _streamSub?.cancel();
+    _streamSub = mergedStream.listen((String event) {
+      print("OUTPUT: $event");
+      state = AsyncValue.data(event);
     });
   }
 
   void stop() {
-    state.whenData((Process? process) {
-      if (process == null) throw Exception("No process to stop!");
-      process.kill();
-    });
+    Process? process = _process;
+    if (process == null) throw Exception("No process to stop!");
+    process.kill();
+    _streamSub?.cancel();
   }
 }
 
-final processProvider =
-    AsyncNotifierProvider<ProcessNotifier, Process?>(() => ProcessNotifier());
+final logNotifierProvider =
+    AsyncNotifierProvider.autoDispose<LogNotifier, String?>(() => LogNotifier());
 
 class ControlPanel extends ConsumerWidget {
   const ControlPanel({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final asyncProcess = ref.watch(processProvider);
-    final Process? process = asyncProcess.asData?.value;
+    final logMessage = ref.watch(logNotifierProvider).value;
 
     return Padding(
       padding: const EdgeInsets.only(top: 16),
@@ -103,18 +90,18 @@ class ControlPanel extends ConsumerWidget {
             children: [
               ElevatedButton.icon(
                 onPressed: () {
-                  if (process == null) {
-                    ref.read(processProvider.notifier).start();
+                  if (logMessage == null) {
+                    ref.read(logNotifierProvider.notifier).start();
                   } else {
-                    ref.read(processProvider.notifier).stop();
+                    ref.read(logNotifierProvider.notifier).stop();
                   }
                 },
-                label: Text(process == null ? "Start" : "Stop"),
-                icon: Icon(process == null ? Icons.play_arrow : Icons.stop),
+                label: Text(logMessage == null ? "Start" : "Stop"),
+                icon: Icon(logMessage == null ? Icons.play_arrow : Icons.stop),
               ),
               const SizedBox(width: 16),
               ElevatedButton.icon(
-                onPressed: process == null
+                onPressed: logMessage == null
                     ? null
                     : () async {
                         if (!await launchUrl(Uri.parse("http://localhost:8100"))) {

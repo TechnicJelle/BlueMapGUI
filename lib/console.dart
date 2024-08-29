@@ -17,20 +17,18 @@ class ConsoleState extends ConsumerState<Console> {
 
   @override
   Widget build(BuildContext context) {
-    final AsyncValue<String> asyncLog = ref.watch(logProvider);
-    switch (asyncLog) {
-      case AsyncData(value: final String message):
-        print("RECEIVE: $message");
-        output.add(message);
-        break;
-      case AsyncError(:final error):
-        print("ERR: $error");
-        output.add("ERR: $error");
-        break;
-      default:
-        print("No new log message");
-        break;
-    }
+    ref.listen(logNotifierProvider, (_, next) {
+      switch (next) {
+        case AsyncData(value: final String? message):
+          if (message != null) {
+            setState(() => output.add(message));
+          }
+          break;
+        case AsyncError(:final error):
+          setState(() => output.add("ERR: $error"));
+          break;
+      }
+    });
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8, right: 8),
