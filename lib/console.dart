@@ -6,6 +6,26 @@ import "package:flutter_riverpod/flutter_riverpod.dart";
 import "control_panel.dart";
 import "utils.dart";
 
+class OutputNotifier extends Notifier<List<String>> {
+  @override
+  List<String> build() {
+    ref.listen(processOutputProvider, (_, next) {
+      switch (next) {
+        case AsyncData(value: final String message):
+          state = [...state, message];
+          break;
+        case AsyncError(:final error):
+          state = [...state, "ERR: $error"];
+          break;
+      }
+    });
+    return [];
+  }
+}
+
+final outputNotifierProvider =
+    NotifierProvider<OutputNotifier, List<String>>(() => OutputNotifier());
+
 class Console extends ConsumerStatefulWidget {
   const Console({super.key});
 
@@ -15,27 +35,20 @@ class Console extends ConsumerStatefulWidget {
 
 class ConsoleState extends ConsumerState<Console> {
   final ScrollController _scrollController = ScrollController();
-  final List<String> output = [];
   Color colour = Colors.white;
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(processOutputProvider, (_, next) {
-      switch (next) {
-        case AsyncData(value: final String message):
-          setState(() => output.add(message));
-
-          //wait a frame, to make sure the text is built before scrolling to the end
-          Timer(const Duration(milliseconds: 20), () {
-            _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-          });
-          break;
-        case AsyncError(:final error):
-          setState(() => output.add("ERR: $error"));
-          break;
-      }
+    //scroll down when new output is added
+    ref.listen(outputNotifierProvider, (previous, next) {
+      //wait a frame, to make sure the text is built before scrolling to the end
+      Timer(const Duration(milliseconds: 20), () {
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      });
     });
 
+    //rebuild when new output is added
+    final List<String> output = ref.watch(outputNotifierProvider);
     return Container(
       margin: const EdgeInsets.only(bottom: 8, right: 8),
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
