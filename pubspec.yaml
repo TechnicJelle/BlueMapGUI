@@ -28,13 +28,13 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  animated_visibility: ^0.0.4
   async: ^2.11.0
   crypto: ^3.0.5
   file_picker: ^8.1.2
   flutter:
     sdk: flutter
   flutter_code_editor: ^0.3.2
-  flutter_list_view: ^1.1.28
   flutter_riverpod: ^2.5.1
   path: ^1.9.0
   rxdart: ^0.28.0

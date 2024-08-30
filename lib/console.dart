@@ -1,3 +1,4 @@
+import "package:animated_visibility/animated_visibility.dart";
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 
@@ -35,14 +36,20 @@ class ConsoleState extends ConsumerState<Console> {
   final ScrollController _scrollController = ScrollController();
   Color colour = Colors.white;
 
+  bool get isScrolledToBottom =>
+      _scrollController.hasClients &&
+      _scrollController.position.pixels == _scrollController.position.maxScrollExtent;
+
   @override
   Widget build(BuildContext context) {
     //scroll down when new output is added
     ref.listen(outputNotifierProvider, (previous, next) {
-      //wait a frame, to make sure the text is built before scrolling to the end
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-      });
+      if (isScrolledToBottom) {
+        //wait a frame, to make sure the text is built before scrolling to the end
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+        });
+      }
     });
 
     //rebuild when new output is added
@@ -55,23 +62,53 @@ class ConsoleState extends ConsumerState<Console> {
         color: Colors.black,
         borderRadius: BorderRadius.all(Radius.circular(8)),
       ),
-      child: DefaultTextStyle(
-        style: pixelCode,
-        child: ListView.builder(
-          controller: _scrollController,
-          itemBuilder: (context, index) {
-            String message = output[index];
-            if (message.contains("ERR")) {
-              colour = Colors.red;
-            } else if (message.contains("WARN")) {
-              colour = Colors.yellow;
-            } else if (message.contains("INFO")) {
-              colour = Colors.white;
-            }
-            return Text(message, style: TextStyle(color: colour));
-          },
-          itemCount: output.length,
-        ),
+      child: Stack(
+        children: [
+          DefaultTextStyle(
+            style: pixelCode,
+            child: ListView.builder(
+              controller: _scrollController,
+              itemBuilder: (context, index) {
+                String message = output[index];
+                if (message.contains("ERR")) {
+                  colour = Colors.red;
+                } else if (message.contains("WARN")) {
+                  colour = Colors.yellow;
+                } else if (message.contains("INFO")) {
+                  colour = Colors.white;
+                }
+                return Text(message, style: TextStyle(color: colour));
+              },
+              itemCount: output.length,
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: AnimatedVisibility(
+              //TODO: this only happens on rebuild, which means it doesn't actually update when you scroll to or from the bottom
+              visible: !isScrolledToBottom,
+              enter: fadeIn() + scaleIn(),
+              enterDuration: Durations.medium1,
+              exit: fadeOut() + scaleOut(),
+              exitDuration: Durations.medium1,
+              child: FloatingActionButton(
+                  child: const Icon(Icons.arrow_downward),
+                  onPressed: () {
+                    _scrollController
+                        .animateTo(
+                      _scrollController.position.maxScrollExtent,
+                      duration: Durations.medium4,
+                      curve: Curves.easeInOut,
+                    )
+                        .then((_) {
+                      _scrollController.jumpTo(_scrollController.position
+                          .maxScrollExtent); //TODO: remove the need for this. get animateTo to work properly and scroll fully down, instead.
+                      setState(() {/*this is a hack to make the button disappear*/});
+                    });
+                  }),
+            ),
+          ),
+        ],
       ),
     );
   }

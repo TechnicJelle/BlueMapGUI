@@ -8,10 +8,8 @@ Make sure you have **Java 16** or higher installed and on your PATH!
 
 ## TODO
 - make the console better
-  - fix the scroll; when you scroll up, new logs should not move the view (but it does, rn)
   - add a scroll down button (only visible if you scroll up)
-  - make the output global state (so it doesn't clear when you switch tabs)
-    - add a clear output button? (do i really want to allow users to clear the output?)
+  - add a clear output button? (do i really want to allow users to clear the output?)
 - make it not lose the process (orphan) as easily
 	- when closing the program, it loses it
 - config editor: horizontal scroll bar
