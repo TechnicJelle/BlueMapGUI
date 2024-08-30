@@ -1,5 +1,3 @@
-import "dart:async";
-
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 
@@ -42,7 +40,7 @@ class ConsoleState extends ConsumerState<Console> {
     //scroll down when new output is added
     ref.listen(outputNotifierProvider, (previous, next) {
       //wait a frame, to make sure the text is built before scrolling to the end
-      Timer(const Duration(milliseconds: 20), () {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
       });
     });
