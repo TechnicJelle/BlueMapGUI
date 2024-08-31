@@ -95,6 +95,12 @@ class _PathPickerButtonState extends ConsumerState<PathPickerButton> {
               throw Exception("BlueMap CLI JAR failed to run!");
             }
 
+            // == Turn default maps directory into templates directory ==
+            final Directory mapsDir =
+                Directory(p.join(projectDirectory.path, "config", "maps"));
+            mapsDir.renameSync(p.join(projectDirectory.path, "config", "map-templates"));
+            mapsDir.createSync(); //recreate maps dir (now empty)
+
             Prefs.instance.projectPath = projectDirectory.path;
             ref.invalidate(projectDirectoryProvider);
           },

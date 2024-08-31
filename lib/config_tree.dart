@@ -7,6 +7,8 @@ import "package:path/path.dart" as p;
 import "config_tile.dart";
 import "dual_pane.dart";
 import "main.dart";
+import "map_tile.dart";
+import "new_map_button.dart";
 
 class ConfigTree extends ConsumerStatefulWidget {
   const ConfigTree({super.key});
@@ -45,6 +47,20 @@ class _ConfigTreeState extends ConsumerState<ConfigTree> {
               maps.add(map);
             }
           }
+
+          //watch for changes to files in the maps directory
+          entity
+              .watch(events: FileSystemEvent.create | FileSystemEvent.delete)
+              .listen((FileSystemEvent event) {
+            switch (event.type) {
+              case FileSystemEvent.create:
+                addMap(File(event.path));
+                break;
+              case FileSystemEvent.delete:
+                removeMap(File(event.path));
+                break;
+            }
+          });
         }
       }
     }
@@ -52,6 +68,24 @@ class _ConfigTreeState extends ConsumerState<ConfigTree> {
     //sort all lists alphabetically
     configs.sort((a, b) => a.path.compareTo(b.path));
     storages.sort((a, b) => a.path.compareTo(b.path));
+    sortMaps();
+  }
+
+  void addMap(File newMap) {
+    setState(() {
+      maps.add(newMap);
+      sortMaps();
+    });
+  }
+
+  void removeMap(File toRemoveMap) {
+    setState(() {
+      maps.removeWhere((File map) => p.equals(map.path, toRemoveMap.path));
+      sortMaps();
+    });
+  }
+
+  void sortMaps() {
     //TODO: Sort maps based on internal `sorting` property
     maps.sort((a, b) => a.path.compareTo(b.path));
   }
@@ -66,7 +100,8 @@ class _ConfigTreeState extends ConsumerState<ConfigTree> {
         const Text("Storages"),
         for (final File storage in storages) ConfigTile(storage),
         const Text("Maps"),
-        for (final File map in maps) ConfigTile(map),
+        for (final File map in maps) MapTile(map),
+        const NewMapButton(),
       ],
     );
   }
