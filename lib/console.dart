@@ -84,28 +84,31 @@ class ConsoleState extends ConsumerState<Console> {
           ),
           Align(
             alignment: Alignment.bottomRight,
-            child: AnimatedVisibility(
-              //TODO: this only happens on rebuild, which means it doesn't actually update when you scroll to or from the bottom
-              visible: !isScrolledToBottom,
-              enter: fadeIn() + scaleIn(),
-              enterDuration: Durations.medium1,
-              exit: fadeOut() + scaleOut(),
-              exitDuration: Durations.medium1,
-              child: FloatingActionButton(
-                  child: const Icon(Icons.arrow_downward),
-                  onPressed: () {
-                    _scrollController
-                        .animateTo(
-                      _scrollController.position.maxScrollExtent,
-                      duration: Durations.medium4,
-                      curve: Curves.easeInOut,
-                    )
-                        .then((_) {
-                      _scrollController.jumpTo(_scrollController.position
-                          .maxScrollExtent); //TODO: remove the need for this. get animateTo to work properly and scroll fully down, instead.
-                      setState(() {/*this is a hack to make the button disappear*/});
-                    });
-                  }),
+            child: ListenableBuilder(
+              listenable: _scrollController,
+              builder: (context, _) {
+                return AnimatedVisibility(
+                  visible: !isScrolledToBottom,
+                  enter: fadeIn() + scaleIn(),
+                  enterDuration: Durations.medium1,
+                  exit: fadeOut() + scaleOut(),
+                  exitDuration: Durations.medium1,
+                  child: FloatingActionButton(
+                      child: const Icon(Icons.arrow_downward),
+                      onPressed: () {
+                        _scrollController
+                            .animateTo(
+                          _scrollController.position.maxScrollExtent,
+                          duration: Durations.medium4,
+                          curve: Curves.easeInOut,
+                        )
+                            .then((_) {
+                          _scrollController.jumpTo(_scrollController.position
+                              .maxScrollExtent); //TODO: remove the need for this. get animateTo to work properly and scroll fully down, instead.
+                        });
+                      }),
+                );
+              },
             ),
           ),
         ],
