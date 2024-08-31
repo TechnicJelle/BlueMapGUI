@@ -49,6 +49,22 @@ class ConsoleState extends ConsumerState<Console> {
           _scrollController.position.maxScrollExtent - 20; //a bit more than the text size
 
   @override
+  void initState() {
+    super.initState();
+
+    //scroll down when console is opened
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToBottom();
+      setState(() {/*hack to make the FAB disappear when no scrolling yet*/});
+
+      //do it again, to really make sure (i hate that this is necessary)
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToBottom();
+      });
+    });
+  }
+
+  @override
   void dispose() {
     super.dispose();
     _scrollController.dispose();
