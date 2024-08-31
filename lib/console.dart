@@ -36,6 +36,12 @@ class ConsoleState extends ConsumerState<Console> {
   final ScrollController _scrollController = ScrollController();
   Color colour = Colors.white;
 
+  void _scrollToBottom() {
+    if (!_scrollController.hasClients) return;
+    if (!_scrollController.position.hasContentDimensions) return;
+    _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+  }
+
   bool get isScrolledToBottom =>
       _scrollController.hasClients &&
       _scrollController.position.hasContentDimensions &&
@@ -55,7 +61,7 @@ class ConsoleState extends ConsumerState<Console> {
       if (isScrolledToBottom) {
         //wait a frame, to make sure the text is built before scrolling to the end
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+          _scrollToBottom();
         });
       }
     });
@@ -112,8 +118,7 @@ class ConsoleState extends ConsumerState<Console> {
                           curve: Curves.easeInOut,
                         )
                             .then((_) {
-                          _scrollController.jumpTo(_scrollController.position
-                              .maxScrollExtent); //TODO: remove the need for this. get animateTo to work properly and scroll fully down, instead.
+                          _scrollToBottom(); //TODO: remove the need for this. get animateTo to work properly and scroll fully down, instead.
                         });
                       }),
                 );
