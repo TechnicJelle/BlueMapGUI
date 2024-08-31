@@ -42,6 +42,12 @@ class ConsoleState extends ConsumerState<Console> {
       _scrollController.position.pixels == _scrollController.position.maxScrollExtent;
 
   @override
+  void dispose() {
+    super.dispose();
+    _scrollController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     //scroll down when new output is added
     ref.listen(outputNotifierProvider, (previous, next) {
