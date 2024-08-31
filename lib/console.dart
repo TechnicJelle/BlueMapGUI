@@ -39,7 +39,8 @@ class ConsoleState extends ConsumerState<Console> {
   bool get isScrolledToBottom =>
       _scrollController.hasClients &&
       _scrollController.position.hasContentDimensions &&
-      _scrollController.position.pixels == _scrollController.position.maxScrollExtent;
+      _scrollController.position.pixels >=
+          _scrollController.position.maxScrollExtent - 20;
 
   @override
   void dispose() {
