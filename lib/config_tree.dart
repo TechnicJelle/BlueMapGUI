@@ -1,3 +1,4 @@
+import "dart:async";
 import "dart:io";
 
 import "package:flutter/material.dart";
@@ -21,6 +22,8 @@ class _ConfigTreeState extends ConsumerState<ConfigTree> {
   final List<File> configs = [];
   final List<File> storages = [];
   final List<File> maps = [];
+
+  final List<StreamSubscription<FileSystemEvent>> subscriptions = [];
 
   @override
   void initState() {
@@ -49,7 +52,7 @@ class _ConfigTreeState extends ConsumerState<ConfigTree> {
           }
 
           //watch for changes to files in the maps directory
-          entity
+          final sub = entity
               .watch(events: FileSystemEvent.create | FileSystemEvent.delete)
               .listen((FileSystemEvent event) {
             switch (event.type) {
@@ -61,6 +64,7 @@ class _ConfigTreeState extends ConsumerState<ConfigTree> {
                 break;
             }
           });
+          subscriptions.add(sub);
         }
       }
     }
@@ -88,6 +92,14 @@ class _ConfigTreeState extends ConsumerState<ConfigTree> {
   void sortMaps() {
     //TODO: Sort maps based on internal `sorting` property
     maps.sort((a, b) => a.path.compareTo(b.path));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    for (var sub in subscriptions) {
+      sub.cancel();
+    }
   }
 
   @override
