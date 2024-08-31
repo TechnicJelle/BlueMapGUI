@@ -94,6 +94,7 @@ class ConsoleState extends ConsumerState<Console> {
                   exit: fadeOut() + scaleOut(),
                   exitDuration: Durations.medium1,
                   child: FloatingActionButton(
+                      mini: true,
                       child: const Icon(Icons.arrow_downward),
                       onPressed: () {
                         _scrollController
