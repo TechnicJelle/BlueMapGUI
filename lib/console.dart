@@ -3,6 +3,7 @@ import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 
 import "control_panel.dart";
+import "main.dart";
 import "utils.dart";
 
 class OutputNotifier extends Notifier<List<String>> {
@@ -18,6 +19,12 @@ class OutputNotifier extends Notifier<List<String>> {
           break;
       }
     });
+
+    //clear output when project directory changes
+    ref.listen(projectDirectoryProvider, (previous, next) {
+      state = [];
+    });
+
     return [];
   }
 }
