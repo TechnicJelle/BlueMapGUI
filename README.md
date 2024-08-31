@@ -25,9 +25,6 @@ For the time being, you have to copy the path to your world folder into the map 
 You can edit the map config in the built-in config editor, too.
 
 ## TODO
-- make the console better
-  - add a scroll down button (only visible if you scroll up)
-  - add a clear output button? (do i really want to allow users to clear the output?)
 - make it not lose the process (orphan) as easily
 	- when closing the program, it loses it
 - config editor: horizontal scroll bar
