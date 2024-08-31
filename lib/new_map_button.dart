@@ -20,10 +20,14 @@ class NewMapButton extends ConsumerWidget {
         ),
         tileColor: Theme.of(context).colorScheme.secondary,
         title: const Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.add),
             SizedBox(width: 8),
             Text("New map"),
+            SizedBox(width: 8),
+            Icon(Icons.add, color: Colors.transparent),
           ],
         ),
         onTap: () {
