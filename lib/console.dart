@@ -46,7 +46,7 @@ class ConsoleState extends ConsumerState<Console> {
       _scrollController.hasClients &&
       _scrollController.position.hasContentDimensions &&
       _scrollController.position.pixels >=
-          _scrollController.position.maxScrollExtent - 20;
+          _scrollController.position.maxScrollExtent - 20; //a bit more than the text size
 
   @override
   void dispose() {
