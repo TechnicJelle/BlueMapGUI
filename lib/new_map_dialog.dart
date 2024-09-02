@@ -10,7 +10,6 @@ import "main.dart";
 import "utils.dart";
 
 //TODO: Show options dialog
-// - which template? (overworld, nether, end) dropdown
 // - map name? (gets turned into a map ID and compared against existing map IDs)
 // other options won't be in this initial dialog, but in the actual config screen
 // which will get opened after this dialog
