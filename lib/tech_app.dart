@@ -47,6 +47,13 @@ class TechApp extends MaterialApp {
                 floatingActionButtonTheme: FloatingActionButtonThemeData(
                   backgroundColor: primary,
                 ),
+                menuTheme: MenuThemeData(
+                  style: MenuStyle(
+                    backgroundColor: WidgetStateProperty.all(
+                      Theme.of(context).scaffoldBackgroundColor,
+                    ),
+                  ),
+                ),
               ),
               child: child!,
             );
