@@ -44,6 +44,9 @@ class TechApp extends MaterialApp {
                       thumbVisibility: const WidgetStatePropertyAll(true),
                       trackVisibility: const WidgetStatePropertyAll(true),
                     ),
+                floatingActionButtonTheme: FloatingActionButtonThemeData(
+                  backgroundColor: primary,
+                ),
               ),
               child: child!,
             );
