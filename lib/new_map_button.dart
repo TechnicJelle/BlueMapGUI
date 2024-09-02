@@ -20,7 +20,7 @@ class NewMapButton extends ConsumerWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(80),
         ),
-        tileColor: Theme.of(context).colorScheme.secondary,
+        tileColor: Theme.of(context).colorScheme.primary,
         title: const Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
