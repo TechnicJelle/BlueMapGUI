@@ -89,7 +89,7 @@ class RunningProcess {
 
     process.exitCode.then((value) {
       _stateController.add(RunningProcessState.stopped);
-      _consoleOutputController.add("Stopped.");
+      _consoleOutputController.add("Stopped. ($value)");
     });
   }
 
