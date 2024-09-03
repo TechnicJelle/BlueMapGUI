@@ -44,3 +44,10 @@ You can edit the map config in the built-in config editor, too.
 - allow users to select which minecraft version the project is
 - support multiple projects
 - (better) support multiple instances open at the same time
+- test if bluemap updates work
+	1. hardcode 5.0 version
+	2. start new project
+	3. render some stuff
+	4. close program
+	5. re-hardcode 5.3
+	6. see if it automatically downloads 5.3
