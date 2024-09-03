@@ -30,10 +30,20 @@ class _MapTileState extends ConsumerState<MapTile> {
       onEnter: (_) => setState(() => _isHovering = true),
       onHover: (_) => setState(() => _isHovering = true),
       onExit: (_) => setState(() => _isHovering = false),
-      child: ListTile(
-        trailing: !_isHovering
-            ? null
-            : IconButton(
+      child: Stack(
+        children: [
+          ListTile(
+            title: Text(_toHuman(configFile)),
+            onTap: () {
+              ref.read(openConfigProvider.notifier).open(configFile);
+            },
+            selected: openConfig != null && p.equals(openConfig.path, configFile.path),
+          ),
+          if (_isHovering)
+            Positioned(
+              right: 6,
+              top: 4,
+              child: IconButton(
                 icon: const DeleteIcon(),
                 onPressed: () {
                   showDialog<bool>(
@@ -95,11 +105,8 @@ class _MapTileState extends ConsumerState<MapTile> {
                   });
                 },
               ),
-        title: Text(_toHuman(configFile)),
-        onTap: () {
-          ref.read(openConfigProvider.notifier).open(configFile);
-        },
-        selected: openConfig != null && p.equals(openConfig.path, configFile.path),
+            ),
+        ],
       ),
     );
   }
