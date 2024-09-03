@@ -53,7 +53,10 @@ class _ConfigTreeState extends ConsumerState<ConfigTree> {
 
           //watch for changes to files in the maps directory
           final sub = entity
-              .watch(events: FileSystemEvent.create | FileSystemEvent.delete)
+              .watch(
+                  events: FileSystemEvent.create |
+                      FileSystemEvent.delete |
+                      FileSystemEvent.move)
               .listen((FileSystemEvent event) {
             switch (event.type) {
               case FileSystemEvent.create:
@@ -61,6 +64,22 @@ class _ConfigTreeState extends ConsumerState<ConfigTree> {
                 break;
               case FileSystemEvent.delete:
                 removeMap(File(event.path));
+                break;
+              case FileSystemEvent.move:
+                final FileSystemMoveEvent moveEvent = event as FileSystemMoveEvent;
+                String? destination = moveEvent.destination;
+                if (destination != null) {
+                  removeMap(File(moveEvent.path));
+                  addMap(File(destination));
+                } else {
+                  //could not get destination, so we nuke everything and re-add it all
+                  maps.clear();
+                  for (final FileSystemEntity map in entity.listSync()) {
+                    if (map is File) {
+                      maps.add(map);
+                    }
+                  }
+                }
                 break;
             }
           });
