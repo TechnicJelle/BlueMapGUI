@@ -1,5 +1,4 @@
 import "dart:io";
-import "dart:math";
 
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
@@ -8,6 +7,8 @@ import "package:path/path.dart" as p;
 import "dual_pane.dart";
 import "main.dart";
 import "utils.dart";
+
+final RegExp regexIDValidation = RegExp(r"^[a-zA-Z0-9_-]+$");
 
 //TODO: Show options dialog
 // - map name? (gets turned into a map ID and compared against existing map IDs)
@@ -21,11 +22,16 @@ class NewMapDialog extends ConsumerStatefulWidget {
 }
 
 class _NewMapDialogState extends ConsumerState<NewMapDialog> {
+  //Widget stuff
+  final formKey = GlobalKey<FormState>();
+  final idController = TextEditingController();
+
+  //Data stuff
   late final List<DropdownMenuEntry<File>> options;
   late final Directory projectDirectory;
 
+  //Output stuff
   File? selectedTemplate;
-  String? templateError;
 
   @override
   void initState() {
@@ -51,29 +57,88 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
         .toList();
   }
 
+  void validateAndCreate() {
+    final formState = formKey.currentState;
+    if (formState != null && formState.validate()) {
+      File template = selectedTemplate!;
+      String id = idController.text;
+
+      File newConfig = File(
+        p.join(projectDirectory.path, "config", "maps", "$id.conf"),
+      );
+
+      template.copySync(newConfig.path);
+
+      Navigator.of(context).pop();
+
+      ref.read(openConfigProvider.notifier).open(newConfig);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text("New map"),
-      content: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text("Map type:"),
-          const SizedBox(height: 8),
-          DropdownMenu(
-            hintText: "Select a template",
-            errorText: templateError,
-            dropdownMenuEntries: options,
-            onSelected: (File? template) {
-              setState(() {
-                selectedTemplate = template;
-                templateError = null;
-              });
-            },
-            width: 200,
-          ),
-        ],
+      content: Form(
+        key: formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text("Map type:"),
+            const SizedBox(height: 8),
+            FormField(
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (field) {
+                if (selectedTemplate == null) {
+                  return "Can't be empty";
+                }
+                return null;
+              },
+              builder: (field) => DropdownMenu(
+                hintText: "Select a template",
+                errorText: field.errorText,
+                dropdownMenuEntries: options,
+                onSelected: (File? template) {
+                  setState(() {
+                    selectedTemplate = template;
+                    field.didChange(template);
+                  });
+                },
+                width: 200,
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text("Map ID:"),
+            TextFormField(
+              controller: idController,
+              decoration: InputDecoration(
+                hintText: selectedTemplate == null
+                    ? "my-cool-map"
+                    : "my-cool-${p.basenameWithoutExtension(selectedTemplate!.path)}-map",
+              ),
+              textInputAction: TextInputAction.done,
+              textCapitalization: TextCapitalization.none,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (String? s) {
+                if (s == null || s.trim().isEmpty) {
+                  return "Can't be empty";
+                }
+                if (!regexIDValidation.hasMatch(s)) {
+                  return "Invalid character";
+                }
+                File potentialNewConfig = File(
+                  p.join(projectDirectory.path, "config", "maps", "$s.conf"),
+                );
+                if (potentialNewConfig.existsSync()) {
+                  return "Can't have a duplicate ID";
+                }
+                return null;
+              },
+              onFieldSubmitted: (_) => validateAndCreate(),
+            ),
+          ],
+        ),
       ),
       actions: [
         TextButton(
@@ -83,26 +148,7 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
           child: const Text("Cancel"),
         ),
         ElevatedButton(
-          onPressed: () {
-            File? template = selectedTemplate;
-            if (template == null) {
-              setState(() {
-                templateError = "Please select a template";
-              });
-              return;
-            }
-
-            File newConfig = File(
-              p.join(projectDirectory.path, "config", "maps",
-                  "new-map-${Random().nextInt(999)}.conf"),
-            );
-
-            template.copySync(newConfig.path);
-
-            Navigator.of(context).pop();
-
-            ref.read(openConfigProvider.notifier).open(newConfig);
-          },
+          onPressed: () => validateAndCreate(),
           child: const Text("Create"),
         ),
       ],
