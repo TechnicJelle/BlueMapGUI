@@ -6,6 +6,7 @@ import "package:path/path.dart" as p;
 
 import "delete_icon.dart";
 import "dual_pane.dart";
+import "main.dart";
 import "utils.dart";
 
 class MapTile extends ConsumerStatefulWidget {
@@ -91,16 +92,26 @@ class _MapTileState extends ConsumerState<MapTile> {
                   ).then((bool? confirmed) {
                     if (confirmed == null || confirmed == false) return;
 
-                    //if the editor is open on that file, close it
+                    // == If the editor is open on that file, close it ==
                     if (openConfig != null &&
                         p.equals(openConfig.path, configFile.path)) {
                       ref.read(openConfigProvider.notifier).close();
                     }
+
+                    // == Delete the config file and the rendered map data ==
+                    final Directory? projectDirectory =
+                        ref.watch(projectDirectoryProvider);
                     //delete the file next frame, to ensure the editor is closed
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       configFile.delete();
-                      //TODO: Also delete the rendered map data (check if it exists first)
-                      //($pwd/web/maps/map-id)
+
+                      if (projectDirectory == null) return;
+                      final String mapID = p.basenameWithoutExtension(configFile.path);
+                      final Directory mapDirectory =
+                          Directory(p.join(projectDirectory.path, "web", "maps", mapID));
+                      if (mapDirectory.existsSync()) {
+                        mapDirectory.delete(recursive: true);
+                      }
                     });
                   });
                 },
