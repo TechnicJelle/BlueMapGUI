@@ -27,97 +27,105 @@ class _MapTileState extends ConsumerState<MapTile> {
   Widget build(BuildContext context) {
     final File? openConfig = ref.watch(openConfigProvider);
 
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovering = true),
-      onHover: (_) => setState(() => _isHovering = true),
-      onExit: (_) => setState(() => _isHovering = false),
-      child: Stack(
-        children: [
-          ListTile(
-            title: Text(_toHuman(configFile)),
-            onTap: () {
-              ref.read(openConfigProvider.notifier).open(configFile);
-            },
-            selected: openConfig != null && p.equals(openConfig.path, configFile.path),
-          ),
-          if (_isHovering)
-            Positioned(
-              right: 6,
-              top: 4,
-              child: IconButton(
-                icon: const DeleteIcon(),
-                onPressed: () {
-                  showDialog<bool>(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text("Delete map"),
-                      content: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Wrap(
-                            children: [
-                              const Text("Are you sure you want to delete the map \" "),
-                              Text(
-                                _toHuman(configFile),
-                                style: pixelCode.copyWith(height: 1.4),
-                              ),
-                              const SizedBox(width: 1),
-                              const Text("\" ?"),
-                            ],
+    return GestureDetector(
+      onSecondaryTap: () {
+        //TODO: Open right click menu:
+        // - Rename config and map data directory
+        // - Delete config and map data directory
+        //maybe even with showDialog..?
+      },
+      child: MouseRegion(
+        onEnter: (_) => setState(() => _isHovering = true),
+        onHover: (_) => setState(() => _isHovering = true),
+        onExit: (_) => setState(() => _isHovering = false),
+        child: Stack(
+          children: [
+            ListTile(
+              title: Text(_toHuman(configFile)),
+              onTap: () {
+                ref.read(openConfigProvider.notifier).open(configFile);
+              },
+              selected: openConfig != null && p.equals(openConfig.path, configFile.path),
+            ),
+            if (_isHovering)
+              Positioned(
+                right: 6,
+                top: 4,
+                child: IconButton(
+                  icon: const DeleteIcon(),
+                  onPressed: () {
+                    showDialog<bool>(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text("Delete map"),
+                        content: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Wrap(
+                              children: [
+                                const Text("Are you sure you want to delete the map \" "),
+                                Text(
+                                  _toHuman(configFile),
+                                  style: pixelCode.copyWith(height: 1.4),
+                                ),
+                                const SizedBox(width: 1),
+                                const Text("\" ?"),
+                              ],
+                            ),
+                            const Text(
+                              "This action cannot be undone!",
+                              style: TextStyle(fontWeight: FontWeight.w500),
+                            ),
+                            const Text(
+                              "However, you can just add the map again, as no unrecoverable data will be deleted.",
+                            ),
+                            const Text(
+                              "Your Minecraft world data will not be affected by this action, only the BlueMap data.",
+                            )
+                          ],
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(true),
+                            child: const Text("Delete"),
                           ),
-                          const Text(
-                            "This action cannot be undone!",
-                            style: TextStyle(fontWeight: FontWeight.w500),
+                          ElevatedButton(
+                            onPressed: () => Navigator.of(context).pop(false),
+                            child: const Text("Cancel"),
                           ),
-                          const Text(
-                            "However, you can just add the map again, as no unrecoverable data will be deleted.",
-                          ),
-                          const Text(
-                            "Your Minecraft world data will not be affected by this action, only the BlueMap data.",
-                          )
                         ],
                       ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(true),
-                          child: const Text("Delete"),
-                        ),
-                        ElevatedButton(
-                          onPressed: () => Navigator.of(context).pop(false),
-                          child: const Text("Cancel"),
-                        ),
-                      ],
-                    ),
-                  ).then((bool? confirmed) {
-                    if (confirmed == null || confirmed == false) return;
+                    ).then((bool? confirmed) {
+                      if (confirmed == null || confirmed == false) return;
 
-                    // == If the editor is open on that file, close it ==
-                    if (openConfig != null &&
-                        p.equals(openConfig.path, configFile.path)) {
-                      ref.read(openConfigProvider.notifier).close();
-                    }
-
-                    // == Delete the config file and the rendered map data ==
-                    final Directory? projectDirectory =
-                        ref.watch(projectDirectoryProvider);
-                    //delete the file next frame, to ensure the editor is closed
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      configFile.delete();
-
-                      if (projectDirectory == null) return;
-                      final String mapID = p.basenameWithoutExtension(configFile.path);
-                      final Directory mapDirectory =
-                          Directory(p.join(projectDirectory.path, "web", "maps", mapID));
-                      if (mapDirectory.existsSync()) {
-                        mapDirectory.delete(recursive: true);
+                      // == If the editor is open on that file, close it ==
+                      if (openConfig != null &&
+                          p.equals(openConfig.path, configFile.path)) {
+                        ref.read(openConfigProvider.notifier).close();
                       }
+
+                      // == Delete the config file and the rendered map data ==
+                      final Directory? projectDirectory =
+                          ref.watch(projectDirectoryProvider);
+                      //delete the file next frame, to ensure the editor is closed
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        configFile.delete();
+
+                        if (projectDirectory == null) return;
+                        final String mapID = p.basenameWithoutExtension(configFile.path);
+                        final Directory mapDirectory = Directory(
+                            p.join(projectDirectory.path, "web", "maps", mapID));
+                        if (mapDirectory.existsSync()) {
+                          mapDirectory.delete(recursive: true);
+                        }
+                      });
                     });
-                  });
-                },
+                  },
+                ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
