@@ -16,6 +16,7 @@ enum _PickingState {
   picking,
   scanning,
   downloading,
+  downloadFailed,
   hashing,
   wrongHash,
   running,
@@ -30,6 +31,7 @@ class PathPickerButton extends ConsumerStatefulWidget {
 
 class _PathPickerButtonState extends ConsumerState<PathPickerButton> {
   _PickingState _pickingState = _PickingState.nothing;
+  String? errorText;
 
   @override
   Widget build(BuildContext context) {
@@ -64,13 +66,21 @@ class _PathPickerButtonState extends ConsumerState<PathPickerButton> {
             // == If needed, download BlueMap CLI JAR ==
             if (bluemapJar == null) {
               setState(() => _pickingState = _PickingState.downloading);
-              Uri link = Uri.parse(blueMapCliJarUrl);
-              final client = HttpClient();
-              final request = await client.getUrl(link);
-              final response = await request.close();
-              bluemapJar = File(p.join(projectDirectory.path, blueMapCliJarName));
-              await response.pipe(bluemapJar.openWrite());
-              client.close();
+              try {
+                Uri link = Uri.parse(blueMapCliJarUrl);
+                final client = HttpClient();
+                final request = await client.getUrl(link);
+                final response = await request.close();
+                bluemapJar = File(p.join(projectDirectory.path, blueMapCliJarName));
+                await response.pipe(bluemapJar.openWrite());
+                client.close();
+              } catch (e) {
+                setState(() {
+                  _pickingState = _PickingState.downloadFailed;
+                  errorText = e.toString();
+                });
+                return;
+              }
             }
 
             // == Verify BlueMap CLI JAR hash ==
@@ -142,6 +152,27 @@ class _PathPickerButtonState extends ConsumerState<PathPickerButton> {
               constraints: const BoxConstraints(maxWidth: 300),
               child: const LinearProgressIndicator(),
             ),
+          ],
+        ),
+      _PickingState.downloadFailed => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 8),
+            const Text(
+              "Downloaded failed:",
+              style: TextStyle(color: Colors.red),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              errorText ?? "Unknown error",
+              style: const TextStyle(color: Colors.red),
+            ),
+            const SizedBox(height: 8),
+            ElevatedButton(
+              onPressed: () => setState(() => _pickingState = _PickingState.nothing),
+              child: const Text("Try again"),
+            ),
+            const SizedBox(height: 8),
           ],
         ),
       _PickingState.hashing => Column(
