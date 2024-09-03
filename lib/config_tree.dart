@@ -71,6 +71,16 @@ class _ConfigTreeState extends ConsumerState<ConfigTree> {
                 if (destination != null) {
                   removeMap(File(moveEvent.path));
                   addMap(File(destination));
+
+                  final String prevMapID = p.basenameWithoutExtension(moveEvent.path);
+                  final String nextMapID = p.basenameWithoutExtension(destination);
+
+                  //Also rename the map data directory:
+                  final Directory mapDataDir =
+                      Directory(p.join(projectPath, "web", "maps", prevMapID));
+                  if (mapDataDir.existsSync()) {
+                    mapDataDir.rename(p.join(projectPath, "web", "maps", nextMapID));
+                  }
                 } else {
                   //could not get destination, so we nuke everything and re-add it all
                   maps.clear();
