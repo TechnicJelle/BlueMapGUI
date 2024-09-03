@@ -72,7 +72,6 @@ class _ConfigTreeState extends ConsumerState<ConfigTree> {
                   removeMap(File(moveEvent.path));
                   addMap(File(destination));
 
-                  //TODO: Remove this in favour of an integrated rename function
                   final String prevMapID = p.basenameWithoutExtension(moveEvent.path);
                   final String nextMapID = p.basenameWithoutExtension(destination);
 
@@ -120,7 +119,6 @@ class _ConfigTreeState extends ConsumerState<ConfigTree> {
   }
 
   void sortMaps() {
-    //TODO: Sort maps based on internal `sorting` property
     maps.sort((a, b) => a.path.compareTo(b.path));
   }
 

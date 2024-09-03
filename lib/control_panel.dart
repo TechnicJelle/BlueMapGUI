@@ -180,7 +180,6 @@ class ControlPanel extends ConsumerWidget {
               ElevatedButton.icon(
                 onPressed: processState == RunningProcessState.running
                     ? () async {
-                        //TODO: Unhardcode the port; get from the process output
                         if (!await launchUrl(Uri.parse("http://localhost:8100"))) {
                           throw Exception("Could not launch url!");
                         }

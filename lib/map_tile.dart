@@ -28,12 +28,7 @@ class _MapTileState extends ConsumerState<MapTile> {
     final File? openConfig = ref.watch(openConfigProvider);
 
     return GestureDetector(
-      onSecondaryTap: () {
-        //TODO: Open right click menu:
-        // - Rename config and map data directory
-        // - Delete config and map data directory
-        //maybe even with showDialog..?
-      },
+      onSecondaryTap: () {/*right click menu will come here*/},
       child: MouseRegion(
         onEnter: (_) => setState(() => _isHovering = true),
         onHover: (_) => setState(() => _isHovering = true),

@@ -141,7 +141,7 @@ class ConsoleState extends ConsumerState<Console> {
                           curve: Curves.easeInOut,
                         )
                             .then((_) {
-                          _scrollToBottom(); //TODO: remove the need for this. get animateTo to work properly and scroll fully down, instead.
+                          _scrollToBottom();
                         });
                       }),
                 );
