@@ -25,6 +25,10 @@ For the time being, you have to copy the path to your world folder into the map 
 You can edit the map config in the built-in config editor, too.
 
 ## TODO
+- java executable:
+	- automatic (from the path)
+	- custom location (file picker)
+	- offer to download it locally to the project directory (from adoptium)
 - make it not lose the process (orphan) as easily
 	- when closing the program, it loses it
 - config editor: horizontal scroll bar
