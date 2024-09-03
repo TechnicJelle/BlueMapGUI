@@ -37,3 +37,5 @@ You can edit the map config in the built-in config editor, too.
 		- button for adding a save (adds map configs for all dimensions in that save)
 		- button for adding a single dimension
 - allow users to select which minecraft version the project is
+- support multiple projects
+- (better) support multiple instances open at the same time
