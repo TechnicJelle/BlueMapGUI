@@ -30,8 +30,6 @@ You can edit the map config in the built-in config editor, too.
 	- ~custom location (file picker)
 	- ~offer to download it locally to the project directory (from adoptium)
 	- check if chosen version >=16
-- make it not lose the process (orphan) as easily
-	- when closing the program, it loses it
 - config editor: horizontal scroll bar
 - add gui for the (main) config options
 	- accept download

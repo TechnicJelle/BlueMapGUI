@@ -1,6 +1,7 @@
 import "dart:async";
 import "dart:convert";
 import "dart:io";
+import "dart:ui";
 
 import "package:async/async.dart";
 import "package:flutter/material.dart";
@@ -53,7 +54,27 @@ class RunningProcess {
 
   StreamSubscription? _outputStreamSub;
 
-  RunningProcess(this._projectDirectory); //ctor
+  RunningProcess(this._projectDirectory) {
+    AppLifecycleListener(
+      onExitRequested: () async {
+        if (_stateController.value == RunningProcessState.running) {
+          //start looking for state to change to stopped
+          final stopFuture = _stateController.stream
+              .firstWhere((state) => state == RunningProcessState.stopped);
+
+          //stop the process
+          stop();
+
+          //wait for the process to stop
+          await stopFuture;
+
+          //allow user to read the "Stopped." message
+          return Future.delayed(const Duration(seconds: 1), () => AppExitResponse.exit);
+        }
+        return Future.value(AppExitResponse.exit);
+      },
+    );
+  }
 
   Future<void> start() async {
     if (_stateController.value != RunningProcessState.stopped) {
