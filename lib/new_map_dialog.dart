@@ -87,7 +87,7 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (field) {
                 if (selectedTemplate == null) {
-                  return "Can't be empty";
+                  return "Can't be empty or invalid selection";
                 }
                 return null;
               },
