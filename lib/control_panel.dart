@@ -80,7 +80,14 @@ class RunningProcess {
     ]);
 
     _outputStreamSub = mergedStream.transform(const LineSplitter()).listen((event) {
-      _consoleOutputController.add(event);
+      int pleaseCheckIndex = event.indexOf("Please check:");
+      if (pleaseCheckIndex != -1 && event.contains("core.conf")) {
+        _consoleOutputController.add(
+          "${event.substring(0, pleaseCheckIndex)}Please check the Core config in the bar on the left!",
+        );
+      } else {
+        _consoleOutputController.add(event);
+      }
 
       if (event.contains("WebServer started")) {
         _stateController.add(RunningProcessState.running);
