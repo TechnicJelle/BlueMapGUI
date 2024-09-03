@@ -96,10 +96,15 @@ class _PathPickerButtonState extends ConsumerState<PathPickerButton> {
             }
 
             // == Turn default maps directory into templates directory ==
-            final Directory mapsDir =
-                Directory(p.join(projectDirectory.path, "config", "maps"));
-            mapsDir.renameSync(p.join(projectDirectory.path, "config", "map-templates"));
-            mapsDir.createSync(); //recreate maps dir (now empty)
+            final templatesDir =
+                Directory(p.join(projectDirectory.path, "config", "map-templates"));
+            //Make sure to support opening existing projects; only do this on fresh projects
+            if (!templatesDir.existsSync()) {
+              final Directory mapsDir =
+                  Directory(p.join(projectDirectory.path, "config", "maps"));
+              mapsDir.renameSync(templatesDir.path); //rename maps dir to templates dir
+              mapsDir.createSync(); //recreate maps dir (now empty)
+            }
 
             Prefs.instance.projectPath = projectDirectory.path;
             ref.invalidate(projectDirectoryProvider);
