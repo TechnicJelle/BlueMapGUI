@@ -131,19 +131,20 @@ class ConsoleState extends ConsumerState<Console> {
                   exit: fadeOut() + scaleOut(),
                   exitDuration: Durations.medium1,
                   child: FloatingActionButton(
-                      mini: true,
-                      child: const Icon(Icons.arrow_downward),
-                      onPressed: () {
-                        _scrollController
-                            .animateTo(
-                          _scrollController.position.maxScrollExtent,
-                          duration: Durations.medium4,
-                          curve: Curves.easeInOut,
-                        )
-                            .then((_) {
-                          _scrollToBottom();
-                        });
-                      }),
+                    mini: true,
+                    child: const Icon(Icons.arrow_downward),
+                    onPressed: () {
+                      _scrollController
+                          .animateTo(
+                        _scrollController.position.maxScrollExtent,
+                        duration: Durations.medium4,
+                        curve: Curves.easeInOut,
+                      )
+                          .then((_) {
+                        _scrollToBottom();
+                      });
+                    },
+                  ),
                 );
               },
             ),
