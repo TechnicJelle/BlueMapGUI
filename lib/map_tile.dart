@@ -51,7 +51,8 @@ class _MapTileState extends ConsumerState<MapTile> {
                                 _toHuman(configFile),
                                 style: pixelCode.copyWith(height: 1.4),
                               ),
-                              const Text(" \" ?"),
+                              const SizedBox(width: 1),
+                              const Text("\" ?"),
                             ],
                           ),
                           const Text(
