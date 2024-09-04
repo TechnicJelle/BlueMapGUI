@@ -11,6 +11,13 @@ import "main.dart";
 import "map_tile.dart";
 import "new_map_button.dart";
 
+///Group 1: Is commented?
+///Group 2: Actual sorting value
+final RegExp sortingRegex = RegExp(
+  r"^(#|//)*\s*sorting\s*:\s*(-?\d+)",
+  multiLine: true,
+);
+
 class ConfigTree extends ConsumerStatefulWidget {
   const ConfigTree({super.key});
 
@@ -56,7 +63,8 @@ class _ConfigTreeState extends ConsumerState<ConfigTree> {
               .watch(
                   events: FileSystemEvent.create |
                       FileSystemEvent.delete |
-                      FileSystemEvent.move)
+                      FileSystemEvent.move |
+                      FileSystemEvent.modify)
               .listen((FileSystemEvent event) {
             switch (event.type) {
               case FileSystemEvent.create:
@@ -91,6 +99,11 @@ class _ConfigTreeState extends ConsumerState<ConfigTree> {
                   }
                 }
                 break;
+              case FileSystemEvent.modify:
+                final FileSystemModifyEvent modifyEvent = event as FileSystemModifyEvent;
+                if (!modifyEvent.contentChanged) return;
+                sortMaps();
+                break;
             }
           });
           subscriptions.add(sub);
@@ -118,8 +131,41 @@ class _ConfigTreeState extends ConsumerState<ConfigTree> {
     });
   }
 
-  void sortMaps() {
-    maps.sort((a, b) => a.path.compareTo(b.path));
+  void sortMaps() async {
+    final Map<File, int> mapSortings = {};
+    await Future.wait(maps.map((File map) async {
+      final String contents = await map.readAsString();
+      final Match? match = sortingRegex.firstMatch(contents);
+      if (match != null) {
+        final String? comment = match.group(1);
+        final bool commented = comment != null && comment.isNotEmpty;
+        if (commented) {
+          mapSortings[map] = 0;
+        } else {
+          final int sorting = int.parse(match.group(2) ?? "0");
+          mapSortings[map] = sorting;
+        }
+      } else {
+        mapSortings[map] = 0;
+      }
+    }));
+
+    setState(() {
+      maps.sort((a, b) {
+        int? sortingA = mapSortings[a];
+        int? sortingB = mapSortings[b];
+        if (sortingA == null) throw Exception("Map $a has no sorting!");
+        if (sortingB == null) throw Exception("Map $b has no sorting!");
+
+        //if sort value is the same, sort by path
+        //this at least keep it consistent, instead of random
+        if (sortingA == sortingB) {
+          return a.path.compareTo(b.path);
+        }
+
+        return sortingA.compareTo(sortingB);
+      });
+    });
   }
 
   @override
