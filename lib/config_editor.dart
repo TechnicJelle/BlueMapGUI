@@ -3,7 +3,7 @@ import "dart:io";
 
 import "package:flutter/material.dart";
 import "package:flutter_code_editor/flutter_code_editor.dart";
-import "package:flutter_highlight/themes/a11y-dark.dart" show a11yDarkTheme;
+import "package:flutter_highlight/themes/ir-black.dart" show irBlackTheme;
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:highlight/languages/yaml.dart" show yaml;
 
@@ -69,7 +69,7 @@ class _ConfigEditorState extends ConsumerState<ConfigEditor> {
       child: SingleChildScrollView(
         controller: vScrollController,
         child: CodeTheme(
-          data: CodeThemeData(styles: a11yDarkTheme),
+          data: CodeThemeData(styles: irBlackTheme),
           child: CodeField(
             gutterStyle: const GutterStyle(
               showFoldingHandles: false,
