@@ -3,7 +3,9 @@ import "dart:io";
 
 import "package:flutter/material.dart";
 import "package:flutter_code_editor/flutter_code_editor.dart";
+import "package:flutter_highlight/themes/a11y-dark.dart" show a11yDarkTheme;
 import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:highlight/languages/yaml.dart" show yaml;
 
 import "dual_pane.dart";
 import "utils.dart";
@@ -18,7 +20,7 @@ class ConfigEditor extends ConsumerStatefulWidget {
 }
 
 class _ConfigEditorState extends ConsumerState<ConfigEditor> {
-  final codeController = CodeController();
+  final codeController = CodeController(language: yaml); //Not HOCON, but close enough
   final vScrollController = ScrollController();
 
   late File openConfig;
@@ -66,14 +68,20 @@ class _ConfigEditorState extends ConsumerState<ConfigEditor> {
       color: Colors.grey.shade900,
       child: SingleChildScrollView(
         controller: vScrollController,
-        child: CodeField(
-          background: Colors.grey.shade900,
-          onChanged: (_) => hasChanged = true,
-          textStyle: pixelCode,
-          controller: codeController,
-          minLines: null,
-          maxLines: null,
-          // expands: true,
+        child: CodeTheme(
+          data: CodeThemeData(styles: a11yDarkTheme),
+          child: CodeField(
+            gutterStyle: const GutterStyle(
+              showFoldingHandles: false,
+            ),
+            background: Colors.transparent,
+            onChanged: (_) => hasChanged = true,
+            textStyle: pixelCode,
+            controller: codeController,
+            minLines: null,
+            maxLines: null,
+            // expands: true,
+          ),
         ),
       ),
     );
