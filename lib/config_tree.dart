@@ -181,11 +181,11 @@ class _ConfigTreeState extends ConsumerState<ConfigTree> {
     return ListView(
       children: [
         const _ControlPanelTile(),
-        const Text("Configs"),
+        const Text(" Configs"),
         for (final File config in configs) ConfigTile(config),
-        const Text("Storages"),
+        const Text(" Storages"),
         for (final File storage in storages) ConfigTile(storage),
-        const Text("Maps"),
+        const Text(" Maps"),
         for (final File map in maps) MapTile(map),
         const NewMapButton(),
       ],
