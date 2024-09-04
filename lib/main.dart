@@ -3,6 +3,7 @@ import "dart:io";
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 
+import "confirmation_dialog.dart";
 import "dual_pane.dart";
 import "path_picker_button.dart";
 import "prefs.dart";
@@ -60,33 +61,31 @@ class MyHomePage extends ConsumerWidget {
       title += ": ${projectDirectory.path}";
     }
 
-    final List<PopupMenuEntry> extraOptions = [
-      if (projectDirectory != null)
-        PopupMenuItem(
-          child: const Row(
-            children: [
-              Icon(Icons.close),
-              SizedBox(width: 8),
-              Text("Close project"),
-            ],
-          ),
-          onTap: () {
-            Prefs.instance.projectPath = null;
-            ref.invalidate(projectDirectoryProvider);
-          },
-        ),
-    ];
-
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
         actions: [
           const Text(commit),
-          if (extraOptions.isNotEmpty)
-            PopupMenuButton(
-              tooltip: "Extra options",
-              itemBuilder: (context) => extraOptions,
-            )
+          if (projectDirectory != null)
+            IconButton(
+              tooltip: "Close project",
+              onPressed: () {
+                showConfirmationDialog(
+                  context: context,
+                  title: "Close project",
+                  content: const [
+                    Text("Are you sure you want to close this project?"),
+                    Text("You can always open it again later."),
+                  ],
+                  confirmAction: "Close",
+                  onConfirmed: () {
+                    Prefs.instance.projectPath = null;
+                    ref.invalidate(projectDirectoryProvider);
+                  },
+                );
+              },
+              icon: const Icon(Icons.close),
+            ),
         ],
       ),
       body: projectDirectory == null
