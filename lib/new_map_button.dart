@@ -8,6 +8,7 @@ class NewMapButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final Color onPrimary = Theme.of(context).colorScheme.onPrimary;
     return Padding(
       padding: const EdgeInsets.all(8),
       child: ListTile(
@@ -15,15 +16,15 @@ class NewMapButton extends ConsumerWidget {
           borderRadius: BorderRadius.circular(80),
         ),
         tileColor: Theme.of(context).colorScheme.primary,
-        title: const Row(
+        title: Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.add),
-            SizedBox(width: 8),
-            Text("New map"),
-            SizedBox(width: 8),
-            Icon(Icons.add, color: Colors.transparent),
+            Icon(Icons.add, color: onPrimary),
+            const SizedBox(width: 8),
+            Text("New map", style: TextStyle(color: onPrimary)),
+            const SizedBox(width: 8),
+            const Icon(Icons.add, color: Colors.transparent),
           ],
         ),
         onTap: () {
