@@ -30,8 +30,6 @@ class _ConfigEditorState extends ConsumerState<ConfigEditor> {
     super.initState();
     readFile(widget.openConfig);
 
-    codeController.addListener(() => hasChanged = true);
-
     autoSaveTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
       writeFile(openConfig);
     });
@@ -67,6 +65,7 @@ class _ConfigEditorState extends ConsumerState<ConfigEditor> {
     return SingleChildScrollView(
       controller: vScrollController,
       child: CodeField(
+        onChanged: (_) => hasChanged = true,
         textStyle: pixelCode,
         controller: codeController,
         minLines: null,
