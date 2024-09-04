@@ -13,6 +13,8 @@ import "package:url_launcher/url_launcher.dart";
 import "console.dart";
 import "main.dart";
 
+final portExtractionRegex = RegExp(r"(?:port\s*|:)(\d{4,5})$");
+
 final _processProvider = Provider<RunningProcess?>((ref) {
   final Directory? projectDirectory = ref.watch(projectDirectoryProvider);
   if (projectDirectory == null) return null;
@@ -44,6 +46,9 @@ class RunningProcess {
   final Directory _projectDirectory;
 
   Process? _process;
+
+  int _port = 8100;
+  int get port => _port;
 
   Stream<String> get consoleOutput => _consoleOutputController.stream;
   final _consoleOutputController = StreamController<String>();
@@ -110,8 +115,10 @@ class RunningProcess {
         _consoleOutputController.add(event);
       }
 
-      if (event.contains("WebServer started")) {
+      if (event.contains("WebServer bound to")) {
         _stateController.add(RunningProcessState.running);
+        final String? portText = portExtractionRegex.firstMatch(event)?.group(1);
+        _port = int.tryParse(portText ?? "") ?? 8100;
       }
     });
 
@@ -180,7 +187,8 @@ class ControlPanel extends ConsumerWidget {
               ElevatedButton.icon(
                 onPressed: processState == RunningProcessState.running
                     ? () async {
-                        if (!await launchUrl(Uri.parse("http://localhost:8100"))) {
+                        final int port = ref.read(_processProvider)?.port ?? 8100;
+                        if (!await launchUrl(Uri.parse("http://localhost:$port"))) {
                           throw Exception("Could not launch url!");
                         }
                       }
