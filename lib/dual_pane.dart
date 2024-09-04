@@ -33,7 +33,7 @@ class DualPane extends ConsumerWidget {
     File? openConfig = ref.watch(openConfigProvider);
 
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Container(
           constraints: const BoxConstraints(maxWidth: 200),

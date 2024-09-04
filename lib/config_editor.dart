@@ -62,15 +62,19 @@ class _ConfigEditorState extends ConsumerState<ConfigEditor> {
       if (previous != null && next != null) writeFile(previous);
       if (next != null) readFile(next);
     });
-    return SingleChildScrollView(
-      controller: vScrollController,
-      child: CodeField(
-        onChanged: (_) => hasChanged = true,
-        textStyle: pixelCode,
-        controller: codeController,
-        minLines: null,
-        maxLines: null,
-        // expands: true,
+    return Container(
+      color: Colors.grey.shade900,
+      child: SingleChildScrollView(
+        controller: vScrollController,
+        child: CodeField(
+          background: Colors.grey.shade900,
+          onChanged: (_) => hasChanged = true,
+          textStyle: pixelCode,
+          controller: codeController,
+          minLines: null,
+          maxLines: null,
+          // expands: true,
+        ),
       ),
     );
   }
