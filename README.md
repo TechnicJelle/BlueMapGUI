@@ -1,4 +1,4 @@
-<img align="left" width="100px" src="assets/icon_1024.png">
+<img align="left" width="100px" src="assets/icon_1024.png" alt="logo">
 
 [![GitHub Total Downloads](https://img.shields.io/github/downloads/TechnicJelle/BlueMapGUI/total?label=Downloads&color=success")](https://github.com/TechnicJelle/BlueMapGUI/releases/latest)
 ![Platform: Linux](https://img.shields.io/badge/Platform-Linux-FCC624?logo=linux&logoColor=white)
