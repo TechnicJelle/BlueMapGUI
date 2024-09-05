@@ -64,7 +64,7 @@ class _ConfigEditorState extends ConsumerState<ConfigEditor> {
       if (previous != null && next != null) writeFile(previous);
       if (next != null) readFile(next);
     });
-    return Container(
+    return ColoredBox(
       color: Colors.grey.shade900,
       child: SingleChildScrollView(
         controller: vScrollController,
