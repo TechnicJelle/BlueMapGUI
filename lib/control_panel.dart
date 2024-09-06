@@ -11,6 +11,7 @@ import "package:rxdart/rxdart.dart";
 import "package:url_launcher/url_launcher.dart";
 
 import "console.dart";
+import "java/java_picker.dart";
 import "main.dart";
 
 final portExtractionRegex = RegExp(r"(?:port\s*|:)(\d{4,5})$");
@@ -18,7 +19,9 @@ final portExtractionRegex = RegExp(r"(?:port\s*|:)(\d{4,5})$");
 final _processProvider = Provider<RunningProcess?>((ref) {
   final Directory? projectDirectory = ref.watch(projectDirectoryProvider);
   if (projectDirectory == null) return null;
-  final process = RunningProcess(projectDirectory);
+  final String? javaPath = ref.watch(javaPathProvider);
+  if (javaPath == null) return null;
+  final process = RunningProcess(projectDirectory, javaPath);
   ref.onDispose(() => process.stop());
   return process;
 });
@@ -44,6 +47,7 @@ enum RunningProcessState {
 
 class RunningProcess {
   final Directory _projectDirectory;
+  final String _javaPath;
 
   Process? _process;
 
@@ -59,7 +63,7 @@ class RunningProcess {
 
   StreamSubscription? _outputStreamSub;
 
-  RunningProcess(this._projectDirectory) {
+  RunningProcess(this._projectDirectory, this._javaPath) {
     AppLifecycleListener(
       onExitRequested: () async {
         if (_stateController.value == RunningProcessState.running) {
@@ -91,7 +95,7 @@ class RunningProcess {
     final String bluemapJarPath = p.join(_projectDirectory.path, blueMapCliJarName);
 
     final process = await Process.start(
-      "java",
+      _javaPath,
       ["-jar", bluemapJarPath, "--render", "--watch", "--webserver"],
       workingDirectory: _projectDirectory.path,
       mode: ProcessStartMode.normal,

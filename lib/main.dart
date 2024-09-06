@@ -5,6 +5,7 @@ import "package:flutter_riverpod/flutter_riverpod.dart";
 
 import "close_project_button.dart";
 import "dual_pane.dart";
+import "java/java_picker.dart";
 import "path_picker_button.dart";
 import "prefs.dart";
 import "tech_app.dart";
@@ -70,19 +71,28 @@ class MyHomePage extends ConsumerWidget {
         ],
       ),
       body: projectDirectory == null
-          ? const Center(
+          ? Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text("Select an empty folder to store your BlueMap files in:"),
-                  SizedBox(height: 8),
-                  PathPickerButton(),
-                  SizedBox(height: 8),
-                  Text("The BlueMap CLI tool will be downloaded into that folder."),
-                  SizedBox(height: 4),
-                  Text("It will generate some default config files for you."),
-                  SizedBox(height: 4),
-                  Text("You will then need to configure your maps in the BlueMap GUI."),
+                  const JavaPicker(),
+                  if (ref.watch(javaPathProvider) != null) ...[
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 600),
+                      child: const Divider(),
+                    ),
+                    const Text("Select an empty folder to store your BlueMap files in:"),
+                    const SizedBox(height: 8),
+                    const PathPickerButton(),
+                    const SizedBox(height: 8),
+                    const Text(
+                        "The BlueMap CLI tool will be downloaded into that folder."),
+                    const SizedBox(height: 4),
+                    const Text("It will generate some default config files for you."),
+                    const SizedBox(height: 4),
+                    const Text(
+                        "You will then need to configure your maps in the BlueMap GUI."),
+                  ],
                 ],
               ),
             )

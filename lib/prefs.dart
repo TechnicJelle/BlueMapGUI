@@ -3,6 +3,7 @@ import "package:shared_preferences/shared_preferences.dart";
 class Prefs {
   // == Constants ==
   static const String projectPathKey = "project_path";
+  static const String javaPathKey = "java_path";
 
   // == Static ==
   static late Prefs _instance;
@@ -30,6 +31,17 @@ class Prefs {
       _prefs.remove(projectPathKey);
     } else {
       _prefs.setString(projectPathKey, value);
+    }
+  }
+
+  String? get javaPath => _prefs.getString(javaPathKey);
+
+  /// Set the java path. If `null`, the java path will be cleared.
+  set javaPath(String? value) {
+    if (value == null) {
+      _prefs.remove(javaPathKey);
+    } else {
+      _prefs.setString(javaPathKey, value);
     }
   }
 }

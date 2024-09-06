@@ -8,6 +8,7 @@ import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:path/path.dart" as p;
 import "package:url_launcher/url_launcher_string.dart";
 
+import "java/java_picker.dart";
 import "main.dart";
 import "prefs.dart";
 
@@ -94,7 +95,7 @@ class _PathPickerButtonState extends ConsumerState<PathPickerButton> {
             // == Run BlueMap CLI JAR to generate default configs ==
             setState(() => _pickingState = _PickingState.running);
             ProcessResult run = await Process.run(
-              "java",
+              ref.read(javaPathProvider)!,
               ["-jar", bluemapJar.path],
               workingDirectory: projectDirectory.path,
               stdoutEncoding: utf8,
