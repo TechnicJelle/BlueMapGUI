@@ -7,9 +7,9 @@ import "package:path/path.dart" as p;
 
 import "config_tile.dart";
 import "dual_pane.dart";
-import "main.dart";
 import "map_tile.dart";
 import "new_map_button.dart";
+import "prefs.dart";
 
 ///Group 1: Is commented?
 ///Group 2: Actual sorting value

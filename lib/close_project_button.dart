@@ -2,7 +2,6 @@ import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 
 import "confirmation_dialog.dart";
-import "main.dart";
 import "prefs.dart";
 
 class CloseProjectButton extends ConsumerWidget {
@@ -22,8 +21,7 @@ class CloseProjectButton extends ConsumerWidget {
           ],
           confirmAction: "Close",
           onConfirmed: () {
-            Prefs.instance.projectPath = null;
-            ref.invalidate(projectDirectoryProvider);
+            ref.read(projectDirectoryProvider.notifier).closeProject();
           },
         );
       },

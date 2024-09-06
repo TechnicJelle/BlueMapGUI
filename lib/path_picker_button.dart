@@ -8,7 +8,6 @@ import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:path/path.dart" as p;
 import "package:url_launcher/url_launcher_string.dart";
 
-import "java/java_picker.dart";
 import "main.dart";
 import "prefs.dart";
 
@@ -117,8 +116,7 @@ class _PathPickerButtonState extends ConsumerState<PathPickerButton> {
               mapsDir.createSync(); //recreate maps dir (now empty)
             }
 
-            Prefs.instance.projectPath = projectDirectory.path;
-            ref.invalidate(projectDirectoryProvider);
+            ref.read(projectDirectoryProvider.notifier).openProject(projectDirectory);
           },
           child: const Text("Select project folder"),
         ),

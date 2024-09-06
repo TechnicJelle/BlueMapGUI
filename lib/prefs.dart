@@ -1,10 +1,53 @@
+import "dart:io";
+
+import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:shared_preferences/shared_preferences.dart";
 
-class Prefs {
-  // == Constants ==
-  static const String projectPathKey = "project_path";
+class JavaPathNotifier extends Notifier<String?> {
   static const String javaPathKey = "java_path";
 
+  @override
+  String? build() {
+    return Prefs.instance._prefs.getString(javaPathKey);
+  }
+
+  void setJavaPath(String javaPath) {
+    Prefs.instance._prefs.setString(javaPathKey, javaPath);
+    state = build();
+  }
+}
+
+final javaPathProvider =
+    NotifierProvider<JavaPathNotifier, String?>(() => JavaPathNotifier());
+
+class ProjectDirectoryNotifier extends Notifier<Directory?> {
+  static const String projectPathKey = "project_path";
+
+  @override
+  Directory? build() {
+    final String? bluemapJarPath = Prefs.instance._prefs.getString(projectPathKey);
+    if (bluemapJarPath == null) {
+      return null;
+    } else {
+      return Directory(bluemapJarPath);
+    }
+  }
+
+  void openProject(Directory projectDirectory) {
+    Prefs.instance._prefs.setString(projectPathKey, projectDirectory.path);
+    state = build();
+  }
+
+  void closeProject() {
+    Prefs.instance._prefs.remove(projectPathKey);
+    state = null;
+  }
+}
+
+final projectDirectoryProvider = NotifierProvider<ProjectDirectoryNotifier, Directory?>(
+    () => ProjectDirectoryNotifier());
+
+class Prefs {
   // == Static ==
   static late Prefs _instance;
 
@@ -20,28 +63,5 @@ class Prefs {
   static Future<void> init() async {
     final prefs = await SharedPreferences.getInstance();
     _instance = Prefs._(prefs);
-  }
-
-  // == Getters and Setters ==
-  String? get projectPath => _prefs.getString(projectPathKey);
-
-  /// Set the project path. If `null`, the project path will be cleared.
-  set projectPath(String? value) {
-    if (value == null) {
-      _prefs.remove(projectPathKey);
-    } else {
-      _prefs.setString(projectPathKey, value);
-    }
-  }
-
-  String? get javaPath => _prefs.getString(javaPathKey);
-
-  /// Set the java path. If `null`, the java path will be cleared.
-  set javaPath(String? value) {
-    if (value == null) {
-      _prefs.remove(javaPathKey);
-    } else {
-      _prefs.setString(javaPathKey, value);
-    }
   }
 }

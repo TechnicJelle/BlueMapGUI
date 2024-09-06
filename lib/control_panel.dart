@@ -11,8 +11,8 @@ import "package:rxdart/rxdart.dart";
 import "package:url_launcher/url_launcher.dart";
 
 import "console.dart";
-import "java/java_picker.dart";
 import "main.dart";
+import "prefs.dart";
 
 final portExtractionRegex = RegExp(r"(?:port\s*|:)(\d{4,5})$");
 

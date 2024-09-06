@@ -7,7 +7,7 @@ import "package:path/path.dart" as p;
 import "confirmation_dialog.dart";
 import "delete_icon.dart";
 import "dual_pane.dart";
-import "main.dart";
+import "prefs.dart";
 import "utils.dart";
 
 class MapTile extends ConsumerStatefulWidget {

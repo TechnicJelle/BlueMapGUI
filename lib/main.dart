@@ -20,15 +20,6 @@ String get blueMapCliJarName => blueMapCliJarUrl.split("/").last;
 
 const String commit = String.fromEnvironment("commit", defaultValue: "development");
 
-final projectDirectoryProvider = Provider<Directory?>((ref) {
-  final String? bluemapJarPath = Prefs.instance.projectPath;
-  if (bluemapJarPath == null) {
-    return null;
-  } else {
-    return Directory(bluemapJarPath);
-  }
-});
-
 Future<void> main() async {
   await Prefs.init();
 
