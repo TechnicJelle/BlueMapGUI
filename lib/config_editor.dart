@@ -2,10 +2,10 @@ import "dart:async";
 import "dart:io";
 
 import "package:flutter/material.dart";
-import "package:flutter_code_editor/flutter_code_editor.dart";
-import "package:flutter_highlight/themes/ir-black.dart" show irBlackTheme;
 import "package:flutter_riverpod/flutter_riverpod.dart";
-import "package:highlight/languages/yaml.dart" show yaml;
+import "package:re_editor/re_editor.dart";
+import "package:re_highlight/languages/yaml.dart" show langYaml;
+import "package:re_highlight/styles/ir-black.dart" show irBlackTheme;
 
 import "dual_pane.dart";
 import "utils.dart";
@@ -20,8 +20,7 @@ class ConfigEditor extends ConsumerStatefulWidget {
 }
 
 class _ConfigEditorState extends ConsumerState<ConfigEditor> {
-  final codeController = CodeController(language: yaml); //Not HOCON, but close enough
-  final vScrollController = ScrollController();
+  final codeController = CodeLineEditingController();
 
   late File openConfig;
   late final Timer autoSaveTimer;
@@ -41,11 +40,12 @@ class _ConfigEditorState extends ConsumerState<ConfigEditor> {
     if (!hasChanged) return;
 
     hasChanged = false;
-    file.writeAsString(codeController.fullText);
+    file.writeAsString(codeController.text);
   }
 
   void readFile(File file) {
-    codeController.fullText = file.readAsStringSync();
+    codeController.text = file.readAsStringSync();
+    // codeController.clearHistory();
     openConfig = file;
   }
 
@@ -55,7 +55,6 @@ class _ConfigEditorState extends ConsumerState<ConfigEditor> {
     writeFile(openConfig);
     autoSaveTimer.cancel();
     codeController.dispose();
-    vScrollController.dispose();
   }
 
   @override
@@ -64,25 +63,49 @@ class _ConfigEditorState extends ConsumerState<ConfigEditor> {
       if (previous != null && next != null) writeFile(previous);
       if (next != null) readFile(next);
     });
-    return ColoredBox(
-      color: Colors.grey.shade900,
-      child: SingleChildScrollView(
-        controller: vScrollController,
-        child: CodeTheme(
-          data: CodeThemeData(styles: irBlackTheme),
-          child: CodeField(
-            gutterStyle: const GutterStyle(
-              showFoldingHandles: false,
+    return ScrollbarTheme(
+      data: Theme.of(context).scrollbarTheme.copyWith(
+            thumbColor: WidgetStateProperty.resolveWith((states) {
+              if (states.contains(WidgetState.dragged)) return Colors.white38;
+              if (states.contains(WidgetState.hovered)) return Colors.white30;
+              return Colors.white24;
+            }),
+            trackColor: WidgetStateProperty.all(Colors.white10),
+            trackBorderColor: WidgetStateProperty.all(Colors.white12),
+          ),
+      child: CodeEditor(
+        indicatorBuilder: (context, editingController, chunkController, notifier) {
+          return Padding(
+            padding: const EdgeInsets.only(left: 16),
+            child: DefaultCodeLineNumber(
+              notifier: notifier,
+              controller: editingController,
             ),
-            background: Colors.transparent,
-            onChanged: (_) => hasChanged = true,
-            textStyle: pixelCode,
-            controller: codeController,
-            minLines: null,
-            maxLines: null,
-            // expands: true,
+          );
+        },
+        style: CodeEditorStyle(
+          textColor: Colors.white,
+          backgroundColor: Colors.grey.shade900,
+          fontFamily: pixelCode.fontFamily,
+          fontSize: pixelCode.fontSize,
+          fontHeight: pixelCode.height,
+          codeTheme: CodeHighlightTheme(
+            theme: irBlackTheme,
+            languages: {
+              "yaml": CodeHighlightThemeMode(mode: langYaml),
+            },
           ),
         ),
+        onChanged: (_) => hasChanged = true,
+        controller: codeController,
+        wordWrap: false,
+        sperator: const SizedBox(width: 12),
+        scrollbarBuilder: (context, child, details) {
+          return Scrollbar(
+            controller: details.controller,
+            child: child,
+          );
+        },
       ),
     );
   }

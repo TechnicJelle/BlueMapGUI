@@ -34,11 +34,10 @@ dependencies:
   file_picker: ^8.1.2
   flutter:
     sdk: flutter
-  flutter_code_editor: ^0.3.2
-  flutter_highlight: ^0.7.0
   flutter_riverpod: ^2.5.1
-  highlight: ^0.7.0
   path: ^1.9.0
+  re_editor: ^0.3.1
+  re_highlight: ^0.0.3
   rxdart: ^0.28.0
   shared_preferences: ^2.3.2
   url_launcher: ^6.3.0
