@@ -22,7 +22,11 @@ final _processProvider = Provider<RunningProcess?>((ref) {
   final String? javaPath = ref.watch(javaPathProvider);
   if (javaPath == null) return null;
   final process = RunningProcess(projectDirectory, javaPath);
-  ref.onDispose(() => process.stop());
+  ref.onDispose(() {
+    if (process.state.value == RunningProcessState.running) {
+      process.stop();
+    }
+  });
   return process;
 });
 
