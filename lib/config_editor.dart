@@ -45,7 +45,7 @@ class _ConfigEditorState extends ConsumerState<ConfigEditor> {
 
   void readFile(File file) {
     codeController.text = file.readAsStringSync();
-    // codeController.clearHistory();
+    codeController.clearHistory();
     openConfig = file;
   }
 

@@ -441,10 +441,10 @@ packages:
     dependency: "direct main"
     description:
       name: re_editor
-      sha256: abae2b015799c936b9f9b68888e2c55007dd159b4654a85da22ce1af84efbd17
+      sha256: "41f2d52060682f12daca57ebefd4ea5b8bbf611ada196c14f38130ae46945e89"
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.1"
+    version: "0.4.0"
   re_highlight:
     dependency: "direct main"
     description:
@@ -694,10 +694,10 @@ packages:
     dependency: transitive
     description:
       name: uuid
-      sha256: "83d37c7ad7aaf9aa8e275490669535c8080377cfa7a7004c24dfac53afffaa90"
+      sha256: f33d6bb662f0e4f79dcd7ada2e6170f3b3a2530c28fc41f49a411ddedd576a77
       url: "https://pub.dev"
     source: hosted
-    version: "4.4.2"
+    version: "4.5.0"
   vector_math:
     dependency: transitive
     description:
