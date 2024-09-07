@@ -21,7 +21,7 @@ String get blueMapCliJarName => blueMapCliJarUrl.split("/").last;
 const String commit = String.fromEnvironment("commit", defaultValue: "development");
 
 Future<void> main() async {
-  await Prefs.init();
+  await initPrefs();
 
   runApp(const ProviderScope(child: MyApp()));
 }
