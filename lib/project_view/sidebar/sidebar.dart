@@ -172,9 +172,11 @@ class _ConfigTreeState extends ConsumerState<Sidebar> {
     return ListView(
       children: [
         const _ControlPanelTile(),
+        const SizedBox(height: 32),
         const Text(" Configs"),
         for (final File config in configs) ConfigTile(config),
-        const Text(" Maps"),
+        const SizedBox(height: 32),
+        const Text(" Map configs"), //TODO: Rename this back to "Maps" for 2.0
         for (final File map in maps) MapTile(map),
         const NewMapButton(),
       ],
