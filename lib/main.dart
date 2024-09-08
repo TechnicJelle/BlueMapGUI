@@ -57,7 +57,7 @@ class MyHomePage extends ConsumerWidget {
       appBar: AppBar(
         title: Text(title),
         actions: [
-          const Text(commit),
+          const Text("$blueMapTag:$commit"),
           if (projectDirectory != null) const CloseProjectButton(),
         ],
       ),
