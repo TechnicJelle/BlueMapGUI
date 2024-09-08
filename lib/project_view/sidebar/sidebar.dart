@@ -5,11 +5,11 @@ import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:path/path.dart" as p;
 
+import "../../prefs.dart";
+import "../project_view.dart";
 import "config_tile.dart";
-import "dual_pane.dart";
 import "map_tile.dart";
 import "new_map_button.dart";
-import "prefs.dart";
 
 ///Group 1: Is commented?
 ///Group 2: Actual sorting value
@@ -18,14 +18,14 @@ final RegExp sortingRegex = RegExp(
   multiLine: true,
 );
 
-class ConfigTree extends ConsumerStatefulWidget {
-  const ConfigTree({super.key});
+class Sidebar extends ConsumerStatefulWidget {
+  const Sidebar({super.key});
 
   @override
-  ConsumerState<ConfigTree> createState() => _ConfigTreeState();
+  ConsumerState<Sidebar> createState() => _ConfigTreeState();
 }
 
-class _ConfigTreeState extends ConsumerState<ConfigTree> {
+class _ConfigTreeState extends ConsumerState<Sidebar> {
   final List<File> configs = [];
   final List<File> storages = [];
   final List<File> maps = [];

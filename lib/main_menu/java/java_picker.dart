@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 
-import "../prefs.dart";
+import "../../prefs.dart";
 import "radio_list_tile_custom_java_picker.dart";
 import "radio_list_tile_system_java_picker.dart";
 

@@ -1,12 +1,12 @@
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 
+import "../prefs.dart";
 import "java/java_picker.dart";
 import "path_picker_button.dart";
-import "prefs.dart";
 
-class Onboarding extends ConsumerWidget {
-  const Onboarding({super.key});
+class MainMenu extends ConsumerWidget {
+  const MainMenu({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

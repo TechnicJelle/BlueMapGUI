@@ -4,9 +4,9 @@ import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:path/path.dart" as p;
 
-import "dual_pane.dart";
-import "prefs.dart";
-import "utils.dart";
+import "../prefs.dart";
+import "../utils.dart";
+import "project_view.dart";
 
 final RegExp regexIDValidation = RegExp(r"^[a-zA-Z0-9_-]+$");
 

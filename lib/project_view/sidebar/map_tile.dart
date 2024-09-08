@@ -4,11 +4,11 @@ import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:path/path.dart" as p;
 
-import "confirmation_dialog.dart";
-import "delete_icon.dart";
-import "dual_pane.dart";
-import "prefs.dart";
-import "utils.dart";
+import "../../confirmation_dialog.dart";
+import "../../delete_icon.dart";
+import "../../prefs.dart";
+import "../../utils.dart";
+import "../project_view.dart";
 
 class MapTile extends ConsumerStatefulWidget {
   final File configFile;

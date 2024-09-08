@@ -10,8 +10,8 @@ import "package:path/path.dart" as p;
 import "package:rxdart/rxdart.dart";
 import "package:url_launcher/url_launcher.dart";
 
-import "main.dart";
-import "prefs.dart";
+import "../main.dart";
+import "../prefs.dart";
 
 final portExtractionRegex = RegExp(r"(?:port\s*|:)(\d{4,5})$");
 

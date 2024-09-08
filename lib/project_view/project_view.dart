@@ -4,8 +4,8 @@ import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 
 import "config_editor.dart";
-import "config_tree.dart";
 import "control_panel.dart";
+import "sidebar/sidebar.dart";
 
 class OpenFileNotifier extends Notifier<File?> {
   @override
@@ -25,8 +25,8 @@ class OpenFileNotifier extends Notifier<File?> {
 final openConfigProvider =
     NotifierProvider<OpenFileNotifier, File?>(() => OpenFileNotifier());
 
-class DualPane extends ConsumerWidget {
-  const DualPane({super.key});
+class ProjectView extends ConsumerWidget {
+  const ProjectView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -37,7 +37,7 @@ class DualPane extends ConsumerWidget {
       children: [
         Container(
           constraints: const BoxConstraints(maxWidth: 200),
-          child: const ConfigTree(),
+          child: const Sidebar(),
         ),
         Expanded(
           child: openConfig == null ? const ControlPanel() : ConfigEditor(openConfig),

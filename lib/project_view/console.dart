@@ -2,9 +2,9 @@ import "package:animated_visibility/animated_visibility.dart";
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 
+import "../prefs.dart";
+import "../utils.dart";
 import "control_row.dart";
-import "prefs.dart";
-import "utils.dart";
 
 class OutputNotifier extends Notifier<List<String>> {
   @override

@@ -3,10 +3,10 @@ import "dart:io";
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 
-import "close_project_button.dart";
-import "dual_pane.dart";
-import "onboarding.dart";
+import "main_menu/main_menu.dart";
 import "prefs.dart";
+import "project_view/close_project_button.dart";
+import "project_view/project_view.dart";
 import "tech_app.dart";
 
 // == Hardcoded BlueMap CLI JAR download URL and hash ==
@@ -60,7 +60,7 @@ class MyHomePage extends ConsumerWidget {
           if (projectDirectory != null) const CloseProjectButton(),
         ],
       ),
-      body: projectDirectory == null ? const Onboarding() : const DualPane(),
+      body: projectDirectory == null ? const MainMenu() : const ProjectView(),
     );
   }
 }

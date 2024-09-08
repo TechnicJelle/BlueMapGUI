@@ -7,8 +7,8 @@ import "package:re_editor/re_editor.dart";
 import "package:re_highlight/languages/yaml.dart" show langYaml;
 import "package:re_highlight/styles/ir-black.dart" show irBlackTheme;
 
-import "dual_pane.dart";
-import "utils.dart";
+import "../utils.dart";
+import "project_view.dart";
 
 class ConfigEditor extends ConsumerStatefulWidget {
   final File openConfig;

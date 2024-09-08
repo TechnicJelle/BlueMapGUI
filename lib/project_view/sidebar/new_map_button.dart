@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 
-import "new_map_dialog.dart";
+import "../new_map_dialog.dart";
 
 class NewMapButton extends ConsumerWidget {
   const NewMapButton({super.key});
