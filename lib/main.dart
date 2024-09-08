@@ -5,8 +5,7 @@ import "package:flutter_riverpod/flutter_riverpod.dart";
 
 import "close_project_button.dart";
 import "dual_pane.dart";
-import "java/java_picker.dart";
-import "path_picker_button.dart";
+import "onboarding.dart";
 import "prefs.dart";
 import "tech_app.dart";
 
@@ -61,33 +60,7 @@ class MyHomePage extends ConsumerWidget {
           if (projectDirectory != null) const CloseProjectButton(),
         ],
       ),
-      body: projectDirectory == null
-          ? Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const JavaPicker(),
-                  if (ref.watch(javaPathProvider) != null) ...[
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 600),
-                      child: const Divider(),
-                    ),
-                    const Text("Select an empty folder to store your BlueMap files in:"),
-                    const SizedBox(height: 8),
-                    const PathPickerButton(),
-                    const SizedBox(height: 8),
-                    const Text(
-                        "The BlueMap CLI tool will be downloaded into that folder."),
-                    const SizedBox(height: 4),
-                    const Text("It will generate some default config files for you."),
-                    const SizedBox(height: 4),
-                    const Text(
-                        "You will then need to configure your maps in the BlueMap GUI."),
-                  ],
-                ],
-              ),
-            )
-          : const DualPane(),
+      body: projectDirectory == null ? const Onboarding() : const DualPane(),
     );
   }
 }
