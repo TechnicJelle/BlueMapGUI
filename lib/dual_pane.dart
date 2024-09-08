@@ -5,7 +5,8 @@ import "package:flutter_riverpod/flutter_riverpod.dart";
 
 import "config_editor.dart";
 import "config_tree.dart";
-import "control_panel.dart";
+import "console.dart";
+import "control_row.dart";
 
 class OpenFileNotifier extends Notifier<File?> {
   @override
@@ -40,7 +41,20 @@ class DualPane extends ConsumerWidget {
           child: const ConfigTree(),
         ),
         Expanded(
-          child: openConfig == null ? const ControlPanel() : ConfigEditor(openConfig),
+          child: openConfig == null
+              ? const Padding(
+                  padding: EdgeInsets.only(top: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      ControlRow(),
+                      SizedBox(height: 16),
+                      Expanded(child: Console()),
+                    ],
+                  ),
+                )
+              : ConfigEditor(openConfig),
         ),
       ],
     );

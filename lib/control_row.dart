@@ -10,7 +10,6 @@ import "package:path/path.dart" as p;
 import "package:rxdart/rxdart.dart";
 import "package:url_launcher/url_launcher.dart";
 
-import "console.dart";
 import "main.dart";
 import "prefs.dart";
 
@@ -147,69 +146,57 @@ class RunningProcess {
   }
 }
 
-class ControlPanel extends ConsumerWidget {
-  const ControlPanel({super.key});
+class ControlRow extends ConsumerWidget {
+  const ControlRow({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final processState = ref.watch(processStateProvider).value;
 
-    return Padding(
-      padding: const EdgeInsets.only(top: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Row(
-            children: [
-              SizedBox(
-                width: 150,
-                child: ElevatedButton.icon(
-                  onPressed: switch (processState) {
-                    RunningProcessState.stopped => () =>
-                        ref.read(_processProvider)?.start(),
-                    RunningProcessState.running => () =>
-                        ref.read(_processProvider)?.stop(),
-                    _ => null,
-                  },
-                  label: Text(
-                    switch (processState) {
-                      RunningProcessState.stopped => "Start",
-                      RunningProcessState.running => "Stop",
-                      RunningProcessState.starting => "Starting...",
-                      RunningProcessState.stopping => "Stopping...",
-                      null => "Unknown",
-                    },
-                  ),
-                  icon: Icon(
-                    switch (processState) {
-                      RunningProcessState.stopped => Icons.play_arrow,
-                      RunningProcessState.running => Icons.stop,
-                      null => Icons.error,
-                      _ => Icons.hourglass_bottom,
-                    },
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              ElevatedButton.icon(
-                onPressed: processState == RunningProcessState.running
-                    ? () async {
-                        final int port = ref.read(_processProvider)?.port ?? 8100;
-                        if (!await launchUrl(Uri.parse("http://localhost:$port"))) {
-                          throw Exception("Could not launch url!");
-                        }
-                      }
-                    : null,
-                label: const Text("Open"),
-                icon: const Icon(Icons.open_in_browser),
-              ),
-            ],
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          width: 150,
+          child: ElevatedButton.icon(
+            onPressed: switch (processState) {
+              RunningProcessState.stopped => () => ref.read(_processProvider)?.start(),
+              RunningProcessState.running => () => ref.read(_processProvider)?.stop(),
+              _ => null,
+            },
+            label: Text(
+              switch (processState) {
+                RunningProcessState.stopped => "Start",
+                RunningProcessState.running => "Stop",
+                RunningProcessState.starting => "Starting...",
+                RunningProcessState.stopping => "Stopping...",
+                null => "Unknown",
+              },
+            ),
+            icon: Icon(
+              switch (processState) {
+                RunningProcessState.stopped => Icons.play_arrow,
+                RunningProcessState.running => Icons.stop,
+                null => Icons.error,
+                _ => Icons.hourglass_bottom,
+              },
+            ),
           ),
-          const SizedBox(height: 16),
-          const Expanded(child: Console()),
-        ],
-      ),
+        ),
+        const SizedBox(width: 16),
+        ElevatedButton.icon(
+          onPressed: processState == RunningProcessState.running
+              ? () async {
+                  final int port = ref.read(_processProvider)?.port ?? 8100;
+                  if (!await launchUrl(Uri.parse("http://localhost:$port"))) {
+                    throw Exception("Could not launch url!");
+                  }
+                }
+              : null,
+          label: const Text("Open"),
+          icon: const Icon(Icons.open_in_browser),
+        ),
+      ],
     );
   }
 }
