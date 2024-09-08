@@ -27,7 +27,6 @@ class Sidebar extends ConsumerStatefulWidget {
 
 class _ConfigTreeState extends ConsumerState<Sidebar> {
   final List<File> configs = [];
-  final List<File> storages = [];
   final List<File> maps = [];
 
   final List<StreamSubscription<FileSystemEvent>> subscriptions = [];
@@ -44,13 +43,6 @@ class _ConfigTreeState extends ConsumerState<Sidebar> {
       }
 
       if (entity is Directory) {
-        if (p.basename(entity.path) == "storages") {
-          for (final FileSystemEntity storage in entity.listSync()) {
-            if (storage is File) {
-              storages.add(storage);
-            }
-          }
-        }
         if (p.basename(entity.path) == "maps") {
           for (final FileSystemEntity map in entity.listSync()) {
             if (map is File) {
@@ -113,7 +105,6 @@ class _ConfigTreeState extends ConsumerState<Sidebar> {
 
     //sort all lists alphabetically
     configs.sort((a, b) => a.path.compareTo(b.path));
-    storages.sort((a, b) => a.path.compareTo(b.path));
     sortMaps();
   }
 
@@ -183,8 +174,6 @@ class _ConfigTreeState extends ConsumerState<Sidebar> {
         const _ControlPanelTile(),
         const Text(" Configs"),
         for (final File config in configs) ConfigTile(config),
-        const Text(" Storages"),
-        for (final File storage in storages) ConfigTile(storage),
         const Text(" Maps"),
         for (final File map in maps) MapTile(map),
         const NewMapButton(),
