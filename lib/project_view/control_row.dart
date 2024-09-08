@@ -6,6 +6,7 @@ import "dart:ui";
 import "package:async/async.dart";
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:meta/meta.dart";
 import "package:path/path.dart" as p;
 import "package:rxdart/rxdart.dart";
 import "package:url_launcher/url_launcher.dart";
@@ -89,20 +90,22 @@ class RunningProcess {
     );
   }
 
-  Future<void> _downloadBlueMap() async {
+  @useResult
+  Future<bool> _downloadBlueMap() async {
     final NonHashedFile suspiciousBlueMapJar;
     try {
       suspiciousBlueMapJar = await downloadBlueMap(_projectDirectory);
     } catch (e) {
       _consoleOutputController.add("[ERROR] Failed to download BlueMap CLI JAR: $e");
-      return;
+      return false;
     }
     final bluemapJar = await suspiciousBlueMapJar.hashFile(blueMapCliJarHash);
     if (bluemapJar == null) {
       _consoleOutputController.add("[ERROR] BlueMap CLI JAR hash mismatch!");
-      return;
+      return false;
     }
     _consoleOutputController.add("[INFO] BlueMap CLI JAR downloaded.");
+    return true;
   }
 
   Future<void> start() async {
@@ -118,12 +121,12 @@ class RunningProcess {
       if (!await checkHash(bluemapJar, blueMapCliJarHash)) {
         _consoleOutputController.add("[ERROR] BlueMap CLI JAR hash mismatch!"
             " Re-downloading and overwriting the corrupted file...");
-        await _downloadBlueMap();
+        if (!await _downloadBlueMap()) return;
       }
     } else {
       _consoleOutputController.add("[WARNING] BlueMap CLI JAR not found."
           " Re-downloading...");
-      await _downloadBlueMap();
+      if (!await _downloadBlueMap()) return;
     }
 
     final process = await Process.start(
