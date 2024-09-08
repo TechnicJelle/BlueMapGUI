@@ -1,7 +1,6 @@
 import "dart:convert";
 import "dart:io";
 
-import "package:crypto/crypto.dart";
 import "package:file_picker/file_picker.dart";
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
@@ -10,6 +9,7 @@ import "package:url_launcher/url_launcher_string.dart";
 
 import "../main.dart";
 import "../prefs.dart";
+import "../utils.dart";
 
 enum _PickingState {
   nothing,
@@ -53,27 +53,21 @@ class _PathPickerButtonState extends ConsumerState<PathPickerButton> {
             final Directory projectDirectory = Directory(result);
             final contents = projectDirectory.listSync();
 
-            File? bluemapJar;
+            NonHashedFile? susBlueMapJar;
             for (final file in contents) {
               if (file is! File) continue;
               String fileName = p.split(file.path).last;
               if (fileName == blueMapCliJarName) {
-                bluemapJar = file;
+                susBlueMapJar = NonHashedFile(file);
                 break;
               }
             }
 
             // == If needed, download BlueMap CLI JAR ==
-            if (bluemapJar == null) {
+            if (susBlueMapJar == null) {
               setState(() => _pickingState = _PickingState.downloading);
               try {
-                Uri link = Uri.parse(blueMapCliJarUrl);
-                final client = HttpClient();
-                final request = await client.getUrl(link);
-                final response = await request.close();
-                bluemapJar = File(p.join(projectDirectory.path, blueMapCliJarName));
-                await response.pipe(bluemapJar.openWrite());
-                client.close();
+                susBlueMapJar = await downloadBlueMap(projectDirectory);
               } catch (e) {
                 setState(() {
                   _pickingState = _PickingState.downloadFailed;
@@ -85,8 +79,8 @@ class _PathPickerButtonState extends ConsumerState<PathPickerButton> {
 
             // == Verify BlueMap CLI JAR hash ==
             setState(() => _pickingState = _PickingState.hashing);
-            final String hash = await bluemapJar.openRead().transform(sha256).join();
-            if (hash != blueMapCliJarHash) {
+            final File? bluemapJar = await susBlueMapJar.hashFile(blueMapCliJarHash);
+            if (bluemapJar == null) {
               setState(() => _pickingState = _PickingState.wrongHash);
               return;
             }

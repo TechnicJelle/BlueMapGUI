@@ -12,6 +12,7 @@ import "package:url_launcher/url_launcher.dart";
 
 import "../main.dart";
 import "../prefs.dart";
+import "../utils.dart";
 
 final portExtractionRegex = RegExp(r"(?:port\s*|:)(\d{4,5})$");
 
@@ -88,6 +89,22 @@ class RunningProcess {
     );
   }
 
+  Future<void> _downloadBlueMap() async {
+    final NonHashedFile suspiciousBlueMapJar;
+    try {
+      suspiciousBlueMapJar = await downloadBlueMap(_projectDirectory);
+    } catch (e) {
+      _consoleOutputController.add("[ERROR] Failed to download BlueMap CLI JAR: $e");
+      return;
+    }
+    final bluemapJar = await suspiciousBlueMapJar.hashFile(blueMapCliJarHash);
+    if (bluemapJar == null) {
+      _consoleOutputController.add("[ERROR] BlueMap CLI JAR hash mismatch!");
+      return;
+    }
+    _consoleOutputController.add("[INFO] BlueMap CLI JAR downloaded.");
+  }
+
   Future<void> start() async {
     if (_stateController.value != RunningProcessState.stopped) {
       throw Exception("Process is already running!");
@@ -95,11 +112,23 @@ class RunningProcess {
 
     _consoleOutputController.add("Starting...");
 
-    final String bluemapJarPath = p.join(_projectDirectory.path, blueMapCliJarName);
+    final File bluemapJar = File(p.join(_projectDirectory.path, blueMapCliJarName));
+
+    if (bluemapJar.existsSync()) {
+      if (!await checkHash(bluemapJar, blueMapCliJarHash)) {
+        _consoleOutputController.add("[ERROR] BlueMap CLI JAR hash mismatch!"
+            " Re-downloading and overwriting the corrupted file...");
+        await _downloadBlueMap();
+      }
+    } else {
+      _consoleOutputController.add("[WARNING] BlueMap CLI JAR not found."
+          " Re-downloading...");
+      await _downloadBlueMap();
+    }
 
     final process = await Process.start(
       _javaPath,
-      ["-jar", bluemapJarPath, "--render", "--watch", "--webserver"],
+      ["-jar", bluemapJar.path, "--render", "--watch", "--webserver"],
       workingDirectory: _projectDirectory.path,
       mode: ProcessStartMode.normal,
       runInShell: false,
