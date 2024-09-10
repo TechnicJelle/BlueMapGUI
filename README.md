@@ -18,6 +18,8 @@ don't have a server, or just want a more user-friendly experience.
 ## Requirements
 Make sure you have **Java 16** or higher installed!
 
+## [Click here to download!](../../releases/latest)
+
 ## Usage Guide
 ### 1. Setting up Java
 When you first open the program, you will need to choose which Java version you want to use.  
