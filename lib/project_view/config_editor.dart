@@ -51,10 +51,10 @@ class _ConfigEditorState extends ConsumerState<ConfigEditor> {
 
   @override
   void dispose() {
-    super.dispose();
     writeFile(openConfig);
     autoSaveTimer.cancel();
     codeController.dispose();
+    super.dispose();
   }
 
   @override

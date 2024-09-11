@@ -73,8 +73,8 @@ class ConsoleState extends ConsumerState<Console> {
 
   @override
   void dispose() {
-    super.dispose();
     _scrollController.dispose();
+    super.dispose();
   }
 
   @override

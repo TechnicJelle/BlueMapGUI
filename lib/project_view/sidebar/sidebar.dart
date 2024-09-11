@@ -161,10 +161,10 @@ class _ConfigTreeState extends ConsumerState<Sidebar> {
 
   @override
   void dispose() {
-    super.dispose();
     for (var sub in subscriptions) {
       sub.cancel();
     }
+    super.dispose();
   }
 
   @override
