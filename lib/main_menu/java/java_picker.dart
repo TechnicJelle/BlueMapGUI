@@ -10,27 +10,17 @@ enum JavaPickerMode {
   pick,
 }
 
-class JavaPicker extends ConsumerStatefulWidget {
+class JavaPicker extends ConsumerWidget {
   const JavaPicker({super.key});
 
   @override
-  ConsumerState<JavaPicker> createState() => _JavaPickerState();
-}
-
-class _JavaPickerState extends ConsumerState<JavaPicker> {
-  JavaPickerMode? javaPickerMode;
-
-  @override
-  void initState() {
-    super.initState();
-    final String? javaPath = ref.read(javaPathProvider);
-    if (javaPath != null) {
-      javaPickerMode = javaPath == "java" ? JavaPickerMode.system : JavaPickerMode.pick;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final JavaPickerMode? javaPickerMode = ref.watch(javaPathProvider.select((javaPath) {
+      if (javaPath != null) {
+        return javaPath == "java" ? JavaPickerMode.system : JavaPickerMode.pick;
+      }
+      return null;
+    }));
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 500),
       child: Column(
@@ -43,14 +33,12 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
           RadioListTileSystemJavaPicker(
             groupValue: javaPickerMode,
             onSet: () {
-              setState(() => javaPickerMode = JavaPickerMode.system);
               ref.read(javaPathProvider.notifier).setJavaPath("java");
             },
           ),
           RadioListTileCustomJavaPicker(
             groupValue: javaPickerMode,
             onChanged: (javaPath) {
-              setState(() => javaPickerMode = JavaPickerMode.pick);
               ref.read(javaPathProvider.notifier).setJavaPath(javaPath);
             },
           )

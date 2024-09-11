@@ -15,7 +15,7 @@ class MainMenu extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           const JavaPicker(),
-          if (ref.watch(javaPathProvider) != null) ...[
+          if (ref.watch(javaPathProvider.select((path) => path != null))) ...[
             ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 600),
               child: const Divider(),

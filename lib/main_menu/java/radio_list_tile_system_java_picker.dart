@@ -22,7 +22,7 @@ class RadioListTileSystemJavaPicker extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final AsyncValue<int> javaVersion = ref.watch(_systemJavaVersionProvider);
-    final bool hasSuitableJavaInstalled = javaVersion.valueOrNull != null;
+    final bool hasSuitableJavaInstalled = javaVersion.hasValue;
 
     return RadioListTile<JavaPickerMode>(
       title: Text(JavaPickerMode.system.name.capitalize()),

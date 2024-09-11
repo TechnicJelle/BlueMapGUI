@@ -53,6 +53,12 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
         .toList();
   }
 
+  @override
+  void dispose() {
+    idController.dispose();
+    super.dispose();
+  }
+
   void validateAndCreate() {
     final formState = formKey.currentState;
     if (formState != null && formState.validate()) {
