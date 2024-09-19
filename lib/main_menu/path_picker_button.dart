@@ -1,4 +1,3 @@
-import "dart:convert";
 import "dart:io";
 
 import "package:file_picker/file_picker.dart";
@@ -91,7 +90,6 @@ class _PathPickerButtonState extends ConsumerState<PathPickerButton> {
               ref.read(javaPathProvider)!,
               ["-jar", bluemapJar.path],
               workingDirectory: projectDirectory.path,
-              stdoutEncoding: utf8,
             );
 
             final String stdout = run.stdout;
