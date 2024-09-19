@@ -40,7 +40,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: "BlueMapGUI_${{ github.event.inputs.TAG_NAME }}_Linux_x64.zip"
+          name: "BlueMapGUI_${{ github.event.inputs.TAG_NAME }}_Linux_x64"
           path: './upload/'
 
   windows:
@@ -70,5 +70,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: "BlueMapGUI_${{ github.event.inputs.TAG_NAME }}_Windows_x64.zip"
+          name: "BlueMapGUI_${{ github.event.inputs.TAG_NAME }}_Windows_x64"
           path: './upload/'
