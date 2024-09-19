@@ -37,7 +37,7 @@ jobs:
       - name: Prepare for upload
         run: |
           mkdir upload
-          mv ./build/linux/x64/release/bundle ./upload/BlueMapGUI_${{ env.GITHUB_SHA_SHORT }}_Linux_x64/
+          mv ./build/linux/x64/release/bundle/ ./upload/BlueMapGUI_${{ env.GITHUB_SHA_SHORT }}_Linux_x64/
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -68,10 +68,13 @@ jobs:
       - name: Build
         run: flutter build windows --release --dart-define=commit=$env:GITHUB_SHA_SHORT
 
-      - run: tree
+      - name: Prepare for upload
+        run: |
+          New-Item -Path . -Name "upload" -ItemType "directory"
+          Move-Item -Path "./build/linux/x64/release/bundle/" -Destination "./upload/BlueMapGUI_${{ env.GITHUB_SHA_SHORT }}_Windows_x64/"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: "windows_x64"
-          path: './build/windows/x64/runner/Release'
+          name: "BlueMapGUI_${{ env.GITHUB_SHA_SHORT }}_Windows_x64.zip"
+          path: './upload/'
