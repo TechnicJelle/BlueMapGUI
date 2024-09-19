@@ -34,11 +34,16 @@ jobs:
       - name: Build
         run: flutter build linux --release --dart-define=commit=$GITHUB_SHA_SHORT
 
+      - name: Prepare for upload
+        run: |
+          mkdir upload
+          mv ./build/linux/x64/release/bundle ./upload/BlueMapGUI_${{ env.GITHUB_SHA_SHORT }}_Linux_x64/
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: "BlueMapGUI_${{ env.GITHUB_SHA_SHORT }}_Linux_x64.zip"
-          path: './build/linux/x64/release/bundle'
+          path: './upload/'
 
   windows:
     runs-on: windows-latest
