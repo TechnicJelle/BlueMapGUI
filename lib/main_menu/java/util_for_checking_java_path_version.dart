@@ -1,6 +1,6 @@
 import "dart:io";
 
-const int _minJavaVersion = 16;
+const int _minJavaVersion = 21;
 
 /// Checks the Java version at the given path.
 /// Throw an exception if the Java version is too old, not installed, or the path is invalid.

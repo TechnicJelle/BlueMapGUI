@@ -10,9 +10,9 @@ import "project_view/project_view.dart";
 import "tech_app.dart";
 
 // == Hardcoded BlueMap CLI JAR download URL and hash ==
-const blueMapTag = "5.3";
+const blueMapTag = "5.4";
 const blueMapCliJarHash =
-    "a0be9a36325f3caabc6306e9c6dd306aeec464b8abe907e93b6589659c8751f5"; //SHA256
+    "c9c802628b77953764b9f25d3925ff3cc588d9f9c05b3f1fe48f48599a4aa69c"; //SHA256
 
 const blueMapCliJarUrl = "https://github.com/BlueMap-Minecraft/BlueMap/releases/download/"
     "v$blueMapTag/BlueMap-$blueMapTag-cli.jar";
