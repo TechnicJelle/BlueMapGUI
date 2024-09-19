@@ -37,7 +37,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: "linux_x64"
+          name: "BlueMapGUI_${{ env.GITHUB_SHA_SHORT }}_Linux_x64.zip"
           path: './build/linux/x64/release/bundle'
 
   windows:
