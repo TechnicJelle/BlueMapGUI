@@ -71,7 +71,7 @@ jobs:
       - name: Prepare for upload
         run: |
           New-Item -Path . -Name "upload" -ItemType "directory"
-          Move-Item -Path "./build/linux/x64/release/bundle/" -Destination "./upload/BlueMapGUI_${{ env.GITHUB_SHA_SHORT }}_Windows_x64/"
+          Move-Item -Path "./build/windows/x64/runner/Release/" -Destination "./upload/BlueMapGUI_${{ env.GITHUB_SHA_SHORT }}_Windows_x64/"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
