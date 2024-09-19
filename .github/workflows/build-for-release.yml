@@ -30,7 +30,7 @@ jobs:
         run: flutter pub get
 
       - name: Build
-        run: flutter build linux --release --dart-define=commit=${{ github.event.inputs.TAG_NAME }}
+        run: flutter build linux --release --dart-define=version=${{ github.event.inputs.TAG_NAME }}
 
       - name: Prepare for upload
         run: |
@@ -60,7 +60,7 @@ jobs:
         run: flutter pub get
 
       - name: Build
-        run: flutter build windows --release --dart-define=commit=${{ github.event.inputs.TAG_NAME }}
+        run: flutter build windows --release --dart-define=version=${{ github.event.inputs.TAG_NAME }}
 
       - name: Prepare for upload
         run: |

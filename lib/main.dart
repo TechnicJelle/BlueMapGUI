@@ -18,7 +18,7 @@ const blueMapCliJarUrl = "https://github.com/BlueMap-Minecraft/BlueMap/releases/
     "v$blueMapTag/BlueMap-$blueMapTag-cli.jar";
 String get blueMapCliJarName => blueMapCliJarUrl.split("/").last;
 
-const String commit = String.fromEnvironment("commit", defaultValue: "development");
+const String version = String.fromEnvironment("version", defaultValue: "development");
 
 Future<void> main() async {
   await initPrefs();
@@ -57,7 +57,7 @@ class MyHomePage extends ConsumerWidget {
       appBar: AppBar(
         title: Text(title),
         actions: [
-          const Text("$blueMapTag:$commit"),
+          const Text("Version: $version\nBlueMap: $blueMapTag"),
           if (projectDirectory != null) const CloseProjectButton(),
         ],
       ),

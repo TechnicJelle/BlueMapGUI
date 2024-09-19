@@ -32,7 +32,7 @@ jobs:
         run: flutter pub get
 
       - name: Build
-        run: flutter build linux --release --dart-define=commit=$GITHUB_SHA_SHORT
+        run: flutter build linux --release --dart-define=version=$GITHUB_SHA_SHORT
 
       - name: Prepare for upload
         run: |
@@ -66,7 +66,7 @@ jobs:
         run: flutter pub get
 
       - name: Build
-        run: flutter build windows --release --dart-define=commit=$env:GITHUB_SHA_SHORT
+        run: flutter build windows --release --dart-define=version=$env:GITHUB_SHA_SHORT
 
       - name: Prepare for upload
         run: |
