@@ -23,7 +23,6 @@ Future<int> checkJavaVersion(String javaPath) async {
   try {
     ProcessResult jv = await Process.run(javaPath, ["-version"]);
     final int exitCode = jv.exitCode;
-    final String stdout = jv.stdout;
     final String stderr = jv.stderr;
 
     if (exitCode != 0) {
@@ -31,7 +30,7 @@ Future<int> checkJavaVersion(String javaPath) async {
     }
 
     RegExp r = RegExp(r"\d+");
-    final Match? match = r.firstMatch(stdout);
+    final Match? match = r.firstMatch(stderr);
     if (match == null) {
       throw "Version message did not contain a version number.";
     }
