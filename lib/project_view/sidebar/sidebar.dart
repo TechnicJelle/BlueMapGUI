@@ -22,10 +22,10 @@ class Sidebar extends ConsumerStatefulWidget {
   const Sidebar({super.key});
 
   @override
-  ConsumerState<Sidebar> createState() => _ConfigTreeState();
+  ConsumerState<Sidebar> createState() => _SidebarState();
 }
 
-class _ConfigTreeState extends ConsumerState<Sidebar> {
+class _SidebarState extends ConsumerState<Sidebar> {
   final List<File> configs = [];
   final List<File> maps = [];
 
