@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 
-import "../../utils.dart";
+import "../../../utils.dart";
 import "java_picker.dart";
 import "util_for_checking_java_path_version.dart";
 

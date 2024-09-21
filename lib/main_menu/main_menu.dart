@@ -1,37 +1,53 @@
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 
-import "../prefs.dart";
-import "java/java_picker.dart";
-import "path_picker_button.dart";
+import "settings/projects_screen.dart";
+import "settings/settings_screen.dart";
 
-class MainMenu extends ConsumerWidget {
+enum MainMenuState {
+  projects,
+  settings,
+}
+
+class MainMenu extends ConsumerStatefulWidget {
   const MainMenu({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const JavaPicker(),
-          if (ref.watch(javaPathProvider.select((path) => path != null))) ...[
-            ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 600),
-              child: const Divider(),
-            ),
-            const Text("Select an empty folder to store your BlueMap files in:"),
-            const SizedBox(height: 8),
-            const PathPickerButton(),
-            const SizedBox(height: 8),
-            const Text("The BlueMap CLI tool will be downloaded into that folder."),
-            const SizedBox(height: 4),
-            const Text("It will generate some default config files for you."),
-            const SizedBox(height: 4),
-            const Text("You will then need to configure your maps in the BlueMap GUI."),
-          ],
-        ],
-      ),
+  ConsumerState<MainMenu> createState() => _MainMenuState();
+}
+
+class _MainMenuState extends ConsumerState<MainMenu> {
+  MainMenuState state = MainMenuState.projects;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container(
+          constraints: const BoxConstraints(maxWidth: 200),
+          child: ListView(
+            children: [
+              ListTile(
+                title: const Text("Projects"),
+                selected: state == MainMenuState.projects,
+                onTap: () => setState(() => state = MainMenuState.projects),
+              ),
+              ListTile(
+                title: const Text("Settings"),
+                selected: state == MainMenuState.settings,
+                onTap: () => setState(() => state = MainMenuState.settings),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: switch (state) {
+            MainMenuState.projects => const ProjectsScreen(),
+            MainMenuState.settings => const SettingsScreen(),
+          },
+        ),
+      ],
     );
   }
 }

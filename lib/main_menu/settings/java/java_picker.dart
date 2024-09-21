@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 
-import "../../prefs.dart";
+import "../../../prefs.dart";
 import "radio_list_tile_custom_java_picker.dart";
 import "radio_list_tile_system_java_picker.dart";
 
@@ -28,8 +28,6 @@ class JavaPicker extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Text("Select your Java executable:"),
-          const SizedBox(height: 4),
           RadioListTileSystemJavaPicker(
             groupValue: javaPickerMode,
             onSet: () {
