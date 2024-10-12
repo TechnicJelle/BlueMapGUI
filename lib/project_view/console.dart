@@ -36,10 +36,10 @@ class Console extends ConsumerStatefulWidget {
   const Console({super.key});
 
   @override
-  ConsoleState createState() => ConsoleState();
+  ConsumerState<Console> createState() => _ConsoleState();
 }
 
-class ConsoleState extends ConsumerState<Console> {
+class _ConsoleState extends ConsumerState<Console> {
   final ScrollController _scrollController = ScrollController();
   Color colour = Colors.white;
 
