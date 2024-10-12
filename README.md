@@ -73,7 +73,12 @@ world: "C:/Users/TechnicJelle/AppData/Roaming/.minecraft/saves/MyCoolWorld/"
 world: "/home/technicjelle/.minecraft/saves/MyCoolWorld/"
 ```
 
-#### 3.c Starting BlueMap
+#### 3.c (OPTIONAL) Setting up mods
+[BlueMap supports (most) modded blocks.](https://bluemap.bluecolored.de/wiki/customization/Mods.html)  
+However, BlueMapGUI does not auto-detect mods, so for the time being, you have to copy all of them manually to the `packs` folder in your project directory.  
+_Adding mods will be made nicer [in the future](https://github.com/TechnicJelle/BlueMapGUI/issues/12)._
+
+#### 3.d Starting BlueMap
 Once you've set up all the maps you want to render,
 you can go back to the Control Panel, and click the `▶ Start` button to start BlueMap!
 
