@@ -16,7 +16,7 @@ don't have a server, or just want a more user-friendly experience.
 ![screenshot](.github/readme_assets/control_panel.png)
 
 ## Requirements
-Make sure you have **Java 16** or higher installed!
+Make sure you have **Java 21** or higher installed!
 
 ## [Click here to download!](../../releases/latest)
 
