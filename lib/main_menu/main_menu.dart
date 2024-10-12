@@ -41,6 +41,7 @@ class _MainMenuState extends ConsumerState<MainMenu> {
             ],
           ),
         ),
+        const VerticalDivider(width: 2),
         Expanded(
           child: switch (state) {
             MainMenuState.projects => const ProjectsScreen(),

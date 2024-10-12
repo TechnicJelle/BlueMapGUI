@@ -39,6 +39,7 @@ class ProjectView extends ConsumerWidget {
           constraints: const BoxConstraints(maxWidth: 200),
           child: const Sidebar(),
         ),
+        const VerticalDivider(width: 2),
         Expanded(
           child: openConfig == null ? const ControlPanel() : ConfigEditor(openConfig),
         ),
