@@ -62,7 +62,7 @@ _I'll make a simpler workflow for this [later](https://github.com/TechnicJelle/B
 Example paths:
 ##### Windows
 ```hocon
-world: "C:/Users/TechnicJelle/AppData/Roaming/.minecraft/saves/1_20_4/"
+world: "C:/Users/TechnicJelle/AppData/Roaming/.minecraft/saves/MyCoolWorld/"
 ```
 > [!NOTE]  
 > Make sure to use forward slashes (` / `) on Windows as well!  
@@ -70,7 +70,7 @@ world: "C:/Users/TechnicJelle/AppData/Roaming/.minecraft/saves/1_20_4/"
 
 ##### Linux
 ```hocon
-world: "/home/technicjelle/.minecraft/saves/1_20_4/"
+world: "/home/technicjelle/.minecraft/saves/MyCoolWorld/"
 ```
 
 #### 3.c Starting BlueMap
