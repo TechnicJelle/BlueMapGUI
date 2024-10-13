@@ -4,7 +4,7 @@ import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:path/path.dart" as p;
 
-import "../prefs.dart";
+import "../main_menu/settings/projects_screen.dart";
 import "../utils.dart";
 import "project_view.dart";
 
@@ -32,7 +32,7 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
   @override
   void initState() {
     super.initState();
-    final Directory? projDir = ref.read(projectDirectoryProvider);
+    final Directory? projDir = ref.read(openProjectProvider);
     if (projDir == null) return;
     projectDirectory = projDir;
 

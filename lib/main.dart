@@ -4,6 +4,7 @@ import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 
 import "main_menu/main_menu.dart";
+import "main_menu/settings/projects_screen.dart";
 import "prefs.dart";
 import "project_view/close_project_button.dart";
 import "project_view/project_view.dart";
@@ -46,7 +47,7 @@ class MyHomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final Directory? projectDirectory = ref.watch(projectDirectoryProvider);
+    final Directory? projectDirectory = ref.watch(openProjectProvider);
 
     String title = "BlueMap GUI";
     if (projectDirectory != null) {

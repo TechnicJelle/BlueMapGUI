@@ -2,7 +2,7 @@ import "package:animated_visibility/animated_visibility.dart";
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 
-import "../prefs.dart";
+import "../main_menu/settings/projects_screen.dart";
 import "../utils.dart";
 import "control_row.dart";
 
@@ -21,7 +21,7 @@ class OutputNotifier extends Notifier<List<String>> {
     });
 
     //clear output when project directory changes
-    ref.listen(projectDirectoryProvider, (previous, next) {
+    ref.listen(openProjectProvider, (previous, next) {
       state = [];
     });
 

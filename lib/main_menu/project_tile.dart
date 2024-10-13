@@ -1,6 +1,5 @@
 import "dart:io";
 
-import "package:file_picker/file_picker.dart";
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:path/path.dart" as p;
@@ -9,10 +8,11 @@ import "package:url_launcher/url_launcher_string.dart";
 import "../main.dart";
 import "../prefs.dart";
 import "../utils.dart";
+import "settings/projects_screen.dart";
 
 enum _PickingState {
   nothing,
-  picking,
+  directoryNotFound,
   scanning,
   downloading,
   downloadFailed,
@@ -21,35 +21,40 @@ enum _PickingState {
   running,
 }
 
-class PathPickerButton extends ConsumerStatefulWidget {
-  const PathPickerButton({super.key});
+class ProjectTile extends ConsumerStatefulWidget {
+  final Directory projectDirectory;
+  const ProjectTile(this.projectDirectory, {super.key});
 
   @override
-  ConsumerState<PathPickerButton> createState() => _PathPickerButtonState();
+  ConsumerState<ProjectTile> createState() => _PathPickerButtonState();
 }
 
-class _PathPickerButtonState extends ConsumerState<PathPickerButton> {
+class _PathPickerButtonState extends ConsumerState<ProjectTile> {
   _PickingState _pickingState = _PickingState.nothing;
   String? errorText;
+
+  Directory get projectDirectory => widget.projectDirectory;
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (!projectDirectory.existsSync()) {
+      setState(() => _pickingState = _PickingState.directoryNotFound);
+      return;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return switch (_pickingState) {
-      _PickingState.nothing => ElevatedButton(
-          onPressed: () async {
-            // == Picking Project Directory ==
-            setState(() => _pickingState = _PickingState.picking);
-            final String? result = await FilePicker.platform.getDirectoryPath(
-              dialogTitle: "Select project folder",
-            );
-            if (result == null) {
-              setState(() => _pickingState = _PickingState.nothing);
-              return; // User canceled the picker
-            }
-
+      //TODO: The states other than ListTile should get more polish
+      _PickingState.nothing => ListTile(
+          title: Text(p.basename(projectDirectory.path)),
+          subtitle: Text(projectDirectory.path),
+          onTap: () async {
             // == Scanning for BlueMap CLI JAR ==
             setState(() => _pickingState = _PickingState.scanning);
-            final Directory projectDirectory = Directory(result);
             final contents = projectDirectory.listSync();
 
             NonHashedFile? susBlueMapJar;
@@ -108,21 +113,11 @@ class _PathPickerButtonState extends ConsumerState<PathPickerButton> {
               mapsDir.createSync(); //recreate maps dir (now empty)
             }
 
-            ref.read(projectDirectoryProvider.notifier).openProject(projectDirectory);
+            ref.read(openProjectProvider.notifier).openProject(projectDirectory);
           },
-          child: const Text("Select project folder"),
         ),
-      _PickingState.picking => Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text("Waiting for user to pick a folder..."),
-            const SizedBox(height: 8),
-            ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 300),
-              child: const LinearProgressIndicator(),
-            ),
-          ],
-        ),
+      _PickingState.directoryNotFound =>
+        Text("Directory ${projectDirectory.path} not found!"),
       _PickingState.scanning => Column(
           mainAxisSize: MainAxisSize.min,
           children: [

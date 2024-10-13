@@ -12,13 +12,14 @@ import "package:rxdart/rxdart.dart";
 import "package:url_launcher/url_launcher.dart";
 
 import "../main.dart";
+import "../main_menu/settings/projects_screen.dart";
 import "../prefs.dart";
 import "../utils.dart";
 
 final portExtractionRegex = RegExp(r"(?:port\s*|:)(\d{4,5})$");
 
 final _processProvider = Provider<RunningProcess?>((ref) {
-  final Directory? projectDirectory = ref.watch(projectDirectoryProvider);
+  final Directory? projectDirectory = ref.watch(openProjectProvider);
   if (projectDirectory == null) return null;
   final String? javaPath = ref.watch(javaPathProvider);
   if (javaPath == null) return null;

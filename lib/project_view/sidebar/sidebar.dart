@@ -5,7 +5,7 @@ import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:path/path.dart" as p;
 
-import "../../prefs.dart";
+import "../../main_menu/settings/projects_screen.dart";
 import "../project_view.dart";
 import "config_tile.dart";
 import "map_tile.dart";
@@ -34,7 +34,7 @@ class _SidebarState extends ConsumerState<Sidebar> {
   @override
   void initState() {
     super.initState();
-    final Directory projectDirectory = ref.read(projectDirectoryProvider)!;
+    final Directory projectDirectory = ref.read(openProjectProvider)!;
     final String projectPath = projectDirectory.path;
     final Directory configDir = Directory(p.join(projectPath, "config"));
     for (final FileSystemEntity entity in configDir.listSync()) {

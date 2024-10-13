@@ -10,7 +10,7 @@ Future<void> initPrefs() async {
     cacheOptions: const SharedPreferencesWithCacheOptions(
       allowList: {
         JavaPathNotifier._javaPathKey,
-        ProjectDirectoryNotifier._projectPathKey,
+        KnownProjectsNotifier._knownProjectsKey,
       },
     ),
   );
@@ -33,29 +33,34 @@ class JavaPathNotifier extends Notifier<String?> {
 final javaPathProvider =
     NotifierProvider<JavaPathNotifier, String?>(() => JavaPathNotifier());
 
-class ProjectDirectoryNotifier extends Notifier<Directory?> {
-  static const String _projectPathKey = "project_path";
+class KnownProjectsNotifier extends Notifier<List<Directory>> {
+  static const String _knownProjectsKey = "known_projects";
 
   @override
-  Directory? build() {
-    final String? bluemapJarPath = _prefs.getString(_projectPathKey);
-    if (bluemapJarPath == null) {
-      return null;
-    } else {
-      return Directory(bluemapJarPath);
-    }
+  List<Directory> build() {
+    final List<String> knownProjects = _prefs.getStringList(_knownProjectsKey) ?? [];
+    final List<Directory> knownProjectsDirectories =
+        knownProjects.map((String path) => Directory(path)).toList();
+    return knownProjectsDirectories;
   }
 
-  void openProject(Directory projectDirectory) {
-    state = projectDirectory;
-    _prefs.setString(_projectPathKey, projectDirectory.path);
+  void addProject(Directory projectDirectory) {
+    state = [...state, projectDirectory];
+    projectDirectory.create(recursive: true);
+    _prefs.setStringList(
+      _knownProjectsKey,
+      state.map((Directory dir) => dir.path).toList(),
+    );
   }
 
-  void closeProject() {
-    state = null;
-    _prefs.remove(_projectPathKey);
+  void removeProject(Directory projectDirectory) {
+    state = state.where((Directory dir) => dir != projectDirectory).toList();
+    _prefs.setStringList(
+      _knownProjectsKey,
+      state.map((Directory dir) => dir.path).toList(),
+    );
   }
 }
 
-final projectDirectoryProvider = NotifierProvider<ProjectDirectoryNotifier, Directory?>(
-    () => ProjectDirectoryNotifier());
+final knownProjectsProvider = NotifierProvider<KnownProjectsNotifier, List<Directory>>(
+    () => KnownProjectsNotifier());
