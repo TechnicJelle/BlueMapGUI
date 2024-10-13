@@ -6,7 +6,7 @@ import "package:path/path.dart" as p;
 
 import "../../confirmation_dialog.dart";
 import "../../hover.dart";
-import "../../main_menu/settings/projects_screen.dart";
+import "../../main_menu/projects/projects_screen.dart";
 import "../../utils.dart";
 import "../project_view.dart";
 

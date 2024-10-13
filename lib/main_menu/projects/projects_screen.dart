@@ -7,8 +7,8 @@ import "package:url_launcher/url_launcher.dart";
 import "../../hover.dart";
 import "../../prefs.dart";
 import "../../project_view/project_view.dart";
-import "../project_tile.dart";
 import "new_project_dialog.dart";
+import "project_tile.dart";
 
 class OpenProjectNotifier extends Notifier<Directory?> {
   @override

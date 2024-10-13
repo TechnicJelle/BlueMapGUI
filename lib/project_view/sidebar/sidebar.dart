@@ -5,7 +5,7 @@ import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:path/path.dart" as p;
 
-import "../../main_menu/settings/projects_screen.dart";
+import "../../main_menu/projects/projects_screen.dart";
 import "../project_view.dart";
 import "config_tile.dart";
 import "map_tile.dart";

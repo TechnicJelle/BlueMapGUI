@@ -4,7 +4,7 @@ import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 
 import "main_menu/main_menu.dart";
-import "main_menu/settings/projects_screen.dart";
+import "main_menu/projects/projects_screen.dart";
 import "prefs.dart";
 import "project_view/close_project_button.dart";
 import "project_view/project_view.dart";

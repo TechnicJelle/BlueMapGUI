@@ -12,7 +12,7 @@ import "package:rxdart/rxdart.dart";
 import "package:url_launcher/url_launcher.dart";
 
 import "../main.dart";
-import "../main_menu/settings/projects_screen.dart";
+import "../main_menu/projects/projects_screen.dart";
 import "../prefs.dart";
 import "../utils.dart";
 

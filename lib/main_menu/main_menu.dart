@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 
-import "settings/projects_screen.dart";
+import "projects/projects_screen.dart";
 import "settings/settings_screen.dart";
 
 enum MainMenuState {

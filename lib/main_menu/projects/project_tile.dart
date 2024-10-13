@@ -5,10 +5,10 @@ import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:path/path.dart" as p;
 import "package:url_launcher/url_launcher_string.dart";
 
-import "../main.dart";
-import "../prefs.dart";
-import "../utils.dart";
-import "settings/projects_screen.dart";
+import "../../main.dart";
+import "../../prefs.dart";
+import "../../utils.dart";
+import "projects_screen.dart";
 
 enum _PickingState {
   nothing,
