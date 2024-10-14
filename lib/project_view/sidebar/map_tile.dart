@@ -36,9 +36,9 @@ class _MapTileState extends ConsumerState<MapTile> {
       ),
       hoverChild: Positioned(
         right: 16,
-        top: 12,
+        top: 5,
         child: PopupMenuButton(
-          itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+          itemBuilder: (_) => <PopupMenuEntry>[
             PopupMenuItem(
               child: const Row(
                 children: [
