@@ -21,8 +21,20 @@ enum _PickingState {
   running,
 }
 
+class _PickingStateNotifier extends Notifier<_PickingState> {
+  @override
+  _PickingState build() {
+    return _PickingState.nothing;
+  }
+
+  void set(_PickingState newState) {
+    state = newState;
+  }
+}
+
 class ProjectTile extends ConsumerStatefulWidget {
   final Directory projectDirectory;
+
   const ProjectTile(this.projectDirectory, {super.key});
 
   @override
@@ -30,7 +42,8 @@ class ProjectTile extends ConsumerStatefulWidget {
 }
 
 class _PathPickerButtonState extends ConsumerState<ProjectTile> {
-  _PickingState _pickingState = _PickingState.nothing;
+  final _pickingStateProvider = NotifierProvider<_PickingStateNotifier, _PickingState>(
+      () => _PickingStateNotifier());
   String? errorText;
 
   Directory get projectDirectory => widget.projectDirectory;
@@ -39,15 +52,17 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
   void initState() {
     super.initState();
 
-    if (!projectDirectory.existsSync()) {
-      setState(() => _pickingState = _PickingState.directoryNotFound);
-      return;
-    }
+    projectDirectory.exists().then((bool exists) {
+      if (!exists) {
+        ref.read(_pickingStateProvider.notifier).set(_PickingState.directoryNotFound);
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return switch (_pickingState) {
+    final _PickingState pickingState = ref.watch(_pickingStateProvider);
+    return switch (pickingState) {
       //TODO: The states other than ListTile should get more polish
       _PickingState.nothing => ListTile(
           title: Text(p.basename(projectDirectory.path)),
@@ -93,7 +108,8 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
             ),
             const SizedBox(height: 8),
             ElevatedButton(
-              onPressed: () => setState(() => _pickingState = _PickingState.nothing),
+              onPressed: () =>
+                  ref.read(_pickingStateProvider.notifier).set(_PickingState.nothing),
               child: const Text("Try again"),
             ),
             const SizedBox(height: 8),
@@ -148,7 +164,7 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
     }
 
     // == Scanning for BlueMap CLI JAR ==
-    setState(() => _pickingState = _PickingState.scanning);
+    ref.read(_pickingStateProvider.notifier).set(_PickingState.scanning);
     final contents = projectDirectory.listSync();
 
     NonHashedFile? susBlueMapJar;
@@ -163,12 +179,12 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
 
     // == If needed, download BlueMap CLI JAR ==
     if (susBlueMapJar == null) {
-      setState(() => _pickingState = _PickingState.downloading);
+      ref.read(_pickingStateProvider.notifier).set(_PickingState.downloading);
       try {
         susBlueMapJar = await downloadBlueMap(projectDirectory);
       } catch (e) {
         setState(() {
-          _pickingState = _PickingState.downloadFailed;
+          ref.read(_pickingStateProvider.notifier).set(_PickingState.downloadFailed);
           errorText = e.toString();
         });
         return;
@@ -176,15 +192,15 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
     }
 
     // == Verify BlueMap CLI JAR hash ==
-    setState(() => _pickingState = _PickingState.hashing);
+    ref.read(_pickingStateProvider.notifier).set(_PickingState.hashing);
     final File? bluemapJar = await susBlueMapJar.hashFile(blueMapCliJarHash);
     if (bluemapJar == null) {
-      setState(() => _pickingState = _PickingState.wrongHash);
+      ref.read(_pickingStateProvider.notifier).set(_PickingState.wrongHash);
       return;
     }
 
     // == Run BlueMap CLI JAR to generate default configs ==
-    setState(() => _pickingState = _PickingState.running);
+    ref.read(_pickingStateProvider.notifier).set(_PickingState.running);
     ProcessResult run = await Process.run(
       ref.read(javaPathProvider)!,
       ["-jar", bluemapJar.path],
