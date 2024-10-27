@@ -52,69 +52,7 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
       _PickingState.nothing => ListTile(
           title: Text(p.basename(projectDirectory.path)),
           subtitle: Text(projectDirectory.path),
-          onTap: () async {
-            // == Scanning for BlueMap CLI JAR ==
-            setState(() => _pickingState = _PickingState.scanning);
-            final contents = projectDirectory.listSync();
-
-            NonHashedFile? susBlueMapJar;
-            for (final file in contents) {
-              if (file is! File) continue;
-              String fileName = p.split(file.path).last;
-              if (fileName == blueMapCliJarName) {
-                susBlueMapJar = NonHashedFile(file);
-                break;
-              }
-            }
-
-            // == If needed, download BlueMap CLI JAR ==
-            if (susBlueMapJar == null) {
-              setState(() => _pickingState = _PickingState.downloading);
-              try {
-                susBlueMapJar = await downloadBlueMap(projectDirectory);
-              } catch (e) {
-                setState(() {
-                  _pickingState = _PickingState.downloadFailed;
-                  errorText = e.toString();
-                });
-                return;
-              }
-            }
-
-            // == Verify BlueMap CLI JAR hash ==
-            setState(() => _pickingState = _PickingState.hashing);
-            final File? bluemapJar = await susBlueMapJar.hashFile(blueMapCliJarHash);
-            if (bluemapJar == null) {
-              setState(() => _pickingState = _PickingState.wrongHash);
-              return;
-            }
-
-            // == Run BlueMap CLI JAR to generate default configs ==
-            setState(() => _pickingState = _PickingState.running);
-            ProcessResult run = await Process.run(
-              ref.read(javaPathProvider)!,
-              ["-jar", bluemapJar.path],
-              workingDirectory: projectDirectory.path,
-            );
-
-            final String stdout = run.stdout;
-            if (!stdout.contains("Generated default config files for you")) {
-              throw Exception("BlueMap CLI JAR failed to run!");
-            }
-
-            // == Turn default maps directory into templates directory ==
-            final templatesDir =
-                Directory(p.join(projectDirectory.path, "config", "map-templates"));
-            //Make sure to support opening existing projects; only do this on fresh projects
-            if (!templatesDir.existsSync()) {
-              final Directory mapsDir =
-                  Directory(p.join(projectDirectory.path, "config", "maps"));
-              mapsDir.renameSync(templatesDir.path); //rename maps dir to templates dir
-              mapsDir.createSync(); //recreate maps dir (now empty)
-            }
-
-            ref.read(openProjectProvider.notifier).openProject(projectDirectory);
-          },
+          onTap: openProject,
         ),
       _PickingState.directoryNotFound =>
         Text("Directory ${projectDirectory.path} not found!"),
@@ -200,5 +138,69 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
           ],
         ),
     };
+  }
+
+  Future<void> openProject() async {
+    // == Scanning for BlueMap CLI JAR ==
+    setState(() => _pickingState = _PickingState.scanning);
+    final contents = projectDirectory.listSync();
+
+    NonHashedFile? susBlueMapJar;
+    for (final file in contents) {
+      if (file is! File) continue;
+      String fileName = p.split(file.path).last;
+      if (fileName == blueMapCliJarName) {
+        susBlueMapJar = NonHashedFile(file);
+        break;
+      }
+    }
+
+    // == If needed, download BlueMap CLI JAR ==
+    if (susBlueMapJar == null) {
+      setState(() => _pickingState = _PickingState.downloading);
+      try {
+        susBlueMapJar = await downloadBlueMap(projectDirectory);
+      } catch (e) {
+        setState(() {
+          _pickingState = _PickingState.downloadFailed;
+          errorText = e.toString();
+        });
+        return;
+      }
+    }
+
+    // == Verify BlueMap CLI JAR hash ==
+    setState(() => _pickingState = _PickingState.hashing);
+    final File? bluemapJar = await susBlueMapJar.hashFile(blueMapCliJarHash);
+    if (bluemapJar == null) {
+      setState(() => _pickingState = _PickingState.wrongHash);
+      return;
+    }
+
+    // == Run BlueMap CLI JAR to generate default configs ==
+    setState(() => _pickingState = _PickingState.running);
+    ProcessResult run = await Process.run(
+      ref.read(javaPathProvider)!,
+      ["-jar", bluemapJar.path],
+      workingDirectory: projectDirectory.path,
+    );
+
+    final String stdout = run.stdout;
+    if (!stdout.contains("Generated default config files for you")) {
+      throw Exception("BlueMap CLI JAR failed to run!");
+    }
+
+    // == Turn default maps directory into templates directory ==
+    final templatesDir =
+        Directory(p.join(projectDirectory.path, "config", "map-templates"));
+    //Make sure to support opening existing projects; only do this on fresh projects
+    if (!templatesDir.existsSync()) {
+      final Directory mapsDir =
+          Directory(p.join(projectDirectory.path, "config", "maps"));
+      mapsDir.renameSync(templatesDir.path); //rename maps dir to templates dir
+      mapsDir.createSync(); //recreate maps dir (now empty)
+    }
+
+    ref.read(openProjectProvider.notifier).openProject(projectDirectory);
   }
 }
