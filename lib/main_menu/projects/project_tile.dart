@@ -141,6 +141,12 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
   }
 
   Future<void> openProject() async {
+    // == Check if project directory exists ==
+    if (!projectDirectory.existsSync()) {
+      ref.read(_pickingStateProvider.notifier).set(_PickingState.directoryNotFound);
+      return;
+    }
+
     // == Scanning for BlueMap CLI JAR ==
     setState(() => _pickingState = _PickingState.scanning);
     final contents = projectDirectory.listSync();
