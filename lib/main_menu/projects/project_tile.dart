@@ -22,6 +22,8 @@ enum _PickingState {
   hashing,
   wrongHash,
   running,
+  mapping,
+  opening,
 }
 
 class _PickingStateNotifier extends Notifier<_PickingState> {
@@ -289,6 +291,7 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
     }
 
     // == Turn default maps directory into templates directory ==
+    ref.read(_pickingStateProvider.notifier).set(_PickingState.mapping);
     final templatesDir =
         Directory(p.join(projectDirectory.path, "config", "map-templates"));
     //Make sure to support opening existing projects; only do this on fresh projects
@@ -299,6 +302,8 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
       mapsDir.createSync(); //recreate maps dir (now empty)
     }
 
+    // == Open project ==
+    ref.read(_pickingStateProvider.notifier).set(_PickingState.opening);
     ref.read(openProjectProvider.notifier).openProject(projectDirectory);
   }
 }
