@@ -2,9 +2,7 @@ import "dart:io";
 
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
-import "package:url_launcher/url_launcher.dart";
 
-import "../../hover.dart";
 import "../../prefs.dart";
 import "../../project_view/project_view.dart";
 import "new_project_dialog.dart";
@@ -47,41 +45,8 @@ class ProjectsScreen extends ConsumerWidget {
         ListView.builder(
           itemCount: projects.length,
           itemBuilder: (BuildContext context, int index) {
-            final Directory project = projects[index];
-            return Hover(
-              alwaysChild: ProjectTile(project),
-              hoverChild: Positioned(
-                right: 16,
-                top: 12,
-                child: PopupMenuButton(
-                  itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-                    PopupMenuItem(
-                      child: const Row(
-                        children: [
-                          Icon(Icons.folder_open),
-                          SizedBox(width: 8),
-                          Text("Open in file manager"),
-                        ],
-                      ),
-                      onTap: () => launchUrl(project.uri),
-                      // does nothing when dir doesn't exist ↑
-                    ),
-                    PopupMenuItem(
-                      child: const Row(
-                        children: [
-                          Icon(Icons.clear),
-                          SizedBox(width: 8),
-                          Text("Remove from projects"),
-                        ],
-                      ),
-                      onTap: () {
-                        ref.read(knownProjectsProvider.notifier).removeProject(project);
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            );
+            final projectDirectory = projects[index];
+            return ProjectTile(projectDirectory);
           },
         ),
         Positioned(
