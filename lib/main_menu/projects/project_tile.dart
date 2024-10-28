@@ -1,3 +1,4 @@
+import "dart:async";
 import "dart:io";
 
 import "package:flutter/material.dart";
@@ -6,6 +7,7 @@ import "package:path/path.dart" as p;
 import "package:url_launcher/url_launcher.dart";
 import "package:url_launcher/url_launcher_string.dart";
 
+import "../../confirmation_dialog.dart";
 import "../../hover.dart";
 import "../../main.dart";
 import "../../prefs.dart";
@@ -14,7 +16,6 @@ import "projects_screen.dart";
 
 enum _PickingState {
   nothing,
-  directoryNotFound,
   scanning,
   downloading,
   downloadFailed,
@@ -48,17 +49,31 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
       () => _PickingStateNotifier());
   String? errorText;
 
+  late final StreamSubscription<FileSystemEvent> fileWatchSub;
+  late bool projectDirectoryExists;
+
   Directory get projectDirectory => widget.projectDirectory;
+
+  String get projectName => p.basename(projectDirectory.path);
 
   @override
   void initState() {
     super.initState();
+    projectDirectoryExists = projectDirectory.existsSync();
 
-    projectDirectory.exists().then((bool exists) {
-      if (!exists) {
-        ref.read(_pickingStateProvider.notifier).set(_PickingState.directoryNotFound);
-      }
+    fileWatchSub = projectDirectory.parent.watch().listen((FileSystemEvent event) {
+      projectDirectory.exists().then((bool exists) {
+        if (mounted) {
+          setState(() => projectDirectoryExists = exists);
+        }
+      });
     });
+  }
+
+  @override
+  void dispose() {
+    fileWatchSub.cancel();
+    super.dispose();
   }
 
   @override
@@ -68,12 +83,22 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
       alwaysChild: switch (pickingState) {
         //TODO: The states other than ListTile should get more polish
         _PickingState.nothing => ListTile(
-            title: Text(p.basename(projectDirectory.path)),
-            subtitle: Text(projectDirectory.path),
+            enabled: projectDirectoryExists,
             onTap: openProject,
+            title: Text(projectName),
+            subtitle: Wrap(
+              spacing: 12,
+              runSpacing: 2,
+              children: [
+                Text(projectDirectory.path),
+                if (!projectDirectoryExists)
+                  Text(
+                    "Error: Directory not found",
+                    style: TextStyle(color: Colors.red[600]),
+                  ),
+              ],
+            ),
           ),
-        _PickingState.directoryNotFound =>
-          Text("Directory ${projectDirectory.path} not found!"),
         _PickingState.scanning => Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -160,41 +185,57 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
       hoverChild: Positioned(
         right: 16,
         top: 12,
-        child: PopupMenuButton(
-          itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-            PopupMenuItem(
-              child: const Row(
-                children: [
-                  Icon(Icons.folder_open),
-                  SizedBox(width: 8),
-                  Text("Open in file manager"),
+        child: projectDirectoryExists
+            ? PopupMenuButton(
+                itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+                  PopupMenuItem(
+                    enabled: projectDirectoryExists,
+                    child: const Row(
+                      children: [
+                        Icon(Icons.folder_open),
+                        SizedBox(width: 8),
+                        Text("Open in file manager"),
+                      ],
+                    ),
+                    onTap: () => launchUrl(projectDirectory.uri),
+                    // does nothing when dir doesn't exist ↑
+                  ),
+                  PopupMenuItem(
+                    child: const Row(
+                      children: [
+                        Icon(Icons.clear),
+                        SizedBox(width: 8),
+                        Text("Remove from projects"),
+                      ],
+                    ),
+                    onTap: () => removeProjectFromList(),
+                  ),
                 ],
+              )
+            : IconButton(
+                onPressed: () => removeProjectFromList(),
+                icon: const Icon(Icons.clear),
               ),
-              onTap: () => launchUrl(projectDirectory.uri),
-              // does nothing when dir doesn't exist ↑
-            ),
-            PopupMenuItem(
-              child: const Row(
-                children: [
-                  Icon(Icons.clear),
-                  SizedBox(width: 8),
-                  Text("Remove from projects"),
-                ],
-              ),
-              onTap: () => ref
-                  .read(knownProjectsProvider.notifier)
-                  .removeProject(projectDirectory),
-            ),
-          ],
-        ),
       ),
+    );
+  }
+
+  void removeProjectFromList() {
+    showConfirmationDialog(
+      context: context,
+      title: "Remove Project",
+      content: [
+        Text("Are you sure you want to remove $projectName from the projects list?"),
+      ],
+      confirmAction: "Yes",
+      onConfirmed: () =>
+          ref.read(knownProjectsProvider.notifier).removeProject(projectDirectory),
     );
   }
 
   Future<void> openProject() async {
     // == Check if project directory exists ==
     if (!projectDirectory.existsSync()) {
-      ref.read(_pickingStateProvider.notifier).set(_PickingState.directoryNotFound);
       return;
     }
 
