@@ -14,6 +14,8 @@ import "../../prefs.dart";
 import "../../utils.dart";
 import "projects_screen.dart";
 
+//TODO: Move the error states to a separate thing.
+//TODO: Rename to _OpeningStep
 enum _PickingState {
   nothing,
   scanning,
@@ -80,110 +82,24 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
 
   @override
   Widget build(BuildContext context) {
-    final _PickingState pickingState = ref.watch(_pickingStateProvider);
     return Hover(
-      alwaysChild: switch (pickingState) {
-        //TODO: The states other than ListTile should get more polish
-        _PickingState.nothing => ListTile(
-            enabled: projectDirectoryExists,
-            onTap: openProject,
-            title: Text(projectName),
-            subtitle: Wrap(
-              spacing: 12,
-              runSpacing: 2,
-              children: [
-                Text(projectDirectory.path),
-                if (!projectDirectoryExists)
-                  Text(
-                    "Error: Directory not found",
-                    style: TextStyle(color: Colors.red[600]),
-                  ),
-              ],
-            ),
-          ),
-        _PickingState.scanning => Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text("Scanning folder for BlueMap CLI JAR..."),
-              const SizedBox(height: 8),
-              ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 300),
-                child: const LinearProgressIndicator(),
-              ),
-            ],
-          ),
-        _PickingState.downloading => Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text("Downloading BlueMap CLI JAR..."),
-              const SizedBox(height: 8),
-              ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 300),
-                child: const LinearProgressIndicator(),
-              ),
-            ],
-          ),
-        _PickingState.downloadFailed => Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(height: 8),
-              const Text(
-                "Downloaded failed:",
-                style: TextStyle(color: Colors.red),
-              ),
-              const SizedBox(height: 4),
+      alwaysChild: ListTile(
+        enabled: projectDirectoryExists,
+        onTap: openProject,
+        title: Text(projectName),
+        subtitle: Wrap(
+          spacing: 12,
+          runSpacing: 2,
+          children: [
+            Text(projectDirectory.path),
+            if (!projectDirectoryExists)
               Text(
-                errorText ?? "Unknown error",
-                style: const TextStyle(color: Colors.red),
+                "Error: Directory not found",
+                style: TextStyle(color: Colors.red[600]),
               ),
-              const SizedBox(height: 8),
-              ElevatedButton(
-                onPressed: () =>
-                    ref.read(_pickingStateProvider.notifier).set(_PickingState.nothing),
-                child: const Text("Try again"),
-              ),
-              const SizedBox(height: 8),
-            ],
-          ),
-        _PickingState.hashing => Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text("Verifying BlueMap CLI JAR hash..."),
-              const SizedBox(height: 8),
-              ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 300),
-                child: const LinearProgressIndicator(),
-              ),
-            ],
-          ),
-        _PickingState.wrongHash => Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                "Downloaded failed! Invalid hash!",
-                style: TextStyle(color: Colors.red),
-              ),
-              const SizedBox(height: 8),
-              ElevatedButton(
-                onPressed: () => launchUrlString(
-                  "https://github.com/TechnicJelle/BlueMapGUI/issues/new",
-                ),
-                child: const Text("Contact developer"),
-              ),
-            ],
-          ),
-        _PickingState.running => Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text("Running BlueMap CLI to generate default configs..."),
-              const SizedBox(height: 8),
-              ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 300),
-                child: const LinearProgressIndicator(),
-              ),
-            ],
-          ),
-      },
+          ],
+        ),
+      ),
       hoverChild: Positioned(
         right: 16,
         top: 12,
@@ -236,6 +152,139 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
   }
 
   Future<void> openProject() async {
+    // == Open opening progress dialog ==
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Consumer(
+          builder: (context, ref, child) {
+            final pickingState = ref.watch(_pickingStateProvider);
+            return switch (pickingState) {
+              //TODO: This should get more polish. DRY it up.
+              _PickingState.nothing => Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text("Preparing to open the project..."),
+                    const SizedBox(height: 8),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 300),
+                      child: const LinearProgressIndicator(),
+                    ),
+                  ],
+                ),
+              _PickingState.scanning => Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text("Scanning folder for BlueMap CLI JAR..."),
+                    const SizedBox(height: 8),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 300),
+                      child: const LinearProgressIndicator(),
+                    ),
+                  ],
+                ),
+              _PickingState.downloading => Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text("Downloading BlueMap CLI JAR..."),
+                    const SizedBox(height: 8),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 300),
+                      child: const LinearProgressIndicator(),
+                    ),
+                  ],
+                ),
+              _PickingState.downloadFailed => Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(height: 8),
+                    const Text(
+                      "Downloaded failed:",
+                      style: TextStyle(color: Colors.red),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      errorText ?? "Unknown error",
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                    const SizedBox(height: 8),
+                    ElevatedButton(
+                      onPressed: () => ref
+                          .read(_pickingStateProvider.notifier)
+                          .set(_PickingState.nothing),
+                      child: const Text("Try again"),
+                    ),
+                    const SizedBox(height: 8),
+                  ],
+                ),
+              _PickingState.hashing => Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text("Verifying BlueMap CLI JAR hash..."),
+                    const SizedBox(height: 8),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 300),
+                      child: const LinearProgressIndicator(),
+                    ),
+                  ],
+                ),
+              _PickingState.wrongHash => Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      "Downloaded failed! Invalid hash!",
+                      style: TextStyle(color: Colors.red),
+                    ),
+                    const SizedBox(height: 8),
+                    ElevatedButton(
+                      onPressed: () => launchUrlString(
+                        "https://github.com/TechnicJelle/BlueMapGUI/issues/new",
+                      ),
+                      child: const Text("Contact developer"),
+                    ),
+                  ],
+                ),
+              _PickingState.running => Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text("Running BlueMap CLI to generate default configs..."),
+                    const SizedBox(height: 8),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 300),
+                      child: const LinearProgressIndicator(),
+                    ),
+                  ],
+                ),
+              _PickingState.mapping => Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text("Turning BlueMap's default map configs into templates..."),
+                    const SizedBox(height: 8),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 300),
+                      child: const LinearProgressIndicator(),
+                    ),
+                  ],
+                ),
+              _PickingState.opening => Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text("Opening project..."),
+                    const SizedBox(height: 8),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 300),
+                      child: const LinearProgressIndicator(),
+                    ),
+                  ],
+                ),
+            };
+          },
+        ),
+        //TODO: Add cancel button
+      ),
+      barrierDismissible: false,
+    );
+
     // == Check if project directory exists ==
     if (!projectDirectory.existsSync()) {
       return;
@@ -305,5 +354,11 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
     // == Open project ==
     ref.read(_pickingStateProvider.notifier).set(_PickingState.opening);
     ref.read(openProjectProvider.notifier).openProject(projectDirectory);
+
+    // == Close opening progress dialog ==
+    if (mounted) {
+      //TODO: Is there a better way to do this?
+      Navigator.of(context).pop();
+    }
   }
 }
