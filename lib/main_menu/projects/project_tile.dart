@@ -5,7 +5,6 @@ import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:path/path.dart" as p;
 import "package:url_launcher/url_launcher.dart";
-import "package:url_launcher/url_launcher_string.dart";
 
 import "../../confirmation_dialog.dart";
 import "../../hover.dart";
@@ -14,28 +13,52 @@ import "../../prefs.dart";
 import "../../utils.dart";
 import "projects_screen.dart";
 
-//TODO: Move the error states to a separate thing.
-//TODO: Rename to _OpeningStep
-enum _PickingState {
+enum _OpeningStep {
   nothing,
   scanning,
   downloading,
-  downloadFailed,
   hashing,
-  wrongHash,
   running,
   mapping,
   opening,
 }
 
-class _PickingStateNotifier extends Notifier<_PickingState> {
+enum _OpenError {
+  downloadFailed,
+  wrongHash,
+}
+
+class _OpeningStateNotifier extends Notifier<_OpeningStep?> {
+  _OpenError? _openError;
+  String? _openErrorDetails;
+
   @override
-  _PickingState build() {
-    return _PickingState.nothing;
+  _OpeningStep build() {
+    return _OpeningStep.nothing;
   }
 
-  void set(_PickingState newState) {
+  void set(_OpeningStep newState) {
     state = newState;
+    _openError = null;
+    _openErrorDetails = null;
+  }
+
+  void error({required _OpenError error, String? details}) {
+    state = null;
+    _openError = error;
+    print(_openError);
+    if (details != null) {
+      _openErrorDetails = details;
+      print(_openErrorDetails);
+    }
+  }
+
+  _OpenError? getError() {
+    return _openError;
+  }
+
+  String? getErrorDetails() {
+    return _openErrorDetails;
   }
 }
 
@@ -49,9 +72,8 @@ class ProjectTile extends ConsumerStatefulWidget {
 }
 
 class _PathPickerButtonState extends ConsumerState<ProjectTile> {
-  final _pickingStateProvider = NotifierProvider<_PickingStateNotifier, _PickingState>(
-      () => _PickingStateNotifier());
-  String? errorText;
+  final _openingStateProvider = NotifierProvider<_OpeningStateNotifier, _OpeningStep?>(
+      () => _OpeningStateNotifier());
 
   late final StreamSubscription<FileSystemEvent> fileWatchSub;
   late bool projectDirectoryExists;
@@ -158,10 +180,26 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
       builder: (context) => AlertDialog(
         title: Consumer(
           builder: (context, ref, child) {
-            final pickingState = ref.watch(_pickingStateProvider);
-            return switch (pickingState) {
+            final _OpeningStep? pickingStep = ref.watch(_openingStateProvider);
+            if (pickingStep == null) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text("An error occurred while opening the project:"),
+                  const SizedBox(height: 8),
+                  switch (ref.read(_openingStateProvider.notifier).getError()!) {
+                    _OpenError.downloadFailed => Text(
+                        "Failed to download BlueMap CLI JAR!\n${ref.read(_openingStateProvider.notifier).getErrorDetails() ?? "Unknown error"}"),
+                    _OpenError.wrongHash =>
+                      const Text("BlueMap CLI JAR hash verification failed!\n"
+                          "Delete the BlueMap CLI JAR and try again to re-download it."),
+                  },
+                ],
+              );
+            }
+            return switch (pickingStep) {
               //TODO: This should get more polish. DRY it up.
-              _PickingState.nothing => Column(
+              _OpeningStep.nothing => Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Text("Preparing to open the project..."),
@@ -172,7 +210,7 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
                     ),
                   ],
                 ),
-              _PickingState.scanning => Column(
+              _OpeningStep.scanning => Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Text("Scanning folder for BlueMap CLI JAR..."),
@@ -183,7 +221,7 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
                     ),
                   ],
                 ),
-              _PickingState.downloading => Column(
+              _OpeningStep.downloading => Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Text("Downloading BlueMap CLI JAR..."),
@@ -194,30 +232,7 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
                     ),
                   ],
                 ),
-              _PickingState.downloadFailed => Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const SizedBox(height: 8),
-                    const Text(
-                      "Downloaded failed:",
-                      style: TextStyle(color: Colors.red),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      errorText ?? "Unknown error",
-                      style: const TextStyle(color: Colors.red),
-                    ),
-                    const SizedBox(height: 8),
-                    ElevatedButton(
-                      onPressed: () => ref
-                          .read(_pickingStateProvider.notifier)
-                          .set(_PickingState.nothing),
-                      child: const Text("Try again"),
-                    ),
-                    const SizedBox(height: 8),
-                  ],
-                ),
-              _PickingState.hashing => Column(
+              _OpeningStep.hashing => Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Text("Verifying BlueMap CLI JAR hash..."),
@@ -228,23 +243,7 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
                     ),
                   ],
                 ),
-              _PickingState.wrongHash => Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text(
-                      "Downloaded failed! Invalid hash!",
-                      style: TextStyle(color: Colors.red),
-                    ),
-                    const SizedBox(height: 8),
-                    ElevatedButton(
-                      onPressed: () => launchUrlString(
-                        "https://github.com/TechnicJelle/BlueMapGUI/issues/new",
-                      ),
-                      child: const Text("Contact developer"),
-                    ),
-                  ],
-                ),
-              _PickingState.running => Column(
+              _OpeningStep.running => Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Text("Running BlueMap CLI to generate default configs..."),
@@ -255,7 +254,7 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
                     ),
                   ],
                 ),
-              _PickingState.mapping => Column(
+              _OpeningStep.mapping => Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Text("Turning BlueMap's default map configs into templates..."),
@@ -266,7 +265,7 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
                     ),
                   ],
                 ),
-              _PickingState.opening => Column(
+              _OpeningStep.opening => Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Text("Opening project..."),
@@ -291,7 +290,7 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
     }
 
     // == Scanning for BlueMap CLI JAR ==
-    ref.read(_pickingStateProvider.notifier).set(_PickingState.scanning);
+    ref.read(_openingStateProvider.notifier).set(_OpeningStep.scanning);
     final contents = projectDirectory.listSync();
 
     NonHashedFile? susBlueMapJar;
@@ -306,28 +305,28 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
 
     // == If needed, download BlueMap CLI JAR ==
     if (susBlueMapJar == null) {
-      ref.read(_pickingStateProvider.notifier).set(_PickingState.downloading);
+      ref.read(_openingStateProvider.notifier).set(_OpeningStep.downloading);
       try {
         susBlueMapJar = await downloadBlueMap(projectDirectory);
       } catch (e) {
-        setState(() {
-          ref.read(_pickingStateProvider.notifier).set(_PickingState.downloadFailed);
-          errorText = e.toString();
-        });
+        ref.read(_openingStateProvider.notifier).error(
+              error: _OpenError.downloadFailed,
+              details: e.toString(),
+            );
         return;
       }
     }
 
     // == Verify BlueMap CLI JAR hash ==
-    ref.read(_pickingStateProvider.notifier).set(_PickingState.hashing);
+    ref.read(_openingStateProvider.notifier).set(_OpeningStep.hashing);
     final File? bluemapJar = await susBlueMapJar.hashFile(blueMapCliJarHash);
     if (bluemapJar == null) {
-      ref.read(_pickingStateProvider.notifier).set(_PickingState.wrongHash);
+      ref.read(_openingStateProvider.notifier).error(error: _OpenError.wrongHash);
       return;
     }
 
     // == Run BlueMap CLI JAR to generate default configs ==
-    ref.read(_pickingStateProvider.notifier).set(_PickingState.running);
+    ref.read(_openingStateProvider.notifier).set(_OpeningStep.running);
     ProcessResult run = await Process.run(
       ref.read(javaPathProvider)!,
       ["-jar", bluemapJar.path],
@@ -340,7 +339,7 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
     }
 
     // == Turn default maps directory into templates directory ==
-    ref.read(_pickingStateProvider.notifier).set(_PickingState.mapping);
+    ref.read(_openingStateProvider.notifier).set(_OpeningStep.mapping);
     final templatesDir =
         Directory(p.join(projectDirectory.path, "config", "map-templates"));
     //Make sure to support opening existing projects; only do this on fresh projects
@@ -352,7 +351,7 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
     }
 
     // == Open project ==
-    ref.read(_pickingStateProvider.notifier).set(_PickingState.opening);
+    ref.read(_openingStateProvider.notifier).set(_OpeningStep.opening);
     ref.read(openProjectProvider.notifier).openProject(projectDirectory);
 
     // == Close opening progress dialog ==
