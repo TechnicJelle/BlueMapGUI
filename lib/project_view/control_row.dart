@@ -13,6 +13,7 @@ import "package:url_launcher/url_launcher.dart";
 import "../main.dart";
 import "../main_menu/projects/projects_screen.dart";
 import "../prefs.dart";
+import "update_button.dart";
 
 final portExtractionRegex = RegExp(r"(?:port\s*|:)(\d{4,5})$");
 
@@ -202,6 +203,9 @@ class ControlRow extends ConsumerWidget {
           label: const Text("Open"),
           icon: const Icon(Icons.open_in_browser),
         ),
+        const SizedBox(width: 32),
+        const Spacer(),
+        const UpdateButton(),
       ],
     );
   }

@@ -20,7 +20,8 @@ const blueMapCliJarUrl = "https://github.com/BlueMap-Minecraft/BlueMap/releases/
     "v$blueMapTag/BlueMap-$blueMapTag-cli.jar";
 String get blueMapCliJarName => blueMapCliJarUrl.split("/").last;
 
-const String version = String.fromEnvironment("version", defaultValue: "development");
+const String vDev = "development";
+const String version = String.fromEnvironment("version", defaultValue: vDev);
 
 Future<void> main() async {
   await initPrefs();
