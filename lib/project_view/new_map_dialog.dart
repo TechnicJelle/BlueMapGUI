@@ -8,8 +8,6 @@ import "../main_menu/projects/projects_screen.dart";
 import "../utils.dart";
 import "project_view.dart";
 
-final RegExp regexIDValidation = RegExp(r"^[a-zA-Z0-9_-]+$");
-
 class NewMapDialog extends ConsumerStatefulWidget {
   const NewMapDialog({super.key});
 
@@ -126,7 +124,7 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
                 if (s == null || s.trim().isEmpty) {
                   return "Can't be empty";
                 }
-                if (!regexIDValidation.hasMatch(s)) {
+                if (!regexSafeCharacters.hasMatch(s)) {
                   return "Invalid character";
                 }
                 File potentialNewConfig = File(

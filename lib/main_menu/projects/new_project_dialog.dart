@@ -7,6 +7,7 @@ import "package:path/path.dart" as p;
 import "package:path_provider/path_provider.dart";
 
 import "../../prefs.dart";
+import "../../utils.dart";
 
 class NewProjectDialog extends ConsumerStatefulWidget {
   const NewProjectDialog({super.key});
@@ -83,11 +84,13 @@ class NewProjectDialogState extends ConsumerState<NewProjectDialog> {
                 textInputAction: TextInputAction.next,
                 textCapitalization: TextCapitalization.words,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
+                validator: (String? s) {
+                  if (s == null || s.trim().isEmpty) {
                     return "Can't be empty";
                   }
-                  //TODO: Only A-Za-z0-9
+                  if (!regexSafeCharacters.hasMatch(s)) {
+                    return "Invalid character";
+                  }
                   return null;
                 },
               ),
@@ -108,11 +111,11 @@ class NewProjectDialogState extends ConsumerState<NewProjectDialog> {
                       textInputAction: TextInputAction.done,
                       textCapitalization: TextCapitalization.none,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
+                      validator: (String? s) {
+                        if (s == null || s.trim().isEmpty) {
                           return "Can't be empty";
                         }
-                        if (!Directory(value).existsSync()) {
+                        if (!Directory(s).existsSync()) {
                           return "Directory does not exist";
                         }
                         return null;

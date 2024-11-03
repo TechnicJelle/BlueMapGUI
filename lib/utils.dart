@@ -7,6 +7,8 @@ import "package:path/path.dart" as p;
 
 import "main.dart";
 
+final RegExp regexSafeCharacters = RegExp(r"^[a-zA-Z0-9_-]+$");
+
 extension StringExtension on String {
   String capitalize() {
     return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
