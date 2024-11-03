@@ -46,10 +46,8 @@ class _OpeningStateNotifier extends Notifier<_OpeningStep?> {
   void error({required _OpenError error, String? details}) {
     state = null;
     _openError = error;
-    print(_openError);
     if (details != null) {
       _openErrorDetails = details;
-      print(_openErrorDetails);
     }
   }
 
@@ -177,109 +175,8 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
     // == Open opening progress dialog ==
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Consumer(
-          builder: (context, ref, child) {
-            final _OpeningStep? pickingStep = ref.watch(_openingStateProvider);
-            if (pickingStep == null) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text("An error occurred while opening the project:"),
-                  const SizedBox(height: 8),
-                  switch (ref.read(_openingStateProvider.notifier).getError()!) {
-                    _OpenError.downloadFailed => Text(
-                        "Failed to download BlueMap CLI JAR!\n${ref.read(_openingStateProvider.notifier).getErrorDetails() ?? "Unknown error"}"),
-                    _OpenError.wrongHash =>
-                      const Text("BlueMap CLI JAR hash verification failed!\n"
-                          "Delete the BlueMap CLI JAR and try again to re-download it."),
-                  },
-                ],
-              );
-            }
-            return switch (pickingStep) {
-              //TODO: This should get more polish. DRY it up.
-              _OpeningStep.nothing => Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text("Preparing to open the project..."),
-                    const SizedBox(height: 8),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 300),
-                      child: const LinearProgressIndicator(),
-                    ),
-                  ],
-                ),
-              _OpeningStep.scanning => Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text("Scanning folder for BlueMap CLI JAR..."),
-                    const SizedBox(height: 8),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 300),
-                      child: const LinearProgressIndicator(),
-                    ),
-                  ],
-                ),
-              _OpeningStep.downloading => Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text("Downloading BlueMap CLI JAR..."),
-                    const SizedBox(height: 8),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 300),
-                      child: const LinearProgressIndicator(),
-                    ),
-                  ],
-                ),
-              _OpeningStep.hashing => Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text("Verifying BlueMap CLI JAR hash..."),
-                    const SizedBox(height: 8),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 300),
-                      child: const LinearProgressIndicator(),
-                    ),
-                  ],
-                ),
-              _OpeningStep.running => Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text("Running BlueMap CLI to generate default configs..."),
-                    const SizedBox(height: 8),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 300),
-                      child: const LinearProgressIndicator(),
-                    ),
-                  ],
-                ),
-              _OpeningStep.mapping => Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text("Turning BlueMap's default map configs into templates..."),
-                    const SizedBox(height: 8),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 300),
-                      child: const LinearProgressIndicator(),
-                    ),
-                  ],
-                ),
-              _OpeningStep.opening => Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text("Opening project..."),
-                    const SizedBox(height: 8),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 300),
-                      child: const LinearProgressIndicator(),
-                    ),
-                  ],
-                ),
-            };
-          },
-        ),
-        //TODO: Add cancel button
+      builder: (context) => _OpenProjectDialog(
+        openingStateProvider: _openingStateProvider,
       ),
       barrierDismissible: false,
     );
@@ -355,9 +252,77 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
     ref.read(openProjectProvider.notifier).openProject(projectDirectory);
 
     // == Close opening progress dialog ==
+    //TODO: Is there a better way to do this?
     if (mounted) {
-      //TODO: Is there a better way to do this?
       Navigator.of(context).pop();
     }
+  }
+}
+
+class _OpenProjectDialog extends ConsumerWidget {
+  //TODO: Is there a way to add an explicit type annotation?
+  // Technically, the type is `NotifierProviderImpl<_OpeningStateNotifier, _OpeningStep?>`
+  // But "The member 'NotifierProviderImpl' can only be used within its package."
+  final _openingStateProvider;
+
+  const _OpenProjectDialog({required openingStateProvider})
+      : _openingStateProvider = openingStateProvider;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final _OpeningStep? pickingStep = ref.watch(_openingStateProvider);
+    final bool isError = pickingStep == null;
+    return AlertDialog(
+      title: isError
+          ? const Text(
+              "An error occurred while opening the project",
+              style: TextStyle(color: Colors.red),
+            )
+          : switch (pickingStep) {
+              _OpeningStep.nothing => const Text("Preparing to open the project..."),
+              _OpeningStep.scanning =>
+                const Text("Scanning folder for BlueMap CLI JAR..."),
+              _OpeningStep.downloading => const Text("Downloading BlueMap CLI JAR..."),
+              _OpeningStep.hashing => const Text("Verifying BlueMap CLI JAR hash..."),
+              _OpeningStep.running =>
+                const Text("Running BlueMap CLI to generate default configs..."),
+              _OpeningStep.mapping =>
+                const Text("Turning BlueMap's default map configs into templates..."),
+              _OpeningStep.opening => const Text("Opening project..."),
+            },
+      content: isError
+          ? switch (ref.read(_openingStateProvider.notifier).getError()) {
+              _OpenError.downloadFailed => Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text("Failed to download BlueMap CLI JAR.\n"
+                        "Check your internet connection and try again."),
+                    const SizedBox(height: 8),
+                    Text(
+                      ref.read(_openingStateProvider.notifier).getErrorDetails(),
+                      //sub text
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+              _OpenError.wrongHash =>
+                const Text("Could not verify BlueMap CLI JAR hash!\n"
+                    "Manually delete the BlueMap CLI JAR and try again."),
+              _ => const Text("An unknown error occurred!"),
+            }
+          : ConstrainedBox(
+              constraints: const BoxConstraints(minWidth: 500),
+              child: const LinearProgressIndicator(),
+            ),
+      actions: isError
+          ? [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text("Understood"),
+              ),
+            ]
+          : null,
+    );
   }
 }
