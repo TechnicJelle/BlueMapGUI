@@ -287,11 +287,11 @@ class _OpenProjectDialog extends ConsumerWidget {
               _OpeningStep.opening => const Text("Opening project..."),
             },
       content: isError
-          ? switch (ref.read(_openingStateProvider.notifier).getError()) {
-              _OpenError.downloadFailed => Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+          ? Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: switch (ref.read(_openingStateProvider.notifier).getError()) {
+                _OpenError.downloadFailed => [
                     const Text("Failed to download BlueMap CLI JAR.\n"
                         "Check your internet connection and try again."),
                     const SizedBox(height: 8),
@@ -301,12 +301,16 @@ class _OpenProjectDialog extends ConsumerWidget {
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ],
-                ),
-              _OpenError.wrongHash =>
-                const Text("Could not verify BlueMap CLI JAR hash!\n"
-                    "Manually delete the BlueMap CLI JAR and try again."),
-              _ => const Text("An unknown error occurred!"),
-            }
+                _OpenError.wrongHash => [
+                    const Text(
+                        "Could not verify the downloaded BlueMap CLI JAR's integrity!\n"
+                        "The hash of the downloaded file does not match the expected hash."),
+                    const SizedBox(height: 8),
+                    const Text("Please try again later or download the file manually."),
+                  ],
+                _ => [const Text("An unknown error occurred!")],
+              },
+            )
           : ConstrainedBox(
               constraints: const BoxConstraints(minWidth: 500),
               child: const LinearProgressIndicator(),
