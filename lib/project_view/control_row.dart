@@ -6,7 +6,6 @@ import "dart:ui";
 import "package:async/async.dart";
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
-import "package:meta/meta.dart";
 import "package:path/path.dart" as p;
 import "package:rxdart/rxdart.dart";
 import "package:url_launcher/url_launcher.dart";
@@ -14,7 +13,6 @@ import "package:url_launcher/url_launcher.dart";
 import "../main.dart";
 import "../main_menu/projects/projects_screen.dart";
 import "../prefs.dart";
-import "../utils.dart";
 
 final portExtractionRegex = RegExp(r"(?:port\s*|:)(\d{4,5})$");
 
@@ -91,43 +89,18 @@ class RunningProcess {
     );
   }
 
-  @useResult
-  Future<bool> _downloadBlueMap() async {
-    final NonHashedFile suspiciousBlueMapJar;
-    try {
-      suspiciousBlueMapJar = await downloadBlueMap(_projectDirectory);
-    } catch (e) {
-      _consoleOutputController.add("[ERROR] Failed to download BlueMap CLI JAR: $e");
-      return false;
-    }
-    final bluemapJar = await suspiciousBlueMapJar.hashFile(blueMapCliJarHash);
-    if (bluemapJar == null) {
-      _consoleOutputController.add("[ERROR] BlueMap CLI JAR hash mismatch!");
-      return false;
-    }
-    _consoleOutputController.add("[INFO] BlueMap CLI JAR downloaded.");
-    return true;
-  }
-
   Future<void> start() async {
     if (_stateController.value != RunningProcessState.stopped) {
       throw Exception("Process is already running!");
     }
 
     _consoleOutputController.add("Starting...");
-
     final File bluemapJar = File(p.join(_projectDirectory.path, blueMapCliJarName));
 
-    if (bluemapJar.existsSync()) {
-      if (!await checkHash(bluemapJar, blueMapCliJarHash)) {
-        _consoleOutputController.add("[ERROR] BlueMap CLI JAR hash mismatch!"
-            " Re-downloading and overwriting the corrupted file...");
-        if (!await _downloadBlueMap()) return;
-      }
-    } else {
-      _consoleOutputController.add("[WARNING] BlueMap CLI JAR not found."
-          " Re-downloading...");
-      if (!await _downloadBlueMap()) return;
+    if (!bluemapJar.existsSync()) {
+      _consoleOutputController.add("[ERROR] BlueMap CLI JAR not found."
+          " Try closing and re-opening the project to re-download it.");
+      return;
     }
 
     final process = await Process.start(

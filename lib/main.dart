@@ -15,6 +15,7 @@ const blueMapTag = "5.4";
 const blueMapCliJarHash =
     "c9c802628b77953764b9f25d3925ff3cc588d9f9c05b3f1fe48f48599a4aa69c"; //SHA256
 
+// == Derived variables ==
 const blueMapCliJarUrl = "https://github.com/BlueMap-Minecraft/BlueMap/releases/download/"
     "v$blueMapTag/BlueMap-$blueMapTag-cli.jar";
 String get blueMapCliJarName => blueMapCliJarUrl.split("/").last;
