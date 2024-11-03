@@ -15,7 +15,7 @@ import "projects_screen.dart";
 
 enum _OpeningStep {
   nothing,
-  scanning,
+  checking,
   downloading,
   hashing,
   running,
@@ -186,23 +186,18 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
       return;
     }
 
-    // == Scanning for BlueMap CLI JAR ==
-    ref.read(_openingStateProvider.notifier).set(_OpeningStep.scanning);
-    final contents = projectDirectory.listSync();
+    // == Checking for BlueMap CLI JAR ==
+    ref.read(_openingStateProvider.notifier).set(_OpeningStep.checking);
+    final File potentialBlueMapJar =
+        File(p.join(projectDirectory.path, blueMapCliJarName));
 
-    NonHashedFile? susBlueMapJar;
-    for (final file in contents) {
-      if (file is! File) continue;
-      String fileName = p.split(file.path).last;
-      if (fileName == blueMapCliJarName) {
-        susBlueMapJar = NonHashedFile(file);
-        break;
-      }
-    }
-
+    final File bluemapJar;
     // == If needed, download BlueMap CLI JAR ==
-    if (susBlueMapJar == null) {
+    if (potentialBlueMapJar.existsSync()) {
+      bluemapJar = potentialBlueMapJar;
+    } else {
       ref.read(_openingStateProvider.notifier).set(_OpeningStep.downloading);
+      final NonHashedFile susBlueMapJar;
       try {
         susBlueMapJar = await downloadBlueMap(projectDirectory);
       } catch (e) {
@@ -212,14 +207,15 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
             );
         return;
       }
-    }
 
-    // == Verify BlueMap CLI JAR hash ==
-    ref.read(_openingStateProvider.notifier).set(_OpeningStep.hashing);
-    final File? bluemapJar = await susBlueMapJar.hashFile(blueMapCliJarHash);
-    if (bluemapJar == null) {
-      ref.read(_openingStateProvider.notifier).error(error: _OpenError.wrongHash);
-      return;
+      // == Verify BlueMap CLI JAR hash ==
+      ref.read(_openingStateProvider.notifier).set(_OpeningStep.hashing);
+      final File? hashedBlueMapJar = await susBlueMapJar.hashFile(blueMapCliJarHash);
+      if (hashedBlueMapJar == null) {
+        ref.read(_openingStateProvider.notifier).error(error: _OpenError.wrongHash);
+        return;
+      }
+      bluemapJar = hashedBlueMapJar;
     }
 
     // == Run BlueMap CLI JAR to generate default configs ==
@@ -280,8 +276,8 @@ class _OpenProjectDialog extends ConsumerWidget {
             )
           : switch (pickingStep) {
               _OpeningStep.nothing => const Text("Preparing to open the project..."),
-              _OpeningStep.scanning =>
-                const Text("Scanning folder for BlueMap CLI JAR..."),
+              _OpeningStep.checking =>
+                const Text("Checking if BlueMap CLI JAR has already been downloaded..."),
               _OpeningStep.downloading => const Text("Downloading BlueMap CLI JAR..."),
               _OpeningStep.hashing => const Text("Verifying BlueMap CLI JAR hash..."),
               _OpeningStep.running =>
