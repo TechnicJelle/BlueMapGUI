@@ -87,6 +87,7 @@ class NewProjectDialogState extends ConsumerState<NewProjectDialog> {
                   if (value == null || value.isEmpty) {
                     return "Can't be empty";
                   }
+                  //TODO: Only A-Za-z0-9
                   return null;
                 },
               ),
