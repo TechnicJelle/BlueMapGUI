@@ -92,7 +92,7 @@ class _ConsoleState extends ConsumerState<Console> {
     //rebuild when new output is added
     final List<String> output = ref.watch(outputNotifierProvider);
     return Container(
-      margin: const EdgeInsets.only(bottom: 8, right: 8),
+      margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       width: double.infinity,
       decoration: const BoxDecoration(
