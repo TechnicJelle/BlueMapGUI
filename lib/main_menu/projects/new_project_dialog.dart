@@ -1,5 +1,6 @@
 import "dart:io";
 
+import "package:file_picker/file_picker.dart";
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:path/path.dart" as p;
@@ -90,27 +91,55 @@ class NewProjectDialogState extends ConsumerState<NewProjectDialog> {
                 },
               ),
               const SizedBox(height: 16),
-              TextFormField(
-                controller: _locationController,
-                onChanged: (_) => setState(() {
-                  specialError = null;
-                }),
-                decoration: const InputDecoration(
-                  labelText: "Location:",
-                ),
-                textInputAction: TextInputAction.done,
-                textCapitalization: TextCapitalization.none,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Can't be empty";
-                  }
-                  if (!Directory(value).existsSync()) {
-                    return "Directory does not exist";
-                  }
-                  return null;
-                },
-                onFieldSubmitted: (_) => validateAndCreate(),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _locationController,
+                      onChanged: (_) => setState(() {
+                        specialError = null;
+                      }),
+                      decoration: const InputDecoration(
+                        labelText: "Location:",
+                      ),
+                      textInputAction: TextInputAction.done,
+                      textCapitalization: TextCapitalization.none,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Can't be empty";
+                        }
+                        if (!Directory(value).existsSync()) {
+                          return "Directory does not exist";
+                        }
+                        return null;
+                      },
+                      onFieldSubmitted: (_) => validateAndCreate(),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 24, left: 8),
+                    child: ElevatedButton.icon(
+                      onPressed: () async {
+                        final String? picked = await FilePicker.platform.getDirectoryPath(
+                          dialogTitle: "Pick project location",
+                        );
+                        if (picked == null) return;
+
+                        setState(() {
+                          _locationController?.text = picked;
+                        });
+                      },
+                      icon: const Icon(Icons.folder_open),
+                      label: const Text("Pick"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue[300],
+                      ),
+                    ),
+                  )
+                ],
               ),
               const SizedBox(height: 8),
               Text(
