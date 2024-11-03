@@ -15,44 +15,52 @@ don't have a server, or just want a more user-friendly experience.
 
 ![screenshot](.github/readme_assets/control_panel.png)
 
-## Requirements
-Make sure you have **Java 21** or higher installed!
-
 ## [Click here to download!](../../releases/latest)
 
 ## Usage Guide
 ### 1. Setting up Java
 When you first open the program, you will need to choose which Java version you want to use.  
-It tries to automatically detect the Java version installed on your system.
-If it couldn't find it, you can pick one manually.  
+Go to the `Settings` tab in the sidebar on the left to select whether you want to:
+- automatically detect the Java version installed on your system.
+- pick a Java version manually. Useful if it couldn't automatically find it.  
+
 _I am planning on adding an Automatic Download button for Java
 [in the future](https://github.com/TechnicJelle/BlueMapGUI/issues/18)._
 
-### 2. Setting up a project
-Once you've supplied a working Java version, you will be asked to select a project directory.  
-I recommend making a new, empty folder somewhere and using that.
+### 2. Creating a project
+Once you've supplied a working Java version, go back to the `Projects` tab in the sidebar.  
+You can create a new BlueMap project with the `(+)` button in the bottom right.  
+Clicking this button opens a dialog where you can name your project.  
+You can also choose a different place on your computer to store the project in, if you like.
 
-From now on, whenever you start BlueMap GUI, it will automatically open this project again.  
-The current project can be closed by clicking the close button in the top right corner.  
-You can always open it back up again, or you can make a new project by opening a new (empty) folder.  
-_I'm planning on adding more proper project management
-[in the future](https://github.com/TechnicJelle/BlueMapGUI/milestone/3)._
+Once you're happy with these settings, click the blue `Create` button.  
+Your new BlueMap project is now in the projects list!  
+Click on it to open it.
+
+Opening will take a bit longer the first time, because it needs to download the BlueMap file.
+
+You can return to the main menu by closing the project, by clicking the close button in the top right corner.
 
 ### 3. Setting up BlueMap
 #### 3.a Accepting the download
 You can now try to start BlueMap by clicking the `▶ Start` button.
 
-But this first time, you will be instructed to accept a download in the Core config.  
-This is because BlueMap needs to download some files from Mojang to work properly,
-and according to the Mojang EULA, you have to manually confirm this download.  
+But this first time, it will not work yet.
+You will see instructions to accept a download in the Core config.
+
+> This is because BlueMap needs to download some files from Mojang to work properly,
+> and according to the Mojang EULA, you have to manually confirm this download.
+
 Luckily, you can do this very simply, by clicking the Core button in the left sidebar.  
-This will open the config editor, where you can edit the config file to accept the download.  
-Just set the `accept-download` option to `true`.
+This will open the config editor, where you can edit the config to accept the download.  
+Find the `accept-download` option, and change the `false` to `true`.
 
 #### 3.b Configuring your maps
-Now, you have to configure your maps.  
-Click the `+ New map` button in the sidebar, and in the popup,
-choose a template (overworld, nether, or end) and type in a unique ID for the map.
+Now, you have to configure your maps.
+
+Click the `+ New map` button in the sidebar.  
+A dialog will open up where you need to choose a template (overworld, nether, or end)
+and type in a unique ID for the map. This can be anything you like.
 
 Now, you need to set the path to your world folder by editing the map config.  
 For the time being, you have to manually copy the path
