@@ -7,7 +7,6 @@ import "package:path_provider/path_provider.dart";
 
 import "../../prefs.dart";
 
-//TODO: This thing needs a LOT of polish and error checking!
 class NewProjectDialog extends ConsumerStatefulWidget {
   const NewProjectDialog({super.key});
 
@@ -16,6 +15,7 @@ class NewProjectDialog extends ConsumerStatefulWidget {
 }
 
 class NewProjectDialogState extends ConsumerState<NewProjectDialog> {
+  final formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController(text: "untitled");
   TextEditingController? _locationController;
 
@@ -40,38 +40,71 @@ class NewProjectDialogState extends ConsumerState<NewProjectDialog> {
     super.dispose();
   }
 
+  void validateAndCreate() {
+    final formState = formKey.currentState;
+    if (formState != null && formState.validate()) {
+      Navigator.of(context).pop();
+      ref.read(knownProjectsProvider.notifier).addProject(Directory(_projectPath));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text("New project"),
       content: ConstrainedBox(
         constraints: const BoxConstraints(minWidth: 600),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: _nameController,
-              onChanged: (_) => setState(() {}),
-              decoration: const InputDecoration(
-                labelText: "Name:",
+        child: Form(
+          key: formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: _nameController,
+                onChanged: (_) => setState(() {}),
+                decoration: const InputDecoration(
+                  labelText: "Name:",
+                ),
+                textInputAction: TextInputAction.next,
+                textCapitalization: TextCapitalization.words,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Can't be empty";
+                  }
+                  return null;
+                },
               ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _locationController,
-              onChanged: (_) => setState(() {}),
-              decoration: const InputDecoration(
-                labelText: "Location:",
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _locationController,
+                onChanged: (_) => setState(() {}),
+                decoration: const InputDecoration(
+                  labelText: "Location:",
+                ),
+                textInputAction: TextInputAction.done,
+                textCapitalization: TextCapitalization.none,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Can't be empty";
+                  }
+                  if (!Directory(value).existsSync()) {
+                    return "Directory does not exist";
+                  }
+                  return null;
+                },
+                onFieldSubmitted: (_) => validateAndCreate(),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              "Project will be created in: $_projectPath",
-              style:
-                  Theme.of(context).textTheme.labelMedium?.copyWith(color: Colors.grey),
-            ),
-          ],
+              const SizedBox(height: 8),
+              Text(
+                "Project will be created in: $_projectPath",
+                style:
+                    Theme.of(context).textTheme.labelMedium?.copyWith(color: Colors.grey),
+              ),
+            ],
+          ),
         ),
       ),
       actions: [
@@ -80,10 +113,7 @@ class NewProjectDialogState extends ConsumerState<NewProjectDialog> {
           child: const Text("Cancel"),
         ),
         ElevatedButton(
-          onPressed: () {
-            ref.read(knownProjectsProvider.notifier).addProject(Directory(_projectPath));
-            Navigator.of(context).pop();
-          },
+          onPressed: () => validateAndCreate(),
           child: const Text("Create"),
         ),
       ],
