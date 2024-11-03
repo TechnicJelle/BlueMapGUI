@@ -34,6 +34,13 @@ class NewProjectDialogState extends ConsumerState<NewProjectDialog> {
   }
 
   @override
+  void dispose() {
+    _nameController.dispose();
+    _locationController?.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text("New project"),
