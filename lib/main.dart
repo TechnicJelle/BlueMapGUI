@@ -7,6 +7,7 @@ import "main_menu/main_menu.dart";
 import "main_menu/projects/projects_screen.dart";
 import "prefs.dart";
 import "project_view/close_project_button.dart";
+import "project_view/open_in_explorer_button.dart";
 import "project_view/project_view.dart";
 import "tech_app.dart";
 
@@ -61,7 +62,10 @@ class MyHomePage extends ConsumerWidget {
         title: Text(title),
         actions: [
           const Text("Version: $version\nBlueMap: $blueMapTag"),
-          if (projectDirectory != null) const CloseProjectButton(),
+          if (projectDirectory != null) ...[
+            const OpenInFileManagerButton(),
+            const CloseProjectButton(),
+          ]
         ],
       ),
       body: projectDirectory == null ? const MainMenu() : const ProjectView(),
