@@ -19,6 +19,8 @@ class NewProjectDialogState extends ConsumerState<NewProjectDialog> {
   final TextEditingController _nameController = TextEditingController(text: "untitled");
   TextEditingController? _locationController;
 
+  String? specialError;
+
   String get _projectPath =>
       p.join(_locationController?.text ?? "", _nameController.text);
 
@@ -43,6 +45,15 @@ class NewProjectDialogState extends ConsumerState<NewProjectDialog> {
   void validateAndCreate() {
     final formState = formKey.currentState;
     if (formState != null && formState.validate()) {
+      //Check if project is already known:
+      final knownProjects = ref.read(knownProjectsProvider);
+      if (knownProjects.any((projectDir) => p.equals(projectDir.path, _projectPath))) {
+        setState(() {
+          specialError = "Project is already in the list!";
+        });
+        return;
+      }
+
       Navigator.of(context).pop();
       ref.read(knownProjectsProvider.notifier).addProject(Directory(_projectPath));
     }
@@ -62,7 +73,9 @@ class NewProjectDialogState extends ConsumerState<NewProjectDialog> {
             children: [
               TextFormField(
                 controller: _nameController,
-                onChanged: (_) => setState(() {}),
+                onChanged: (_) => setState(() {
+                  specialError = null;
+                }),
                 decoration: const InputDecoration(
                   labelText: "Name:",
                 ),
@@ -79,7 +92,9 @@ class NewProjectDialogState extends ConsumerState<NewProjectDialog> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _locationController,
-                onChanged: (_) => setState(() {}),
+                onChanged: (_) => setState(() {
+                  specialError = null;
+                }),
                 decoration: const InputDecoration(
                   labelText: "Location:",
                 ),
@@ -103,6 +118,20 @@ class NewProjectDialogState extends ConsumerState<NewProjectDialog> {
                 style:
                     Theme.of(context).textTheme.labelMedium?.copyWith(color: Colors.grey),
               ),
+              if (specialError != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      specialError!,
+                      style: TextStyle(
+                        color: Colors.red[400],
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),
