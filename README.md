@@ -60,35 +60,66 @@ Now, you have to configure your maps.
 
 Click the `+ New map` button in the sidebar.  
 A dialog will open up where you need to choose a template (overworld, nether, or end)
-and type in a unique ID for the map. This can be anything you like.
+and type in a unique ID for the map. This can be anything you like.  
+Once you're happy with these settings, click the blue `Create` button.
 
-Now, you need to set the path to your world folder by editing the map config.  
-For the time being, you have to manually copy the path
-to your world folder into the map config.  
+You will now see the ID you typed in the sidebar, under the **Map configs** section.
+
+The config editor should be opened on your new map automatically,
+but if it isn't you can click the newly created map in the sidebar to open it.
+
+You need to edit this file to tell BlueMap where on your computer your world is.
+
+For the time being, you have to manually provide the path to your world folder.  
 _I'll make a simpler workflow for this [later](https://github.com/TechnicJelle/BlueMapGUI/milestone/2)._
 
-Example paths:
+So find your world folder on your computer and copy the path to it.
+
+Then in the config editor, find the `world` option, and paste the path you copied into it.
+
+**Example paths:**
 ##### Windows
 ```hocon
 world: "C:/Users/TechnicJelle/AppData/Roaming/.minecraft/saves/MyCoolWorld/"
 ```
 > [!NOTE]  
 > Make sure to use forward slashes (` / `) on Windows as well!  
-> It likely copies the path with backslashes (` \ `), so you probably have to change them manually.
+> The path you copied likely has backslashes (` \ `), so you have to change them manually.
 
 ##### Linux
 ```hocon
 world: "/home/technicjelle/.minecraft/saves/MyCoolWorld/"
 ```
 
-#### 3.c (OPTIONAL) Setting up mods
-[BlueMap supports (most) modded blocks.](https://bluemap.bluecolored.de/wiki/customization/Mods.html)  
-However, BlueMapGUI does not auto-detect mods, so for the time being, you have to copy all of them manually to the `config/packs` folder in your project directory.  
+#### 3.c (OPTIONAL) Setting up resource-packs & data-packs
+To make BlueMap use your preferred resource-packs and data-packs,
+click the `Open in file manager` button in the top right.
+
+In the file manager window that now opened, go into the `config` folder, and then `packs`.
+Copy&paste all resource-packs/data-packs you want to use here.
+You do not need to unpack them.
+
+You can read more about how to set these up [on the BlueMap wiki](https://bluemap.bluecolored.de/wiki/customization/ResourcePacks.html).
+
+_Managing resource-packs and data-packs will be made nicer [in the future](https://github.com/TechnicJelle/BlueMapGUI/issues/13)._
+
+#### 3.d (OPTIONAL) Setting up mods
+To make modded blocks show up correctly, BlueMap needs to know which mods you're using.
+
+Click the `Open in file manager` button in the top right.
+
+In the file manager window that now opened, go into the `config` folder, and then `packs`.
+Copy&paste all the `.jar` files of all the mods you're using into here.
+
+BlueMap does not support all blocks from all mods, but most things will likely work.
+You can read more about BlueMap's mod support [on the BlueMap wiki](https://bluemap.bluecolored.de/wiki/customization/Mods.html).
+
 _Adding mods will be made nicer [in the future](https://github.com/TechnicJelle/BlueMapGUI/issues/12)._
 
-#### 3.d Starting BlueMap
+### 4. Starting BlueMap
 Once you've set up all the maps you want to render,
-you can go back to the Control Panel, and click the `▶ Start` button to start BlueMap!
+you can go back to the `Control Panel` tab in the sidebar,
+and click the `▶ Start` button to finally start BlueMap!
 
 You can view the progress and status in the console output,
 and you can open the map by clicking the `⬆ Open` button.
