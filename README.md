@@ -130,6 +130,8 @@ and ask your questions in [#3rd-party-support](https://discord.com/channels/6658
 You're welcome to ping me, @TechnicJelle.
 
 ## More screenshots
-![screenshot](.github/readme_assets/main_menu.png)
+![screenshot](.github/readme_assets/projects_list.png)
+
+![screenshot](.github/readme_assets/settings_screen.png)
 
 ![screenshot](.github/readme_assets/map_config.png)
