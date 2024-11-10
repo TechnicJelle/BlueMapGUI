@@ -73,7 +73,7 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
   final _openingStateProvider = NotifierProvider<_OpeningStateNotifier, _OpeningStep?>(
       () => _OpeningStateNotifier());
 
-  late final StreamSubscription<FileSystemEvent> fileWatchSub;
+  StreamSubscription<FileSystemEvent>? fileWatchSub;
   late bool projectDirectoryExists;
 
   Directory get projectDirectory => widget.projectDirectory;
@@ -99,7 +99,7 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
 
   @override
   void dispose() {
-    fileWatchSub.cancel();
+    fileWatchSub?.cancel();
     super.dispose();
   }
 
