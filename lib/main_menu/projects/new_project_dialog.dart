@@ -56,8 +56,25 @@ class NewProjectDialogState extends ConsumerState<NewProjectDialog> {
         return;
       }
 
+      final Directory projectDirectory = Directory(_projectPath);
+      try {
+        projectDirectory.createSync(recursive: true);
+      } catch (e) {
+        if (e.toString().toLowerCase().contains("perm")) {
+          setState(() {
+            specialError = "No file permissions to create project directory there!";
+          });
+        } else {
+          setState(() {
+            specialError = "Failed to create project directory!\n"
+                "${e.toString()}";
+          });
+        }
+        return;
+      }
+
       Navigator.of(context).pop();
-      ref.read(knownProjectsProvider.notifier).addProject(Directory(_projectPath));
+      ref.read(knownProjectsProvider.notifier).addProject(projectDirectory);
     }
   }
 
