@@ -115,9 +115,6 @@ class NewProjectDialogState extends ConsumerState<NewProjectDialog> {
                         if (s == null || s.trim().isEmpty) {
                           return "Can't be empty";
                         }
-                        if (!Directory(s).existsSync()) {
-                          return "Directory does not exist";
-                        }
                         return null;
                       },
                       onFieldSubmitted: (_) => validateAndCreate(),
