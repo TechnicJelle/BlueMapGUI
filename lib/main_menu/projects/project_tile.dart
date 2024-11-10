@@ -24,6 +24,7 @@ enum _OpeningStep {
 }
 
 enum _OpenError {
+  directoryNotFound,
   downloadFailed,
   wrongHash,
 }
@@ -117,7 +118,7 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
             Text(projectDirectory.path),
             if (!projectDirectoryExists)
               Text(
-                "Error: Directory not found",
+                "Error: Directory not found.",
                 style: TextStyle(color: Colors.red[600]),
               ),
           ],
@@ -186,6 +187,8 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
 
     // == Check if project directory exists ==
     if (!projectDirectory.existsSync()) {
+      ref.read(_openingStateProvider.notifier).error(error: _OpenError.directoryNotFound);
+      setState(() => projectDirectoryExists = false); //to update the subtitle
       return;
     }
 
@@ -294,6 +297,11 @@ class _OpenProjectDialog extends ConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: switch (ref.read(_openingStateProvider.notifier).getError()) {
+                _OpenError.directoryNotFound => [
+                    const Text("The project directory could not be found!"),
+                    const SizedBox(height: 8),
+                    const Text("Try removing it from the list and recreating it."),
+                  ],
                 _OpenError.downloadFailed => [
                     const Text("Failed to download BlueMap CLI JAR.\n"
                         "Check your internet connection and try again."),
