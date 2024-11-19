@@ -18,7 +18,7 @@ const blueMapCliJarHash =
 
 // == Derived variables ==
 const blueMapCliJarUrl = "https://github.com/BlueMap-Minecraft/BlueMap/releases/download/"
-    "v$blueMapTag/BlueMap-$blueMapTag-cli.jar";
+    "v$blueMapTag/bluemap-$blueMapTag-cli.jar";
 String get blueMapCliJarName => blueMapCliJarUrl.split("/").last;
 
 const String vDev = "development";
