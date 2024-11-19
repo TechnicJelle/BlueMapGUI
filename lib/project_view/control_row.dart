@@ -66,20 +66,22 @@ class RunningProcess {
   final _stateController =
       BehaviorSubject<RunningProcessState>.seeded(RunningProcessState.stopped);
 
-  StreamSubscription? _outputStreamSub;
+  StreamSubscription? _processOutputStreamSub;
 
   RunningProcess(this._projectDirectory, this._javaPath) {
     AppLifecycleListener(
       onExitRequested: () async {
-        if (_stateController.value == RunningProcessState.running) {
+        if (_stateController.value != RunningProcessState.stopped) {
           //start looking for state to change to stopped
           final stopFuture = _stateController.stream
               .firstWhere((state) => state == RunningProcessState.stopped);
 
-          //stop the process
-          stop();
+          if (_stateController.value == RunningProcessState.running) {
+            //start stopping the process
+            stop();
+          }
 
-          //wait for the process to stop
+          //actually wait for the process to stop
           await stopFuture;
 
           //allow user to read the "Stopped." message
@@ -119,7 +121,8 @@ class RunningProcess {
       process.stderr.transform(utf8.decoder),
     ]);
 
-    _outputStreamSub = mergedStream.transform(const LineSplitter()).listen((event) {
+    _processOutputStreamSub =
+        mergedStream.transform(const LineSplitter()).listen((event) {
       int pleaseCheckIndex = event.indexOf("Please check:");
       if (pleaseCheckIndex != -1 && event.contains("core.conf")) {
         _consoleOutputController.add(
@@ -146,8 +149,9 @@ class RunningProcess {
       }
     });
 
-    process.exitCode.then((value) {
+    process.exitCode.then((int value) {
       _stateController.add(RunningProcessState.stopped);
+      _processOutputStreamSub?.cancel();
       _consoleOutputController.add("Stopped. ($value)");
     });
   }
@@ -157,8 +161,10 @@ class RunningProcess {
       throw Exception("Process is not running!");
     }
 
-    _process?.kill();
-    _outputStreamSub?.cancel();
+    bool? success = _process?.kill(ProcessSignal.sigint);
+    if (success == false) {
+      _consoleOutputController.add("Failed to stop the process.");
+    }
     _stateController.add(RunningProcessState.stopping);
   }
 }
