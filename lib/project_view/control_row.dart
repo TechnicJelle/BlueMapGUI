@@ -1,7 +1,6 @@
 import "dart:async";
 import "dart:convert";
 import "dart:io";
-import "dart:ui";
 
 import "package:async/async.dart";
 import "package:flutter/material.dart";
@@ -9,6 +8,7 @@ import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:path/path.dart" as p;
 import "package:rxdart/rxdart.dart";
 import "package:url_launcher/url_launcher.dart";
+import "package:window_manager/window_manager.dart";
 
 import "../main.dart";
 import "../main_menu/projects/projects_screen.dart";
@@ -23,11 +23,7 @@ final _processProvider = Provider<RunningProcess?>((ref) {
   final String? javaPath = ref.watch(javaPathProvider);
   if (javaPath == null) return null;
   final process = RunningProcess(projectDirectory, javaPath);
-  ref.onDispose(() {
-    if (process.state.value == RunningProcessState.running) {
-      process.stop();
-    }
-  });
+  ref.onDispose(() => process.dispose());
   return process;
 });
 
@@ -50,7 +46,7 @@ enum RunningProcessState {
   stopping,
 }
 
-class RunningProcess {
+class RunningProcess with WindowListener {
   final Directory _projectDirectory;
   final String _javaPath;
 
@@ -69,27 +65,46 @@ class RunningProcess {
   StreamSubscription? _processOutputStreamSub;
 
   RunningProcess(this._projectDirectory, this._javaPath) {
-    AppLifecycleListener(
-      onExitRequested: () async {
-        if (_stateController.value != RunningProcessState.stopped) {
-          //start looking for state to change to stopped
-          final stopFuture = _stateController.stream
-              .firstWhere((state) => state == RunningProcessState.stopped);
+    windowManager.addListener(this);
+    // Add this line to override the default close handler
+    windowManager.setPreventClose(true);
+  }
 
-          if (_stateController.value == RunningProcessState.running) {
-            //start stopping the process
-            stop();
-          }
+  /// "destructor"
+  /// Actually called by the managing Provider
+  void dispose() {
+    windowManager.removeListener(this);
 
-          //actually wait for the process to stop
-          await stopFuture;
+    //Stop the process when the project is closed
+    if (state.value != RunningProcessState.stopped) {
+      stop();
+    }
+  }
 
-          //allow user to read the "Stopped." message
-          return Future.delayed(const Duration(seconds: 1), () => AppExitResponse.exit);
+  @override
+  void onWindowClose() async {
+    bool isPreventClose = await windowManager.isPreventClose();
+    if (isPreventClose) {
+      if (_stateController.value != RunningProcessState.stopped) {
+        //start looking for state to change to stopped
+        final stopFuture = _stateController.stream
+            .firstWhere((state) => state == RunningProcessState.stopped);
+
+        if (_stateController.value == RunningProcessState.starting ||
+            _stateController.value == RunningProcessState.running) {
+          //start stopping the process
+          stop();
         }
-        return Future.value(AppExitResponse.exit);
-      },
-    );
+
+        //actually wait for the process to stop
+        await stopFuture;
+
+        //allow user to read the "Stopped." message
+        await Future.delayed(const Duration(seconds: 1));
+      }
+      await windowManager.setPreventClose(false);
+      await windowManager.close();
+    }
   }
 
   Future<void> start() async {
@@ -157,8 +172,8 @@ class RunningProcess {
   }
 
   void stop() {
-    if (_stateController.value != RunningProcessState.running) {
-      throw Exception("Process is not running!");
+    if (_stateController.value == RunningProcessState.stopped) {
+      throw Exception("Process is stopped!");
     }
 
     bool? success = _process?.kill(ProcessSignal.sigint);
