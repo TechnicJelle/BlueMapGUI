@@ -2,6 +2,7 @@ import "dart:io";
 
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:path/path.dart" as p;
 
 import "main_menu/main_menu.dart";
 import "main_menu/projects/projects_screen.dart";
@@ -52,14 +53,16 @@ class MyHomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final Directory? projectDirectory = ref.watch(openProjectProvider);
 
-    String title = "BlueMap GUI";
-    if (projectDirectory != null) {
-      title += ": ${projectDirectory.path}";
-    }
+    final String title = projectDirectory == null
+        ? "BlueMap GUI"
+        : "Project: ${p.basename(projectDirectory.path)}";
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        title: Tooltip(
+          message: projectDirectory?.path ?? "Hi :)",
+          child: Text(title),
+        ),
         actions: [
           const Text("Version: $version\nBlueMap: $blueMapTag"),
           if (projectDirectory != null) ...[
