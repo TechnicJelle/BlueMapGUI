@@ -3,6 +3,7 @@ import "dart:io";
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:path/path.dart" as p;
+import "package:window_manager/window_manager.dart";
 
 import "main_menu/main_menu.dart";
 import "main_menu/projects/projects_screen.dart";
@@ -27,6 +28,17 @@ const String version = String.fromEnvironment("version", defaultValue: vDev);
 
 Future<void> main() async {
   await initPrefs();
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await windowManager.ensureInitialized();
+
+  WindowOptions windowOptions = WindowOptions(
+    minimumSize: const Size(600, 300),
+  );
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+    await windowManager.focus();
+  });
 
   runApp(const ProviderScope(child: MyApp()));
 }
