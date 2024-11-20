@@ -45,7 +45,7 @@ class _SidebarState extends ConsumerState<Sidebar> {
       if (entity is Directory) {
         if (p.basename(entity.path) == "maps") {
           for (final FileSystemEntity map in entity.listSync()) {
-            if (map is File) {
+            if (map is File && map.path.endsWith(".conf")) {
               maps.add(map);
             }
           }
@@ -85,7 +85,7 @@ class _SidebarState extends ConsumerState<Sidebar> {
                   //could not get destination, so we nuke everything and re-add it all
                   maps.clear();
                   for (final FileSystemEntity map in entity.listSync()) {
-                    if (map is File) {
+                    if (map is File && map.path.endsWith(".conf")) {
                       maps.add(map);
                     }
                   }
