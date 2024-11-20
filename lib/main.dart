@@ -64,14 +64,36 @@ class MyHomePage extends ConsumerWidget {
           child: Text(title),
         ),
         actions: [
-          const Text("Version: $version\nBlueMap: $blueMapTag"),
           if (projectDirectory != null) ...[
             const OpenInFileManagerButton(),
             const CloseProjectButton(),
           ]
         ],
       ),
-      body: projectDirectory == null ? const MainMenu() : const ProjectView(),
+      body: Stack(
+        children: [
+          projectDirectory == null ? const MainMenu() : const ProjectView(),
+          _VersionText(),
+        ],
+      ),
+    );
+  }
+}
+
+class _VersionText extends StatelessWidget {
+  const _VersionText();
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.bottomLeft,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 4, left: 4),
+        child: Text(
+          "Version: $version\nBlueMap: $blueMapTag",
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+      ),
     );
   }
 }
