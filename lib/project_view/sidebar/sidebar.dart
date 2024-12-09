@@ -38,7 +38,7 @@ class _SidebarState extends ConsumerState<Sidebar> {
     final String projectPath = projectDirectory.path;
     final Directory configDir = Directory(p.join(projectPath, "config"));
     for (final FileSystemEntity entity in configDir.listSync()) {
-      if (entity is File && (entity.path.endsWith(".conf"))) {
+      if (entity is File && entity.path.endsWith(".conf")) {
         configs.add(entity);
       }
 
