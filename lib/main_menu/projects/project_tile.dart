@@ -27,6 +27,7 @@ enum _OpenError {
   directoryNotFound,
   downloadFailed,
   wrongHash,
+  runFail,
 }
 
 class _OpeningStateNotifier extends Notifier<_OpeningStep?> {
@@ -234,7 +235,10 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
 
     final String stdout = run.stdout;
     if (!stdout.contains("Generated default config files for you")) {
-      throw Exception("BlueMap CLI JAR failed to run!");
+      ref.read(_openingStateProvider.notifier).error(
+          error: _OpenError.runFail,
+          details: stdout.trim().isEmpty ? "<no output>" : stdout);
+      return;
     }
 
     // == Turn default maps directory into templates directory ==
@@ -318,6 +322,17 @@ class _OpenProjectDialog extends ConsumerWidget {
                         "The hash of the downloaded file does not match the expected hash."),
                     const SizedBox(height: 8),
                     const Text("Please try again later or download the file manually."),
+                  ],
+                _OpenError.runFail => [
+                    const Text(
+                        "Failed to run the CLI to generate default BlueMap configs!\n"
+                        "Please check your Java settings and try again."),
+                    const SizedBox(height: 8),
+                    Text(
+                      ref.read(_openingStateProvider.notifier).getErrorDetails(),
+                      //sub text
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
                   ],
                 _ => [const Text("An unknown error occurred!")],
               },
