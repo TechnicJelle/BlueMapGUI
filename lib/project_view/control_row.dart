@@ -131,13 +131,11 @@ class RunningProcess with WindowListener {
     _process = process;
     _stateController.add(RunningProcessState.starting);
 
-    Stream<String> mergedStream = StreamGroup.merge([
-      process.stdout.transform(utf8.decoder),
-      process.stderr.transform(utf8.decoder),
-    ]);
+    Stream<String> mergedStream = StreamGroup.merge([process.stdout, process.stderr])
+        .transform(utf8.decoder)
+        .transform(const LineSplitter());
 
-    _processOutputStreamSub =
-        mergedStream.transform(const LineSplitter()).listen((event) {
+    _processOutputStreamSub = mergedStream.listen((event) {
       int pleaseCheckIndex = event.indexOf("Please check:");
       if (pleaseCheckIndex != -1 && event.contains("core.conf")) {
         _consoleOutputController.add(
