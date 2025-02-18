@@ -8,7 +8,7 @@ on:
         required: true
 
 env:
-  FLUTTER_VERSION: '3.24.4'
+  FLUTTER_VERSION: '3.29.0'
 
 jobs:
   linux:
