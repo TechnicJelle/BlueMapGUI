@@ -14,9 +14,9 @@ import "project_view/project_view.dart";
 import "tech_app.dart";
 
 // == Hardcoded BlueMap CLI JAR download URL and hash ==
-const blueMapTag = "5.5";
+const blueMapTag = "5.7";
 const blueMapCliJarHash =
-    "766d962d60db6ebb1021f0fe81b453ade24d6d9af210781e8ec9319572ff23d1"; //SHA256
+    "f2e75960982baf86e2da68d162b01277c270528515656d6d66938b46069f008c"; //SHA256
 
 // == Derived variables ==
 const blueMapCliJarUrl = "https://github.com/BlueMap-Minecraft/BlueMap/releases/download/"
