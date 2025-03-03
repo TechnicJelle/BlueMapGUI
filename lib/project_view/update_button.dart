@@ -38,19 +38,16 @@ class UpdateButton extends ConsumerWidget {
     }
 
     return Tooltip(
-      message: "BlueMapGUI Update Available\n"
+      message:
+          "BlueMapGUI Update Available\n"
           "$version -> ${update.value}",
       child: ElevatedButton.icon(
         onPressed: () {
-          launchUrlString(
-            "https://github.com/TechnicJelle/BlueMapGUI/releases/latest",
-          );
+          launchUrlString("https://github.com/TechnicJelle/BlueMapGUI/releases/latest");
         },
         label: const Text("Update"),
         icon: const Icon(Icons.browser_updated),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.yellow[500],
-        ),
+        style: ElevatedButton.styleFrom(backgroundColor: Colors.yellow[500]),
       ),
     );
   }

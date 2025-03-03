@@ -15,7 +15,11 @@ extension StringExtension on String {
   }
 }
 
-const TextStyle pixelCode = TextStyle(fontFamily: "PixelCode", fontSize: 14, height: 1.2);
+const TextStyle pixelCode = TextStyle(
+  fontFamily: "PixelCode",
+  fontSize: 14,
+  height: 1.2,
+);
 
 /// Checks if the given file has the same SHA256 hash as the given hash.
 /// Returns true if the hashes match, false otherwise.

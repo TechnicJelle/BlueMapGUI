@@ -41,14 +41,15 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
     final List<File> mapTemplates =
         mapTemplatesDirectory.listSync().whereType<File>().toList();
 
-    options = mapTemplates
-        .map(
-          (template) => DropdownMenuEntry(
-            value: template,
-            label: p.basenameWithoutExtension(template.path).capitalize(),
-          ),
-        )
-        .toList();
+    options =
+        mapTemplates
+            .map(
+              (template) => DropdownMenuEntry(
+                value: template,
+                label: p.basenameWithoutExtension(template.path).capitalize(),
+              ),
+            )
+            .toList();
   }
 
   @override
@@ -63,9 +64,7 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
       File template = selectedTemplate!;
       String id = idController.text;
 
-      File newConfig = File(
-        p.join(projectDirectory.path, "config", "maps", "$id.conf"),
-      );
+      File newConfig = File(p.join(projectDirectory.path, "config", "maps", "$id.conf"));
 
       template.copySync(newConfig.path);
 
@@ -95,27 +94,29 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
                 }
                 return null;
               },
-              builder: (field) => DropdownMenu(
-                hintText: "Select a template",
-                errorText: field.errorText,
-                dropdownMenuEntries: options,
-                onSelected: (File? template) {
-                  setState(() {
-                    selectedTemplate = template;
-                    field.didChange(template);
-                  });
-                },
-                width: 200,
-              ),
+              builder:
+                  (field) => DropdownMenu(
+                    hintText: "Select a template",
+                    errorText: field.errorText,
+                    dropdownMenuEntries: options,
+                    onSelected: (File? template) {
+                      setState(() {
+                        selectedTemplate = template;
+                        field.didChange(template);
+                      });
+                    },
+                    width: 200,
+                  ),
             ),
             const SizedBox(height: 16),
             const Text("Map ID:"),
             TextFormField(
               controller: idController,
               decoration: InputDecoration(
-                hintText: selectedTemplate == null
-                    ? "my-cool-map"
-                    : "my-cool-${p.basenameWithoutExtension(selectedTemplate!.path)}-map",
+                hintText:
+                    selectedTemplate == null
+                        ? "my-cool-map"
+                        : "my-cool-${p.basenameWithoutExtension(selectedTemplate!.path)}-map",
               ),
               textInputAction: TextInputAction.done,
               textCapitalization: TextCapitalization.none,

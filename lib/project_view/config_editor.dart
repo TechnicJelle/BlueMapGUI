@@ -65,14 +65,14 @@ class _ConfigEditorState extends ConsumerState<ConfigEditor> {
     });
     return ScrollbarTheme(
       data: Theme.of(context).scrollbarTheme.copyWith(
-            thumbColor: WidgetStateProperty.resolveWith((states) {
-              if (states.contains(WidgetState.dragged)) return Colors.white38;
-              if (states.contains(WidgetState.hovered)) return Colors.white30;
-              return Colors.white24;
-            }),
-            trackColor: WidgetStateProperty.all(Colors.white10),
-            trackBorderColor: WidgetStateProperty.all(Colors.white12),
-          ),
+        thumbColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.dragged)) return Colors.white38;
+          if (states.contains(WidgetState.hovered)) return Colors.white30;
+          return Colors.white24;
+        }),
+        trackColor: WidgetStateProperty.all(Colors.white10),
+        trackBorderColor: WidgetStateProperty.all(Colors.white12),
+      ),
       child: CodeEditor(
         indicatorBuilder: (context, editingController, chunkController, notifier) {
           return Padding(
@@ -91,9 +91,7 @@ class _ConfigEditorState extends ConsumerState<ConfigEditor> {
           fontHeight: pixelCode.height,
           codeTheme: CodeHighlightTheme(
             theme: irBlackTheme,
-            languages: {
-              "yaml": CodeHighlightThemeMode(mode: langYaml),
-            },
+            languages: {"yaml": CodeHighlightThemeMode(mode: langYaml)},
           ),
         ),
         onChanged: (_) => hasChanged = true,
@@ -101,10 +99,7 @@ class _ConfigEditorState extends ConsumerState<ConfigEditor> {
         wordWrap: false,
         sperator: const SizedBox(width: 12),
         scrollbarBuilder: (context, child, details) {
-          return Scrollbar(
-            controller: details.controller,
-            child: child,
-          );
+          return Scrollbar(controller: details.controller, child: child);
         },
       ),
     );

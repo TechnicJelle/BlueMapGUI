@@ -11,10 +11,11 @@ class UpdateChecker {
     required String author,
     required String repoName,
     required String currentVersion,
-  })  : _currentVersion = _removePrefix(currentVersion),
-        _disabled =
-            Platform.environment.containsKey("technicjelle.updatechecker.disabled"),
-        _url = Uri.parse("https://github.com/$author/$repoName/releases/latest");
+  }) : _currentVersion = _removePrefix(currentVersion),
+       _disabled = Platform.environment.containsKey(
+         "technicjelle.updatechecker.disabled",
+       ),
+       _url = Uri.parse("https://github.com/$author/$repoName/releases/latest");
 
   Future<bool> isUpdateAvailable() async {
     return await getLatestVersion() != _currentVersion;

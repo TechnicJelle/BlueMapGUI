@@ -13,10 +13,7 @@ import "new_map_button.dart";
 
 ///Group 1: Is commented?
 ///Group 2: Actual sorting value
-final RegExp sortingRegex = RegExp(
-  r"^(#|//)*\s*sorting\s*:\s*(-?\d+)",
-  multiLine: true,
-);
+final RegExp sortingRegex = RegExp(r"^(#|//)*\s*sorting\s*:\s*(-?\d+)", multiLine: true);
 
 class Sidebar extends ConsumerStatefulWidget {
   const Sidebar({super.key});
@@ -53,51 +50,57 @@ class _SidebarState extends ConsumerState<Sidebar> {
           //watch for changes to files in the maps directory
           final sub = entity
               .watch(
-                  events: FileSystemEvent.create |
-                      FileSystemEvent.delete |
-                      FileSystemEvent.move |
-                      FileSystemEvent.modify)
+                events:
+                    FileSystemEvent.create |
+                    FileSystemEvent.delete |
+                    FileSystemEvent.move |
+                    FileSystemEvent.modify,
+              )
               .listen((FileSystemEvent event) {
-            switch (event.type) {
-              case FileSystemEvent.create:
-                addMap(File(event.path));
-                break;
-              case FileSystemEvent.delete:
-                removeMap(File(event.path));
-                break;
-              case FileSystemEvent.move:
-                final FileSystemMoveEvent moveEvent = event as FileSystemMoveEvent;
-                String? destination = moveEvent.destination;
-                if (destination != null) {
-                  removeMap(File(moveEvent.path));
-                  addMap(File(destination));
+                switch (event.type) {
+                  case FileSystemEvent.create:
+                    addMap(File(event.path));
+                    break;
+                  case FileSystemEvent.delete:
+                    removeMap(File(event.path));
+                    break;
+                  case FileSystemEvent.move:
+                    final FileSystemMoveEvent moveEvent = event as FileSystemMoveEvent;
+                    String? destination = moveEvent.destination;
+                    if (destination != null) {
+                      removeMap(File(moveEvent.path));
+                      addMap(File(destination));
 
-                  final String prevMapID = p.basenameWithoutExtension(moveEvent.path);
-                  final String nextMapID = p.basenameWithoutExtension(destination);
+                      final String prevMapID = p.basenameWithoutExtension(
+                        moveEvent.path,
+                      );
+                      final String nextMapID = p.basenameWithoutExtension(destination);
 
-                  //Also rename the map data directory:
-                  final Directory mapDataDir =
-                      Directory(p.join(projectPath, "web", "maps", prevMapID));
-                  if (mapDataDir.existsSync()) {
-                    mapDataDir.rename(p.join(projectPath, "web", "maps", nextMapID));
-                  }
-                } else {
-                  //could not get destination, so we nuke everything and re-add it all
-                  maps.clear();
-                  for (final FileSystemEntity map in entity.listSync()) {
-                    if (map is File && map.path.endsWith(".conf")) {
-                      maps.add(map);
+                      //Also rename the map data directory:
+                      final Directory mapDataDir = Directory(
+                        p.join(projectPath, "web", "maps", prevMapID),
+                      );
+                      if (mapDataDir.existsSync()) {
+                        mapDataDir.rename(p.join(projectPath, "web", "maps", nextMapID));
+                      }
+                    } else {
+                      //could not get destination, so we nuke everything and re-add it all
+                      maps.clear();
+                      for (final FileSystemEntity map in entity.listSync()) {
+                        if (map is File && map.path.endsWith(".conf")) {
+                          maps.add(map);
+                        }
+                      }
                     }
-                  }
+                    break;
+                  case FileSystemEvent.modify:
+                    final FileSystemModifyEvent modifyEvent =
+                        event as FileSystemModifyEvent;
+                    if (!modifyEvent.contentChanged) return;
+                    sortMaps();
+                    break;
                 }
-                break;
-              case FileSystemEvent.modify:
-                final FileSystemModifyEvent modifyEvent = event as FileSystemModifyEvent;
-                if (!modifyEvent.contentChanged) return;
-                sortMaps();
-                break;
-            }
-          });
+              });
           subscriptions.add(sub);
         }
       }
@@ -124,22 +127,24 @@ class _SidebarState extends ConsumerState<Sidebar> {
 
   void sortMaps() async {
     final Map<File, int> mapSortings = {};
-    await Future.wait(maps.map((File map) async {
-      final String contents = await map.readAsString();
-      final Match? match = sortingRegex.firstMatch(contents);
-      if (match != null) {
-        final String? comment = match.group(1);
-        final bool commented = comment != null && comment.isNotEmpty;
-        if (commented) {
-          mapSortings[map] = 0;
+    await Future.wait(
+      maps.map((File map) async {
+        final String contents = await map.readAsString();
+        final Match? match = sortingRegex.firstMatch(contents);
+        if (match != null) {
+          final String? comment = match.group(1);
+          final bool commented = comment != null && comment.isNotEmpty;
+          if (commented) {
+            mapSortings[map] = 0;
+          } else {
+            final int sorting = int.parse(match.group(2) ?? "0");
+            mapSortings[map] = sorting;
+          }
         } else {
-          final int sorting = int.parse(match.group(2) ?? "0");
-          mapSortings[map] = sorting;
+          mapSortings[map] = 0;
         }
-      } else {
-        mapSortings[map] = 0;
-      }
-    }));
+      }),
+    );
 
     setState(() {
       maps.sort((a, b) {

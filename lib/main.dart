@@ -19,8 +19,10 @@ const blueMapCliJarHash =
     "f2e75960982baf86e2da68d162b01277c270528515656d6d66938b46069f008c"; //SHA256
 
 // == Derived variables ==
-const blueMapCliJarUrl = "https://github.com/BlueMap-Minecraft/BlueMap/releases/download/"
+const blueMapCliJarUrl =
+    "https://github.com/BlueMap-Minecraft/BlueMap/releases/download/"
     "v$blueMapTag/bluemap-$blueMapTag-cli.jar";
+
 String get blueMapCliJarName => blueMapCliJarUrl.split("/").last;
 
 const String vDev = "development";
@@ -32,9 +34,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
 
-  WindowOptions windowOptions = WindowOptions(
-    minimumSize: const Size(600, 300),
-  );
+  WindowOptions windowOptions = WindowOptions(minimumSize: const Size(600, 300));
   windowManager.waitUntilReadyToShow(windowOptions, () async {
     await windowManager.show();
     await windowManager.focus();
@@ -65,21 +65,19 @@ class MyHomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final Directory? projectDirectory = ref.watch(openProjectProvider);
 
-    final String title = projectDirectory == null
-        ? "BlueMap GUI"
-        : "Project: ${p.basename(projectDirectory.path)}";
+    final String title =
+        projectDirectory == null
+            ? "BlueMap GUI"
+            : "Project: ${p.basename(projectDirectory.path)}";
 
     return Scaffold(
       appBar: AppBar(
-        title: Tooltip(
-          message: projectDirectory?.path ?? "Hi :)",
-          child: Text(title),
-        ),
+        title: Tooltip(message: projectDirectory?.path ?? "Hi :)", child: Text(title)),
         actions: [
           if (projectDirectory != null) ...[
             const OpenInFileManagerButton(),
             const CloseProjectButton(),
-          ]
+          ],
         ],
       ),
       body: Stack(

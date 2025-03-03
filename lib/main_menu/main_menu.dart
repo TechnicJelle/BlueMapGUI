@@ -4,10 +4,7 @@ import "package:flutter_riverpod/flutter_riverpod.dart";
 import "projects/projects_screen.dart";
 import "settings/settings_screen.dart";
 
-enum MainMenuState {
-  projects,
-  settings,
-}
+enum MainMenuState { projects, settings }
 
 class MainMenu extends ConsumerStatefulWidget {
   const MainMenu({super.key});

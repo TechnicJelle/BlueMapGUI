@@ -66,7 +66,8 @@ class NewProjectDialogState extends ConsumerState<NewProjectDialog> {
           });
         } else {
           setState(() {
-            specialError = "Failed to create project directory!\n"
+            specialError =
+                "Failed to create project directory!\n"
                 "${e.toString()}";
           });
         }
@@ -92,12 +93,11 @@ class NewProjectDialogState extends ConsumerState<NewProjectDialog> {
             children: [
               TextFormField(
                 controller: _nameController,
-                onChanged: (_) => setState(() {
-                  specialError = null;
-                }),
-                decoration: const InputDecoration(
-                  labelText: "Name:",
-                ),
+                onChanged:
+                    (_) => setState(() {
+                      specialError = null;
+                    }),
+                decoration: const InputDecoration(labelText: "Name:"),
                 textInputAction: TextInputAction.next,
                 textCapitalization: TextCapitalization.words,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -119,12 +119,11 @@ class NewProjectDialogState extends ConsumerState<NewProjectDialog> {
                   Expanded(
                     child: TextFormField(
                       controller: _locationController,
-                      onChanged: (_) => setState(() {
-                        specialError = null;
-                      }),
-                      decoration: const InputDecoration(
-                        labelText: "Location:",
-                      ),
+                      onChanged:
+                          (_) => setState(() {
+                            specialError = null;
+                          }),
+                      decoration: const InputDecoration(labelText: "Location:"),
                       textInputAction: TextInputAction.done,
                       textCapitalization: TextCapitalization.none,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -141,9 +140,8 @@ class NewProjectDialogState extends ConsumerState<NewProjectDialog> {
                     padding: const EdgeInsets.only(top: 24, left: 8),
                     child: ElevatedButton.icon(
                       onPressed: () async {
-                        final String? picked = await FilePicker.platform.getDirectoryPath(
-                          dialogTitle: "Pick project location",
-                        );
+                        final String? picked = await FilePicker.platform
+                            .getDirectoryPath(dialogTitle: "Pick project location");
                         if (picked == null) return;
 
                         setState(() {
@@ -152,18 +150,17 @@ class NewProjectDialogState extends ConsumerState<NewProjectDialog> {
                       },
                       icon: const Icon(Icons.folder_open),
                       label: const Text("Pick"),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue[300],
-                      ),
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.blue[300]),
                     ),
-                  )
+                  ),
                 ],
               ),
               const SizedBox(height: 8),
               Text(
                 "Project will be created in: $_projectPath",
-                style:
-                    Theme.of(context).textTheme.labelMedium?.copyWith(color: Colors.grey),
+                style: Theme.of(
+                  context,
+                ).textTheme.labelMedium?.copyWith(color: Colors.grey),
               ),
               if (specialError != null)
                 Padding(
@@ -172,10 +169,7 @@ class NewProjectDialogState extends ConsumerState<NewProjectDialog> {
                     alignment: Alignment.centerRight,
                     child: Text(
                       specialError!,
-                      style: TextStyle(
-                        color: Colors.red[400],
-                        fontSize: 14,
-                      ),
+                      style: TextStyle(color: Colors.red[400], fontSize: 14),
                     ),
                   ),
                 ),

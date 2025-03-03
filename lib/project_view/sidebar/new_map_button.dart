@@ -12,9 +12,7 @@ class NewMapButton extends ConsumerWidget {
     return Padding(
       padding: const EdgeInsets.all(8),
       child: ListTile(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(80),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(80)),
         tileColor: Theme.of(context).colorScheme.primary,
         title: Row(
           mainAxisSize: MainAxisSize.max,
@@ -28,10 +26,7 @@ class NewMapButton extends ConsumerWidget {
           ],
         ),
         onTap: () {
-          showDialog(
-            context: context,
-            builder: (context) => const NewMapDialog(),
-          );
+          showDialog(context: context, builder: (context) => const NewMapDialog());
         },
       ),
     );

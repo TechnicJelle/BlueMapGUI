@@ -39,12 +39,7 @@ final processStateProvider = StreamProvider<RunningProcessState>((ref) async* {
   yield* process.state;
 });
 
-enum RunningProcessState {
-  stopped,
-  starting,
-  running,
-  stopping,
-}
+enum RunningProcessState { stopped, starting, running, stopping }
 
 class RunningProcess with WindowListener {
   final Directory _projectDirectory;
@@ -53,14 +48,16 @@ class RunningProcess with WindowListener {
   Process? _process;
 
   int _port = 8100;
+
   int get port => _port;
 
   Stream<String> get consoleOutput => _consoleOutputController.stream;
   final _consoleOutputController = StreamController<String>();
 
   ValueStream<RunningProcessState> get state => _stateController.stream;
-  final _stateController =
-      BehaviorSubject<RunningProcessState>.seeded(RunningProcessState.stopped);
+  final _stateController = BehaviorSubject<RunningProcessState>.seeded(
+    RunningProcessState.stopped,
+  );
 
   StreamSubscription? _processOutputStreamSub;
 
@@ -87,8 +84,9 @@ class RunningProcess with WindowListener {
     if (isPreventClose) {
       if (_stateController.value != RunningProcessState.stopped) {
         //start looking for state to change to stopped
-        final stopFuture = _stateController.stream
-            .firstWhere((state) => state == RunningProcessState.stopped);
+        final stopFuture = _stateController.stream.firstWhere(
+          (state) => state == RunningProcessState.stopped,
+        );
 
         if (_stateController.value == RunningProcessState.starting ||
             _stateController.value == RunningProcessState.running) {
@@ -116,8 +114,10 @@ class RunningProcess with WindowListener {
     final File bluemapJar = File(p.join(_projectDirectory.path, blueMapCliJarName));
 
     if (!bluemapJar.existsSync()) {
-      _consoleOutputController.add("[ERROR] BlueMap CLI JAR not found."
-          " Try closing and re-opening the project to re-download it.");
+      _consoleOutputController.add(
+        "[ERROR] BlueMap CLI JAR not found."
+        " Try closing and re-opening the project to re-download it.",
+      );
       return;
     }
 
@@ -131,9 +131,10 @@ class RunningProcess with WindowListener {
     _process = process;
     _stateController.add(RunningProcessState.starting);
 
-    Stream<String> mergedStream = StreamGroup.merge([process.stdout, process.stderr])
-        .transform(utf8.decoder)
-        .transform(const LineSplitter());
+    Stream<String> mergedStream = StreamGroup.merge([
+      process.stdout,
+      process.stderr,
+    ]).transform(utf8.decoder).transform(const LineSplitter());
 
     _processOutputStreamSub = mergedStream.listen((event) {
       int pleaseCheckIndex = event.indexOf("Please check:");
@@ -148,11 +149,12 @@ class RunningProcess with WindowListener {
       if (event.contains("This usually happens when the configured port ") &&
           event.contains(" is already in use by some other program.")) {
         _consoleOutputController.add(
-            " There is probably already a BlueMap process running.\n"
-            " Check that you don't have any BlueMap mods installed on your Minecraft client,\n"
-            "  and check in your Task Manager for any orphaned BlueMapCLI processes and close them.\n"
-            " If you are sure there is no other BlueMap process running and this error persists,\n"
-            "  try restarting your computer.");
+          " There is probably already a BlueMap process running.\n"
+          " Check that you don't have any BlueMap mods installed on your Minecraft client,\n"
+          "  and check in your Task Manager for any orphaned BlueMapCLI processes and close them.\n"
+          " If you are sure there is no other BlueMap process running and this error persists,\n"
+          "  try restarting your computer.",
+        );
       }
 
       if (event.contains("WebServer bound to")) {
@@ -200,35 +202,32 @@ class ControlRow extends ConsumerWidget {
               RunningProcessState.running => () => ref.read(_processProvider)?.stop(),
               _ => null,
             },
-            label: Text(
-              switch (processState) {
-                RunningProcessState.stopped => "Start",
-                RunningProcessState.running => "Stop",
-                RunningProcessState.starting => "Starting...",
-                RunningProcessState.stopping => "Stopping...",
-                null => "Unknown",
-              },
-            ),
-            icon: Icon(
-              switch (processState) {
-                RunningProcessState.stopped => Icons.play_arrow,
-                RunningProcessState.running => Icons.stop,
-                null => Icons.error,
-                _ => Icons.hourglass_bottom,
-              },
-            ),
+            label: Text(switch (processState) {
+              RunningProcessState.stopped => "Start",
+              RunningProcessState.running => "Stop",
+              RunningProcessState.starting => "Starting...",
+              RunningProcessState.stopping => "Stopping...",
+              null => "Unknown",
+            }),
+            icon: Icon(switch (processState) {
+              RunningProcessState.stopped => Icons.play_arrow,
+              RunningProcessState.running => Icons.stop,
+              null => Icons.error,
+              _ => Icons.hourglass_bottom,
+            }),
           ),
         ),
         const SizedBox(width: 16),
         ElevatedButton.icon(
-          onPressed: processState == RunningProcessState.running
-              ? () async {
-                  final int port = ref.read(_processProvider)?.port ?? 8100;
-                  if (!await launchUrl(Uri.parse("http://localhost:$port"))) {
-                    throw Exception("Could not launch url!");
+          onPressed:
+              processState == RunningProcessState.running
+                  ? () async {
+                    final int port = ref.read(_processProvider)?.port ?? 8100;
+                    if (!await launchUrl(Uri.parse("http://localhost:$port"))) {
+                      throw Exception("Could not launch url!");
+                    }
                   }
-                }
-              : null,
+                  : null,
           label: const Text("Open"),
           icon: const Icon(Icons.open_in_browser),
         ),

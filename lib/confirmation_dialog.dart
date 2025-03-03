@@ -9,11 +9,12 @@ void showConfirmationDialog({
 }) {
   showDialog<bool>(
     context: context,
-    builder: (context) => _ConfirmationDialog(
-      title: title,
-      content: content,
-      confirmAction: confirmAction,
-    ),
+    builder:
+        (context) => _ConfirmationDialog(
+          title: title,
+          content: content,
+          confirmAction: confirmAction,
+        ),
   ).then((bool? confirmed) {
     if (confirmed == null || confirmed == false) return;
     onConfirmed();

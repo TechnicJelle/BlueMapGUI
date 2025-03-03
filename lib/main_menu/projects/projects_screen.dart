@@ -24,8 +24,9 @@ class OpenProjectNotifier extends Notifier<Directory?> {
   }
 }
 
-final openProjectProvider =
-    NotifierProvider<OpenProjectNotifier, Directory?>(() => OpenProjectNotifier());
+final openProjectProvider = NotifierProvider<OpenProjectNotifier, Directory?>(
+  () => OpenProjectNotifier(),
+);
 
 class ProjectsScreen extends ConsumerWidget {
   const ProjectsScreen({super.key});
@@ -33,9 +34,7 @@ class ProjectsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (ref.watch(javaPathProvider.select((path) => path == null))) {
-      return const Center(
-        child: Text("⬅ Please select your Java in the settings"),
-      );
+      return const Center(child: Text("⬅ Please select your Java in the settings"));
     }
 
     final List<Directory> projects = ref.watch(knownProjectsProvider);

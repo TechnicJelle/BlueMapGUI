@@ -4,13 +4,7 @@ import "package:flutter/material.dart";
 import "java_picker.dart";
 import "util_for_checking_java_path_version.dart";
 
-enum _CustomPickingState {
-  nothing,
-  picking,
-  checking,
-  failed,
-  success,
-}
+enum _CustomPickingState { nothing, picking, checking, failed, success }
 
 class RadioListTileCustomJavaPicker extends StatefulWidget {
   final JavaPickerMode? groupValue;
@@ -41,19 +35,19 @@ class _RadioListTileCustomJavaPickerState extends State<RadioListTileCustomJavaP
         _CustomPickingState.picking => const Text("Selecting Java executable..."),
         _CustomPickingState.checking => const Text("Checking Java version..."),
         _CustomPickingState.failed => Text(
-            customPickErrorText ?? "Unknown error",
-            style: const TextStyle(color: Colors.red),
-          ),
-        _CustomPickingState.success => Text(
-            "Detected Java version: $customJavaVersion",
-          ),
+          customPickErrorText ?? "Unknown error",
+          style: const TextStyle(color: Colors.red),
+        ),
+        _CustomPickingState.success => Text("Detected Java version: $customJavaVersion"),
       },
       value: JavaPickerMode.pick,
       groupValue: widget.groupValue,
       onChanged: (JavaPickerMode? value) async {
         if (customPickingState != _CustomPickingState.nothing &&
             customPickingState != _CustomPickingState.failed &&
-            customPickingState != _CustomPickingState.success) return;
+            customPickingState != _CustomPickingState.success) {
+          return;
+        }
         setState(() => customPickingState = _CustomPickingState.picking);
         final FilePickerResult? picked = await FilePicker.platform.pickFiles(
           dialogTitle: "Select Java executable",

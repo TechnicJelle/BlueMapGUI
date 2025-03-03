@@ -4,9 +4,7 @@ import "console.dart";
 import "control_row.dart";
 
 class ControlPanel extends StatelessWidget {
-  const ControlPanel({
-    super.key,
-  });
+  const ControlPanel({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,11 +13,7 @@ class ControlPanel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.max,
-        children: [
-          ControlRow(),
-          SizedBox(height: 16),
-          Expanded(child: Console()),
-        ],
+        children: [ControlRow(), SizedBox(height: 16), Expanded(child: Console())],
       ),
     );
   }

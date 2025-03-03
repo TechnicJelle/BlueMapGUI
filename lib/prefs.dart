@@ -30,8 +30,9 @@ class JavaPathNotifier extends Notifier<String?> {
   }
 }
 
-final javaPathProvider =
-    NotifierProvider<JavaPathNotifier, String?>(() => JavaPathNotifier());
+final javaPathProvider = NotifierProvider<JavaPathNotifier, String?>(
+  () => JavaPathNotifier(),
+);
 
 class KnownProjectsNotifier extends Notifier<List<Directory>> {
   static const String _knownProjectsKey = "known_projects";
@@ -63,4 +64,5 @@ class KnownProjectsNotifier extends Notifier<List<Directory>> {
 }
 
 final knownProjectsProvider = NotifierProvider<KnownProjectsNotifier, List<Directory>>(
-    () => KnownProjectsNotifier());
+  () => KnownProjectsNotifier(),
+);

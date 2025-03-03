@@ -13,22 +13,9 @@ import "../../prefs.dart";
 import "../../utils.dart";
 import "projects_screen.dart";
 
-enum _OpeningStep {
-  nothing,
-  checking,
-  downloading,
-  hashing,
-  running,
-  mapping,
-  opening,
-}
+enum _OpeningStep { nothing, checking, downloading, hashing, running, mapping, opening }
 
-enum _OpenError {
-  directoryNotFound,
-  downloadFailed,
-  wrongHash,
-  runFail,
-}
+enum _OpenError { directoryNotFound, downloadFailed, wrongHash, runFail }
 
 class _OpeningStateNotifier extends Notifier<_OpeningStep?> {
   _OpenError? _openError;
@@ -73,7 +60,8 @@ class ProjectTile extends ConsumerStatefulWidget {
 
 class _PathPickerButtonState extends ConsumerState<ProjectTile> {
   final _openingStateProvider = NotifierProvider<_OpeningStateNotifier, _OpeningStep?>(
-      () => _OpeningStateNotifier());
+    () => _OpeningStateNotifier(),
+  );
 
   StreamSubscription<FileSystemEvent>? fileWatchSub;
   late bool projectDirectoryExists;
@@ -128,37 +116,39 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
       hoverChild: Positioned(
         right: 16,
         top: 12,
-        child: projectDirectoryExists
-            ? PopupMenuButton(
-                itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-                  PopupMenuItem(
-                    enabled: projectDirectoryExists,
-                    child: const Row(
-                      children: [
-                        Icon(Icons.folder_open),
-                        SizedBox(width: 8),
-                        Text("Open in file manager"),
+        child:
+            projectDirectoryExists
+                ? PopupMenuButton(
+                  itemBuilder:
+                      (BuildContext context) => <PopupMenuEntry>[
+                        PopupMenuItem(
+                          enabled: projectDirectoryExists,
+                          child: const Row(
+                            children: [
+                              Icon(Icons.folder_open),
+                              SizedBox(width: 8),
+                              Text("Open in file manager"),
+                            ],
+                          ),
+                          onTap: () => launchUrl(projectDirectory.uri),
+                          // does nothing when dir doesn't exist ↑
+                        ),
+                        PopupMenuItem(
+                          child: const Row(
+                            children: [
+                              Icon(Icons.clear),
+                              SizedBox(width: 8),
+                              Text("Remove from projects"),
+                            ],
+                          ),
+                          onTap: () => removeProjectFromList(),
+                        ),
                       ],
-                    ),
-                    onTap: () => launchUrl(projectDirectory.uri),
-                    // does nothing when dir doesn't exist ↑
-                  ),
-                  PopupMenuItem(
-                    child: const Row(
-                      children: [
-                        Icon(Icons.clear),
-                        SizedBox(width: 8),
-                        Text("Remove from projects"),
-                      ],
-                    ),
-                    onTap: () => removeProjectFromList(),
-                  ),
-                ],
-              )
-            : IconButton(
-                onPressed: () => removeProjectFromList(),
-                icon: const Icon(Icons.clear),
-              ),
+                )
+                : IconButton(
+                  onPressed: () => removeProjectFromList(),
+                  icon: const Icon(Icons.clear),
+                ),
       ),
     );
   }
@@ -171,8 +161,8 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
         Text("Are you sure you want to remove $projectName from the projects list?"),
       ],
       confirmAction: "Yes",
-      onConfirmed: () =>
-          ref.read(knownProjectsProvider.notifier).removeProject(projectDirectory),
+      onConfirmed:
+          () => ref.read(knownProjectsProvider.notifier).removeProject(projectDirectory),
     );
   }
 
@@ -180,23 +170,25 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
     // == Open opening progress dialog ==
     showDialog(
       context: context,
-      builder: (context) => _OpenProjectDialog(
-        openingStateProvider: _openingStateProvider,
-      ),
+      builder:
+          (context) => _OpenProjectDialog(openingStateProvider: _openingStateProvider),
       barrierDismissible: false,
     );
 
     // == Check if project directory exists ==
     if (!projectDirectory.existsSync()) {
-      ref.read(_openingStateProvider.notifier).error(error: _OpenError.directoryNotFound);
+      ref
+          .read(_openingStateProvider.notifier)
+          .error(error: _OpenError.directoryNotFound);
       setState(() => projectDirectoryExists = false); //to update the subtitle
       return;
     }
 
     // == Checking for BlueMap CLI JAR ==
     ref.read(_openingStateProvider.notifier).set(_OpeningStep.checking);
-    final File potentialBlueMapJar =
-        File(p.join(projectDirectory.path, blueMapCliJarName));
+    final File potentialBlueMapJar = File(
+      p.join(projectDirectory.path, blueMapCliJarName),
+    );
 
     final File bluemapJar;
     // == If needed, download BlueMap CLI JAR ==
@@ -208,10 +200,9 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
       try {
         susBlueMapJar = await downloadBlueMap(projectDirectory);
       } catch (e) {
-        ref.read(_openingStateProvider.notifier).error(
-              error: _OpenError.downloadFailed,
-              details: e.toString(),
-            );
+        ref
+            .read(_openingStateProvider.notifier)
+            .error(error: _OpenError.downloadFailed, details: e.toString());
         return;
       }
 
@@ -227,28 +218,32 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
 
     // == Run BlueMap CLI JAR to generate default configs ==
     ref.read(_openingStateProvider.notifier).set(_OpeningStep.running);
-    ProcessResult run = await Process.run(
-      ref.read(javaPathProvider)!,
-      ["-jar", bluemapJar.path],
-      workingDirectory: projectDirectory.path,
-    );
+    ProcessResult run = await Process.run(ref.read(javaPathProvider)!, [
+      "-jar",
+      bluemapJar.path,
+    ], workingDirectory: projectDirectory.path);
 
     final String stdout = run.stdout;
     if (!stdout.contains("Generated default config files for you")) {
-      ref.read(_openingStateProvider.notifier).error(
-          error: _OpenError.runFail,
-          details: stdout.trim().isEmpty ? "<no output>" : stdout);
+      ref
+          .read(_openingStateProvider.notifier)
+          .error(
+            error: _OpenError.runFail,
+            details: stdout.trim().isEmpty ? "<no output>" : stdout,
+          );
       return;
     }
 
     // == Turn default maps directory into templates directory ==
     ref.read(_openingStateProvider.notifier).set(_OpeningStep.mapping);
-    final templatesDir =
-        Directory(p.join(projectDirectory.path, "config", "map-templates"));
+    final templatesDir = Directory(
+      p.join(projectDirectory.path, "config", "map-templates"),
+    );
     //Make sure to support opening existing projects; only do this on fresh projects
     if (!templatesDir.existsSync()) {
-      final Directory mapsDir =
-          Directory(p.join(projectDirectory.path, "config", "maps"));
+      final Directory mapsDir = Directory(
+        p.join(projectDirectory.path, "config", "maps"),
+      );
       mapsDir.renameSync(templatesDir.path); //rename maps dir to templates dir
       mapsDir.createSync(); //recreate maps dir (now empty)
     }
@@ -272,43 +267,50 @@ class _OpenProjectDialog extends ConsumerWidget {
   final _openingStateProvider;
 
   const _OpenProjectDialog({required openingStateProvider})
-      : _openingStateProvider = openingStateProvider;
+    : _openingStateProvider = openingStateProvider;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final _OpeningStep? pickingStep = ref.watch(_openingStateProvider);
     final bool isError = pickingStep == null;
     return AlertDialog(
-      title: isError
-          ? const Text(
-              "An error occurred while opening the project",
-              style: TextStyle(color: Colors.red),
-            )
-          : switch (pickingStep) {
-              _OpeningStep.nothing => const Text("Preparing to open the project..."),
-              _OpeningStep.checking =>
-                const Text("Checking if BlueMap CLI JAR has already been downloaded..."),
-              _OpeningStep.downloading => const Text("Downloading BlueMap CLI JAR..."),
-              _OpeningStep.hashing => const Text("Verifying BlueMap CLI JAR hash..."),
-              _OpeningStep.running =>
-                const Text("Running BlueMap CLI to generate default configs..."),
-              _OpeningStep.mapping =>
-                const Text("Turning BlueMap's default map configs into templates..."),
-              _OpeningStep.opening => const Text("Opening project..."),
-            },
-      content: isError
-          ? Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: switch (ref.read(_openingStateProvider.notifier).getError()) {
-                _OpenError.directoryNotFound => [
+      title:
+          isError
+              ? const Text(
+                "An error occurred while opening the project",
+                style: TextStyle(color: Colors.red),
+              )
+              : switch (pickingStep) {
+                _OpeningStep.nothing => const Text("Preparing to open the project..."),
+                _OpeningStep.checking => const Text(
+                  "Checking if BlueMap CLI JAR has already been downloaded...",
+                ),
+                _OpeningStep.downloading => const Text("Downloading BlueMap CLI JAR..."),
+                _OpeningStep.hashing => const Text("Verifying BlueMap CLI JAR hash..."),
+                _OpeningStep.running => const Text(
+                  "Running BlueMap CLI to generate default configs...",
+                ),
+                _OpeningStep.mapping => const Text(
+                  "Turning BlueMap's default map configs into templates...",
+                ),
+                _OpeningStep.opening => const Text("Opening project..."),
+              },
+      content:
+          isError
+              ? Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: switch (ref.read(_openingStateProvider.notifier).getError()) {
+                  _OpenError.directoryNotFound => [
                     const Text("The project directory could not be found!"),
                     const SizedBox(height: 8),
                     const Text("Try removing it from the list and recreating it."),
                   ],
-                _OpenError.downloadFailed => [
-                    const Text("Failed to download BlueMap CLI JAR.\n"
-                        "Check your internet connection and try again."),
+                  _OpenError.downloadFailed => [
+                    const Text(
+                      "Failed to download BlueMap CLI JAR.\n"
+                      "Check your internet connection and try again.",
+                    ),
                     const SizedBox(height: 8),
                     Text(
                       ref.read(_openingStateProvider.notifier).getErrorDetails(),
@@ -316,17 +318,19 @@ class _OpenProjectDialog extends ConsumerWidget {
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ],
-                _OpenError.wrongHash => [
+                  _OpenError.wrongHash => [
                     const Text(
-                        "Could not verify the downloaded BlueMap CLI JAR's integrity!\n"
-                        "The hash of the downloaded file does not match the expected hash."),
+                      "Could not verify the downloaded BlueMap CLI JAR's integrity!\n"
+                      "The hash of the downloaded file does not match the expected hash.",
+                    ),
                     const SizedBox(height: 8),
                     const Text("Please try again later or download the file manually."),
                   ],
-                _OpenError.runFail => [
+                  _OpenError.runFail => [
                     const Text(
-                        "Failed to run the CLI to generate default BlueMap configs!\n"
-                        "Please check your Java settings and try again."),
+                      "Failed to run the CLI to generate default BlueMap configs!\n"
+                      "Please check your Java settings and try again.",
+                    ),
                     const SizedBox(height: 8),
                     Text(
                       ref.read(_openingStateProvider.notifier).getErrorDetails(),
@@ -334,21 +338,22 @@ class _OpenProjectDialog extends ConsumerWidget {
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ],
-                _ => [const Text("An unknown error occurred!")],
-              },
-            )
-          : ConstrainedBox(
-              constraints: const BoxConstraints(minWidth: 500),
-              child: const LinearProgressIndicator(),
-            ),
-      actions: isError
-          ? [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text("Understood"),
+                  _ => [const Text("An unknown error occurred!")],
+                },
+              )
+              : ConstrainedBox(
+                constraints: const BoxConstraints(minWidth: 500),
+                child: const LinearProgressIndicator(),
               ),
-            ]
-          : null,
+      actions:
+          isError
+              ? [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text("Understood"),
+                ),
+              ]
+              : null,
     );
   }
 }

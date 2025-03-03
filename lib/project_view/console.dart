@@ -29,8 +29,9 @@ class OutputNotifier extends Notifier<List<String>> {
   }
 }
 
-final outputNotifierProvider =
-    NotifierProvider<OutputNotifier, List<String>>(() => OutputNotifier());
+final outputNotifierProvider = NotifierProvider<OutputNotifier, List<String>>(
+  () => OutputNotifier(),
+);
 
 class Console extends ConsumerStatefulWidget {
   const Console({super.key});
@@ -53,7 +54,8 @@ class _ConsoleState extends ConsumerState<Console> {
       _scrollController.hasClients &&
       _scrollController.position.hasContentDimensions &&
       _scrollController.position.pixels >=
-          _scrollController.position.maxScrollExtent - 20; //a bit more than the text size
+          _scrollController.position.maxScrollExtent -
+              20; //a bit more than the text size
 
   @override
   void initState() {
@@ -62,7 +64,9 @@ class _ConsoleState extends ConsumerState<Console> {
     //scroll down when console is opened
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollToBottom();
-      setState(() {/*hack to make the FAB disappear when no scrolling yet*/});
+      setState(() {
+        /*hack to make the FAB disappear when no scrolling yet*/
+      });
 
       //do it again, to really make sure (i hate that this is necessary)
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -136,13 +140,13 @@ class _ConsoleState extends ConsumerState<Console> {
                     onPressed: () {
                       _scrollController
                           .animateTo(
-                        _scrollController.position.maxScrollExtent,
-                        duration: Durations.medium4,
-                        curve: Curves.easeInOut,
-                      )
+                            _scrollController.position.maxScrollExtent,
+                            duration: Durations.medium4,
+                            curve: Curves.easeInOut,
+                          )
                           .then((_) {
-                        _scrollToBottom();
-                      });
+                            _scrollToBottom();
+                          });
                     },
                   ),
                 );

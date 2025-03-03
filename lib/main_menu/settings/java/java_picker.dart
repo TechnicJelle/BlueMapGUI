@@ -5,22 +5,21 @@ import "../../../prefs.dart";
 import "radio_list_tile_custom_java_picker.dart";
 import "radio_list_tile_system_java_picker.dart";
 
-enum JavaPickerMode {
-  system,
-  pick,
-}
+enum JavaPickerMode { system, pick }
 
 class JavaPicker extends ConsumerWidget {
   const JavaPicker({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final JavaPickerMode? javaPickerMode = ref.watch(javaPathProvider.select((javaPath) {
-      if (javaPath != null) {
-        return javaPath == "java" ? JavaPickerMode.system : JavaPickerMode.pick;
-      }
-      return null;
-    }));
+    final JavaPickerMode? javaPickerMode = ref.watch(
+      javaPathProvider.select((javaPath) {
+        if (javaPath != null) {
+          return javaPath == "java" ? JavaPickerMode.system : JavaPickerMode.pick;
+        }
+        return null;
+      }),
+    );
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 500),
       child: Column(
@@ -39,7 +38,7 @@ class JavaPicker extends ConsumerWidget {
             onChanged: (javaPath) {
               ref.read(javaPathProvider.notifier).setJavaPath(javaPath);
             },
-          )
+          ),
         ],
       ),
     );

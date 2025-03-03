@@ -29,9 +29,9 @@ class RadioListTileSystemJavaPicker extends ConsumerWidget {
       subtitle: switch (javaVersion) {
         AsyncData(:final value) => Text("Detected System Java version: $value"),
         AsyncError(:final error) => Text(
-            error.toString(),
-            style: const TextStyle(color: Colors.red),
-          ),
+          error.toString(),
+          style: const TextStyle(color: Colors.red),
+        ),
         _ => const Text("Checking System Java version..."),
       },
       value: JavaPickerMode.system,

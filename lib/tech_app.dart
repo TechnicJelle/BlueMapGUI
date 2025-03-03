@@ -17,46 +17,40 @@ class TechApp extends MaterialApp {
     required super.home,
     super.key,
   }) : super(
-          theme: ThemeData(
-            useMaterial3: false,
-            colorScheme: ColorScheme.light(
-              primary: primary,
-              secondary: secondary,
-            ),
-          ),
-          darkTheme: ThemeData(
-            useMaterial3: false,
-            colorScheme: ColorScheme.dark(
-              primary: primary,
-              secondary: secondary,
-            ),
-          ),
-          builder: (BuildContext context, Widget? child) {
-            return Theme(
-              data: Theme.of(context).copyWith(
-                appBarTheme: AppBarTheme(color: primary),
-                textTheme: Theme.of(context).textTheme.apply(
-                      fontSizeFactor: fontSizeFactor ?? 1.0,
-                      fontFamily: fontFamily,
-                    ),
-                scrollbarTheme: Theme.of(context).scrollbarTheme.copyWith(
-                      radius: const Radius.circular(2),
-                      thumbVisibility: const WidgetStatePropertyAll(true),
-                      trackVisibility: const WidgetStatePropertyAll(true),
-                    ),
-                floatingActionButtonTheme: FloatingActionButtonThemeData(
-                  backgroundColor: primary,
-                ),
-                menuTheme: MenuThemeData(
-                  style: MenuStyle(
-                    backgroundColor: WidgetStateProperty.all(
-                      Theme.of(context).scaffoldBackgroundColor,
-                    ),
-                  ),
-                ),
-              ),
-              child: child!,
-            );
-          },
-        );
+         theme: ThemeData(
+           useMaterial3: false,
+           colorScheme: ColorScheme.light(primary: primary, secondary: secondary),
+         ),
+         darkTheme: ThemeData(
+           useMaterial3: false,
+           colorScheme: ColorScheme.dark(primary: primary, secondary: secondary),
+         ),
+         builder: (BuildContext context, Widget? child) {
+           return Theme(
+             data: Theme.of(context).copyWith(
+               appBarTheme: AppBarTheme(color: primary),
+               textTheme: Theme.of(context).textTheme.apply(
+                 fontSizeFactor: fontSizeFactor ?? 1.0,
+                 fontFamily: fontFamily,
+               ),
+               scrollbarTheme: Theme.of(context).scrollbarTheme.copyWith(
+                 radius: const Radius.circular(2),
+                 thumbVisibility: const WidgetStatePropertyAll(true),
+                 trackVisibility: const WidgetStatePropertyAll(true),
+               ),
+               floatingActionButtonTheme: FloatingActionButtonThemeData(
+                 backgroundColor: primary,
+               ),
+               menuTheme: MenuThemeData(
+                 style: MenuStyle(
+                   backgroundColor: WidgetStateProperty.all(
+                     Theme.of(context).scaffoldBackgroundColor,
+                   ),
+                 ),
+               ),
+             ),
+             child: child!,
+           );
+         },
+       );
 }
