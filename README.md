@@ -75,8 +75,6 @@ _I'll make a simpler workflow for this [later](https://github.com/TechnicJelle/B
 
 So find your world folder on your computer and copy the path to it.
 
-Then in the config editor, find the `world` option, and paste the path you copied into it.
-
 **Example paths:**
 ##### Windows
 ```hocon
@@ -90,6 +88,8 @@ world: "C:/Users/TechnicJelle/AppData/Roaming/.minecraft/saves/MyCoolWorld/"
 ```hocon
 world: "/home/technicjelle/.minecraft/saves/MyCoolWorld/"
 ```
+
+Then in the config editor, find the `world` option, and paste the path you copied into it.
 
 #### 3.c (OPTIONAL) Setting up resource-packs & data-packs
 To make BlueMap use your preferred resource-packs and data-packs,
