@@ -70,6 +70,7 @@ class RunningProcess with WindowListener {
   /// "destructor"
   /// Actually called by the managing Provider
   void dispose() {
+    windowManager.setPreventClose(false);
     windowManager.removeListener(this);
 
     //Stop the process when the project is closed
