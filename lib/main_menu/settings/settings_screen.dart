@@ -9,11 +9,11 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      children: const [
-        SettingHeading(
-          "# Java Executable\n"
-          "You can download Java [here](https://adoptium.net/temurin/releases/)",
-        ),
+      children: [
+        SettingHeading(context, "Java Executable", [
+          SettingsBodyText("You can download Java "),
+          SettingsBodyLink("here", "https://adoptium.net/temurin/releases/"),
+        ]),
         JavaPicker(),
       ],
     );
