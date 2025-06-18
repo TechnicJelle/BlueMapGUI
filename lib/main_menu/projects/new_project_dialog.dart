@@ -93,10 +93,9 @@ class NewProjectDialogState extends ConsumerState<NewProjectDialog> {
             children: [
               TextFormField(
                 controller: _nameController,
-                onChanged:
-                    (_) => setState(() {
-                      specialError = null;
-                    }),
+                onChanged: (_) => setState(() {
+                  specialError = null;
+                }),
                 decoration: const InputDecoration(labelText: "Name:"),
                 textInputAction: TextInputAction.next,
                 textCapitalization: TextCapitalization.words,
@@ -119,10 +118,9 @@ class NewProjectDialogState extends ConsumerState<NewProjectDialog> {
                   Expanded(
                     child: TextFormField(
                       controller: _locationController,
-                      onChanged:
-                          (_) => setState(() {
-                            specialError = null;
-                          }),
+                      onChanged: (_) => setState(() {
+                        specialError = null;
+                      }),
                       decoration: const InputDecoration(labelText: "Location:"),
                       textInputAction: TextInputAction.done,
                       textCapitalization: TextCapitalization.none,

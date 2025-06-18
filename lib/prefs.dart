@@ -40,8 +40,9 @@ class KnownProjectsNotifier extends Notifier<List<Directory>> {
   @override
   List<Directory> build() {
     final List<String> knownProjects = _prefs.getStringList(_knownProjectsKey) ?? [];
-    final List<Directory> knownProjectsDirectories =
-        knownProjects.map((String path) => Directory(path)).toList();
+    final List<Directory> knownProjectsDirectories = knownProjects
+        .map((String path) => Directory(path))
+        .toList();
     return knownProjectsDirectories;
   }
 

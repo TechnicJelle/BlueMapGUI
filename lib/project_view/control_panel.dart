@@ -13,7 +13,11 @@ class ControlPanel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.max,
-        children: [ControlRow(), SizedBox(height: 16), Expanded(child: Console())],
+        children: [
+          ControlRow(),
+          SizedBox(height: 16),
+          Expanded(child: Console()),
+        ],
       ),
     );
   }

@@ -116,39 +116,37 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
       hoverChild: Positioned(
         right: 16,
         top: 12,
-        child:
-            projectDirectoryExists
-                ? PopupMenuButton(
-                  itemBuilder:
-                      (BuildContext context) => <PopupMenuEntry>[
-                        PopupMenuItem(
-                          enabled: projectDirectoryExists,
-                          child: const Row(
-                            children: [
-                              Icon(Icons.folder_open),
-                              SizedBox(width: 8),
-                              Text("Open in file manager"),
-                            ],
-                          ),
-                          onTap: () => launchUrl(projectDirectory.uri),
-                          // does nothing when dir doesn't exist ↑
-                        ),
-                        PopupMenuItem(
-                          child: const Row(
-                            children: [
-                              Icon(Icons.clear),
-                              SizedBox(width: 8),
-                              Text("Remove from projects"),
-                            ],
-                          ),
-                          onTap: () => removeProjectFromList(),
-                        ),
+        child: projectDirectoryExists
+            ? PopupMenuButton(
+                itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+                  PopupMenuItem(
+                    enabled: projectDirectoryExists,
+                    child: const Row(
+                      children: [
+                        Icon(Icons.folder_open),
+                        SizedBox(width: 8),
+                        Text("Open in file manager"),
                       ],
-                )
-                : IconButton(
-                  onPressed: () => removeProjectFromList(),
-                  icon: const Icon(Icons.clear),
-                ),
+                    ),
+                    onTap: () => launchUrl(projectDirectory.uri),
+                    // does nothing when dir doesn't exist ↑
+                  ),
+                  PopupMenuItem(
+                    child: const Row(
+                      children: [
+                        Icon(Icons.clear),
+                        SizedBox(width: 8),
+                        Text("Remove from projects"),
+                      ],
+                    ),
+                    onTap: () => removeProjectFromList(),
+                  ),
+                ],
+              )
+            : IconButton(
+                onPressed: () => removeProjectFromList(),
+                icon: const Icon(Icons.clear),
+              ),
       ),
     );
   }
@@ -161,8 +159,8 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
         Text("Are you sure you want to remove $projectName from the projects list?"),
       ],
       confirmAction: "Yes",
-      onConfirmed:
-          () => ref.read(knownProjectsProvider.notifier).removeProject(projectDirectory),
+      onConfirmed: () =>
+          ref.read(knownProjectsProvider.notifier).removeProject(projectDirectory),
     );
   }
 
@@ -170,8 +168,8 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
     // == Open opening progress dialog ==
     showDialog(
       context: context,
-      builder:
-          (context) => _OpenProjectDialog(openingStateProvider: _openingStateProvider),
+      builder: (context) =>
+          _OpenProjectDialog(openingStateProvider: _openingStateProvider),
       barrierDismissible: false,
     );
 
@@ -274,86 +272,83 @@ class _OpenProjectDialog extends ConsumerWidget {
     final _OpeningStep? pickingStep = ref.watch(_openingStateProvider);
     final bool isError = pickingStep == null;
     return AlertDialog(
-      title:
-          isError
-              ? const Text(
-                "An error occurred while opening the project",
-                style: TextStyle(color: Colors.red),
-              )
-              : switch (pickingStep) {
-                _OpeningStep.nothing => const Text("Preparing to open the project..."),
-                _OpeningStep.checking => const Text(
-                  "Checking if BlueMap CLI JAR has already been downloaded...",
-                ),
-                _OpeningStep.downloading => const Text("Downloading BlueMap CLI JAR..."),
-                _OpeningStep.hashing => const Text("Verifying BlueMap CLI JAR hash..."),
-                _OpeningStep.running => const Text(
-                  "Running BlueMap CLI to generate default configs...",
-                ),
-                _OpeningStep.mapping => const Text(
-                  "Turning BlueMap's default map configs into templates...",
-                ),
-                _OpeningStep.opening => const Text("Opening project..."),
-              },
-      content:
-          isError
-              ? Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: switch (ref.read(_openingStateProvider.notifier).getError()) {
-                  _OpenError.directoryNotFound => [
-                    const Text("The project directory could not be found!"),
-                    const SizedBox(height: 8),
-                    const Text("Try removing it from the list and recreating it."),
-                  ],
-                  _OpenError.downloadFailed => [
-                    const Text(
-                      "Failed to download BlueMap CLI JAR.\n"
-                      "Check your internet connection and try again.",
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      ref.read(_openingStateProvider.notifier).getErrorDetails(),
-                      //sub text
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                  ],
-                  _OpenError.wrongHash => [
-                    const Text(
-                      "Could not verify the downloaded BlueMap CLI JAR's integrity!\n"
-                      "The hash of the downloaded file does not match the expected hash.",
-                    ),
-                    const SizedBox(height: 8),
-                    const Text("Please try again later or download the file manually."),
-                  ],
-                  _OpenError.runFail => [
-                    const Text(
-                      "Failed to run the CLI to generate default BlueMap configs!\n"
-                      "Please check your Java settings and try again.",
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      ref.read(_openingStateProvider.notifier).getErrorDetails(),
-                      //sub text
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                  ],
-                  _ => [const Text("An unknown error occurred!")],
-                },
-              )
-              : ConstrainedBox(
-                constraints: const BoxConstraints(minWidth: 500),
-                child: const LinearProgressIndicator(),
+      title: isError
+          ? const Text(
+              "An error occurred while opening the project",
+              style: TextStyle(color: Colors.red),
+            )
+          : switch (pickingStep) {
+              _OpeningStep.nothing => const Text("Preparing to open the project..."),
+              _OpeningStep.checking => const Text(
+                "Checking if BlueMap CLI JAR has already been downloaded...",
               ),
-      actions:
-          isError
-              ? [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text("Understood"),
-                ),
-              ]
-              : null,
+              _OpeningStep.downloading => const Text("Downloading BlueMap CLI JAR..."),
+              _OpeningStep.hashing => const Text("Verifying BlueMap CLI JAR hash..."),
+              _OpeningStep.running => const Text(
+                "Running BlueMap CLI to generate default configs...",
+              ),
+              _OpeningStep.mapping => const Text(
+                "Turning BlueMap's default map configs into templates...",
+              ),
+              _OpeningStep.opening => const Text("Opening project..."),
+            },
+      content: isError
+          ? Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: switch (ref.read(_openingStateProvider.notifier).getError()) {
+                _OpenError.directoryNotFound => [
+                  const Text("The project directory could not be found!"),
+                  const SizedBox(height: 8),
+                  const Text("Try removing it from the list and recreating it."),
+                ],
+                _OpenError.downloadFailed => [
+                  const Text(
+                    "Failed to download BlueMap CLI JAR.\n"
+                    "Check your internet connection and try again.",
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    ref.read(_openingStateProvider.notifier).getErrorDetails(),
+                    //sub text
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+                _OpenError.wrongHash => [
+                  const Text(
+                    "Could not verify the downloaded BlueMap CLI JAR's integrity!\n"
+                    "The hash of the downloaded file does not match the expected hash.",
+                  ),
+                  const SizedBox(height: 8),
+                  const Text("Please try again later or download the file manually."),
+                ],
+                _OpenError.runFail => [
+                  const Text(
+                    "Failed to run the CLI to generate default BlueMap configs!\n"
+                    "Please check your Java settings and try again.",
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    ref.read(_openingStateProvider.notifier).getErrorDetails(),
+                    //sub text
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+                _ => [const Text("An unknown error occurred!")],
+              },
+            )
+          : ConstrainedBox(
+              constraints: const BoxConstraints(minWidth: 500),
+              child: const LinearProgressIndicator(),
+            ),
+      actions: isError
+          ? [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text("Understood"),
+              ),
+            ]
+          : null,
     );
   }
 }

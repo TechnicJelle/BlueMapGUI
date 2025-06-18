@@ -219,15 +219,14 @@ class ControlRow extends ConsumerWidget {
         ),
         const SizedBox(width: 16),
         ElevatedButton.icon(
-          onPressed:
-              processState == RunningProcessState.running
-                  ? () async {
-                    final int port = ref.read(_processProvider)?.port ?? 8100;
-                    if (!await launchUrl(Uri.parse("http://localhost:$port"))) {
-                      throw Exception("Could not launch url!");
-                    }
+          onPressed: processState == RunningProcessState.running
+              ? () async {
+                  final int port = ref.read(_processProvider)?.port ?? 8100;
+                  if (!await launchUrl(Uri.parse("http://localhost:$port"))) {
+                    throw Exception("Could not launch url!");
                   }
-                  : null,
+                }
+              : null,
           label: const Text("Open"),
           icon: const Icon(Icons.open_in_browser),
         ),

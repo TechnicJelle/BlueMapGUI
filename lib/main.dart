@@ -65,10 +65,9 @@ class MyHomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final Directory? projectDirectory = ref.watch(openProjectProvider);
 
-    final String title =
-        projectDirectory == null
-            ? "BlueMap GUI"
-            : "Project: ${p.basename(projectDirectory.path)}";
+    final String title = projectDirectory == null
+        ? "BlueMap GUI"
+        : "Project: ${p.basename(projectDirectory.path)}";
 
     return Scaffold(
       appBar: AppBar(
