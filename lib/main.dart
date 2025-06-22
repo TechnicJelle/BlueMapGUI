@@ -14,9 +14,9 @@ import "project_view/project_view.dart";
 import "tech_app.dart";
 
 // == Hardcoded BlueMap CLI JAR download URL and hash ==
-const blueMapTag = "5.8";
+const blueMapTag = "5.9";
 const blueMapCliJarHash =
-    "f6c22ce3e60c8863e622e1c0043525fd05a3ca32b12c5778933c09f0f6303ec9"; //SHA256
+    "46bb395bb5f877a4f9b896cdcb5d7d70527f3f0fb94b15c8b51e57cb7fc5f13d"; //SHA256
 
 // == Derived variables ==
 const blueMapCliJarUrl =
