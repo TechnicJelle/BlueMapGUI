@@ -11,7 +11,7 @@ class UpdateChecker {
     required String author,
     required String repoName,
     required String currentVersion,
-  }) : _currentVersion = _removePrefix(currentVersion),
+  }) : _currentVersion = removePrefix(currentVersion),
        _disabled = Platform.environment.containsKey(
          "technicjelle.updatechecker.disabled",
        ),
@@ -42,13 +42,13 @@ class UpdateChecker {
 
       // Get the latest version tag from the redirect URL
       final List<String> split = newUrl.split("/");
-      return _removePrefix(split[split.length - 1]);
+      return removePrefix(split[split.length - 1]);
     } catch (e) {
       throw "Exception trying to fetch the latest version:\n$e";
     }
   }
 
-  static String _removePrefix(String version) {
+  static String removePrefix(String version) {
     return version.replaceFirst(RegExp("^v"), "");
   }
 }

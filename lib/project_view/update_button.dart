@@ -40,7 +40,7 @@ class UpdateButton extends ConsumerWidget {
     return Tooltip(
       message:
           "BlueMapGUI Update Available\n"
-          "$version -> ${update.value}",
+          "${UpdateChecker.removePrefix(version)} -> ${update.value}",
       child: ElevatedButton.icon(
         onPressed: () {
           launchUrlString("https://github.com/TechnicJelle/BlueMapGUI/releases/latest");
