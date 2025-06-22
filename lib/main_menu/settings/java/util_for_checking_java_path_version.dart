@@ -21,7 +21,7 @@ Future<int> checkJavaVersion(String javaPath) async {
   }
 
   try {
-    ProcessResult jv = await Process.run(javaPath, ["-version"]);
+    ProcessResult jv = await Process.run(javaPath, ["-fullversion"]);
     final int exitCode = jv.exitCode;
     final String stderr = jv.stderr;
 
