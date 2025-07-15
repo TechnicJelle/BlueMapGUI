@@ -43,7 +43,7 @@ dependencies:
   rxdart: ^0.28.0
   shared_preferences: ^2.5.3
   url_launcher: ^6.3.0
-  window_manager: ^0.5.0
+  window_manager: ^0.5.1
 
 dev_dependencies:
   # The "flutter_lints" package below contains a set of recommended lints to
