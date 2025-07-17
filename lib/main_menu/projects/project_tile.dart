@@ -271,6 +271,7 @@ class _OpenProjectDialog extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final _OpeningStep? pickingStep = ref.watch(_openingStateProvider);
     final bool isError = pickingStep == null;
+    final _OpenError? openError = ref.read(_openingStateProvider.notifier).getError();
     return AlertDialog(
       title: isError
           ? const Text(
@@ -292,11 +293,11 @@ class _OpenProjectDialog extends ConsumerWidget {
               ),
               _OpeningStep.opening => const Text("Opening project..."),
             },
-      content: isError
+      content: isError && openError != null
           ? Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: switch (ref.read(_openingStateProvider.notifier).getError()) {
+              children: switch (openError) {
                 _OpenError.directoryNotFound => [
                   const Text("The project directory could not be found!"),
                   const SizedBox(height: 8),
@@ -334,7 +335,6 @@ class _OpenProjectDialog extends ConsumerWidget {
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],
-                _ => [const Text("An unknown error occurred!")],
               },
             )
           : ConstrainedBox(
