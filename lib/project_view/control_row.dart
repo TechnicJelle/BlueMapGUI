@@ -13,6 +13,7 @@ import "package:window_manager/window_manager.dart";
 import "../main.dart";
 import "../main_menu/projects/projects_screen.dart";
 import "../prefs.dart";
+import "../utils.dart";
 import "update_button.dart";
 
 final portExtractionRegex = RegExp(r"(?:port\s*|:)(\d{4,5})$");
@@ -120,6 +121,15 @@ class RunningProcess with WindowListener {
         " Try closing and re-opening the project to re-download it.",
       );
       return;
+    }
+
+    final NonHashedFile nonHashedBlueMapJar = NonHashedFile(bluemapJar);
+    final File? hashedBlueMapJar = await nonHashedBlueMapJar.hashFile(blueMapCliJarHash);
+    if (hashedBlueMapJar == null) {
+      _consoleOutputController.add(
+        "[WARNING] BlueMap CLI JAR hash is not valid. "
+        "Your BlueMap CLI JAR may be modified, corrupted or outdated.",
+      );
     }
 
     final process = await Process.start(
