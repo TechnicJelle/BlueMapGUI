@@ -71,6 +71,7 @@ flutter:
    - assets/icon_48.png
    - assets/icon_256.png
    - assets/icon_1024.png
+   - assets/startup.conf
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

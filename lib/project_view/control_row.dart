@@ -132,9 +132,41 @@ class RunningProcess with WindowListener {
       );
     }
 
+    List<String> args = ["-jar", bluemapJar.path, "--render", "--watch", "--webserver"];
+
+    final File startupConfigFile = File(
+      p.join(_projectDirectory.path, "config", "startup.conf"),
+    );
+    final String startupConfigContent = await startupConfigFile.readAsString();
+
+    //TODO: Do not use regexes for this, but parse the config file properly.
+    // Perhaps use a new program that converts HOCON to JSON, which can then be loaded.
+    String? modsPath;
+    final RegExp modsPathRegex = RegExp(r'^mods-path:.*"(.*)"', multiLine: true);
+    final Match? modsPathMatch = modsPathRegex.firstMatch(startupConfigContent);
+    if (modsPathMatch != null && modsPathMatch.groupCount > 0) {
+      modsPath = modsPathMatch.group(1);
+    }
+    if (modsPath != null && modsPath.isNotEmpty) {
+      args.addAll(["--mods", modsPath]);
+    }
+
+    String? mcVersion;
+    final RegExp mcVersionRegex = RegExp(
+      r'^minecraft-version:.*"(.*)"',
+      multiLine: true,
+    );
+    final Match? match = mcVersionRegex.firstMatch(startupConfigContent);
+    if (match != null && match.groupCount > 0) {
+      mcVersion = match.group(1);
+    }
+    if (mcVersion != null && mcVersion.isNotEmpty) {
+      args.addAll(["--mc-version", mcVersion]);
+    }
+
     final process = await Process.start(
       _javaPath,
-      ["-jar", bluemapJar.path, "--render", "--watch", "--webserver"],
+      args,
       workingDirectory: _projectDirectory.path,
       mode: ProcessStartMode.normal,
       runInShell: false,

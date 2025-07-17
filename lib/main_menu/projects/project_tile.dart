@@ -2,6 +2,7 @@ import "dart:async";
 import "dart:io";
 
 import "package:flutter/material.dart";
+import "package:flutter/services.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:path/path.dart" as p;
 import "package:url_launcher/url_launcher.dart";
@@ -13,9 +14,18 @@ import "../../prefs.dart";
 import "../../utils.dart";
 import "projects_screen.dart";
 
-enum _OpeningStep { nothing, checking, downloading, hashing, running, mapping, opening }
+enum _OpeningStep {
+  nothing,
+  checking,
+  downloading,
+  hashing,
+  running,
+  mapping,
+  copying,
+  opening,
+}
 
-enum _OpenError { directoryNotFound, downloadFailed, wrongHash, runFail }
+enum _OpenError { directoryNotFound, downloadFailed, wrongHash, runFail, copyFail }
 
 class _OpeningStateNotifier extends Notifier<_OpeningStep?> {
   _OpenError? _openError;
@@ -246,6 +256,27 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
       mapsDir.createSync(); //recreate maps dir (now empty)
     }
 
+    // == Copy BlueMapGUI Configs ==
+    ref.read(_openingStateProvider.notifier).set(_OpeningStep.copying);
+    final File startupConfigFile = File(
+      p.join(projectDirectory.path, "config", "startup.conf"),
+    );
+    if (!startupConfigFile.existsSync()) {
+      try {
+        final ByteData bytes = await rootBundle.load("assets/startup.conf");
+        await startupConfigFile.writeAsBytes(
+          bytes.buffer.asUint8List(),
+          mode: FileMode.writeOnly,
+          flush: true,
+        );
+      } catch (e) {
+        ref
+            .read(_openingStateProvider.notifier)
+            .error(error: _OpenError.copyFail, details: e.toString());
+        return;
+      }
+    }
+
     // == Open project ==
     ref.read(_openingStateProvider.notifier).set(_OpeningStep.opening);
     ref.read(openProjectProvider.notifier).openProject(projectDirectory);
@@ -291,6 +322,9 @@ class _OpenProjectDialog extends ConsumerWidget {
               _OpeningStep.mapping => const Text(
                 "Turning BlueMap's default map configs into templates...",
               ),
+              _OpeningStep.copying => const Text(
+                "Copying BlueMapGUI configs into the project...",
+              ),
               _OpeningStep.opening => const Text("Opening project..."),
             },
       content: isError && openError != null
@@ -328,6 +362,15 @@ class _OpenProjectDialog extends ConsumerWidget {
                     "Failed to run the CLI to generate default BlueMap configs!\n"
                     "Please check your Java settings and try again.",
                   ),
+                  const SizedBox(height: 8),
+                  Text(
+                    ref.read(_openingStateProvider.notifier).getErrorDetails(),
+                    //sub text
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+                _OpenError.copyFail => [
+                  const Text("Failed to copy BlueMapGUI config into the project!"),
                   const SizedBox(height: 8),
                   Text(
                     ref.read(_openingStateProvider.notifier).getErrorDetails(),
