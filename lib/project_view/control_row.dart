@@ -142,7 +142,7 @@ class RunningProcess with WindowListener {
     //TODO: Do not use regexes for this, but parse the config file properly.
     // Perhaps use a new program that converts HOCON to JSON, which can then be loaded.
     String? modsPath;
-    final RegExp modsPathRegex = RegExp(r'^mods-path:.*"(.*)"', multiLine: true);
+    final RegExp modsPathRegex = RegExp(r'^mods-path:.*?"(.*)"', multiLine: true);
     final Match? modsPathMatch = modsPathRegex.firstMatch(startupConfigContent);
     if (modsPathMatch != null && modsPathMatch.groupCount > 0) {
       modsPath = modsPathMatch.group(1);
@@ -153,7 +153,7 @@ class RunningProcess with WindowListener {
 
     String? mcVersion;
     final RegExp mcVersionRegex = RegExp(
-      r'^minecraft-version:.*"(.*)"',
+      r'^minecraft-version:.*?"(.*)"',
       multiLine: true,
     );
     final Match? match = mcVersionRegex.firstMatch(startupConfigContent);
