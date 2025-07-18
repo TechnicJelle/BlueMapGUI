@@ -35,6 +35,10 @@ class NewProjectDialogState extends ConsumerState<NewProjectDialog> {
         _locationController = TextEditingController(text: projectDir);
       });
     });
+    _nameController.selection = TextSelection(
+      baseOffset: 0,
+      extentOffset: _nameController.value.text.length,
+    );
   }
 
   @override
@@ -93,6 +97,7 @@ class NewProjectDialogState extends ConsumerState<NewProjectDialog> {
             children: [
               TextFormField(
                 controller: _nameController,
+                autofocus: true,
                 onChanged: (_) => setState(() {
                   specialError = null;
                 }),
