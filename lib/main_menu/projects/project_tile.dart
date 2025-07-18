@@ -166,7 +166,11 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
       context: context,
       title: "Remove Project",
       content: [
-        Text("Are you sure you want to remove $projectName from the projects list?"),
+        Text(
+          "Are you sure you want to remove $projectName from the projects list?\n"
+          "This will not delete the project directory from your disk.\n"
+          "It will only be removed from the list.",
+        ),
       ],
       confirmAction: "Yes",
       onConfirmed: () =>
