@@ -106,15 +106,36 @@ _Managing resource-packs and data-packs will be made nicer [in the future](https
 #### 3.d (OPTIONAL) Setting up mods
 To make modded blocks show up correctly, BlueMap needs to know which mods you're using.
 
-Click the `Open in file manager` button in the top right.
+To tell BlueMap about your mods, go to the `Startup` tab in the sidebar,
+and fill in the path to your mods folder in the `mods-path` option.
 
-In the file manager window that now opened, go into the `config` folder, and then `packs`.
-Copy&paste all the `.jar` files of all the mods you're using into here.
+**Example paths:**
+##### Windows
+```hocon
+mods-path: "C:/Users/TechnicJelle/AppData/Roaming/.minecraft/mods/"
+```
+> [!NOTE]  
+> Make sure to use forward slashes (` / `) on Windows as well!  
+> The path you copied likely has backslashes (` \ `), so you have to change them manually.
+
+##### Linux
+```hocon
+mods-path: "/home/technicjelle/.minecraft/mods/"
+```
 
 BlueMap does not support all blocks from all mods, but most things will likely work.
 You can read more about BlueMap's mod support [on the BlueMap wiki](https://bluemap.bluecolored.de/wiki/customization/Mods.html).
 
-_Adding mods will be made nicer [in the future](https://github.com/TechnicJelle/BlueMapGUI/issues/12)._
+If you already started BlueMap before setting this up, you may see purple/black blocks in your map.  
+To fix this, you need to re-render the map with the new settings:  
+Click the `Open in file manager` button in the top right, go into the `web` folder,
+then into the `maps` folder, and delete the folder with the ID of the map you want to re-render.  
+Lastly, go back to the `Control Panel` tab in the sidebar, and click the `▶ Start` button again.
+BlueMap will now re-render the map with the new settings.
+
+#### 3.e (OPTIONAL) Minecraft version
+If you're not on the latest version of Minecraft,
+you can change the `minecraft-version` option in the `Startup` tab in the sidebar.
 
 ### 4. Starting BlueMap
 Once you've set up all the maps you want to render,
