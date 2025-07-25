@@ -19,11 +19,12 @@ jobs:
       - name: Install system dependencies
         run: sudo apt-get install -y jq
 
-      - name: Install yt
+      - name: Install yq
         run: pip install yq
 
       - name: Check tag with project version
         run: |
+          TAG_NAME=${{ github.event.inputs.TAG_NAME }}
           PROJECT_VERSION=$(yq .version pubspec.yaml --raw-output)
           # Remove 'v' prefix from tag name
           TAG_VERSION=$(sed 's/^v//g' <<< "$TAG_NAME")
