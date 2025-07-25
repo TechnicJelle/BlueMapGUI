@@ -29,7 +29,7 @@ jobs:
           # Remove 'v' prefix from tag name
           TAG_VERSION=$(sed 's/^v//g' <<< "$TAG_NAME")
           if [ "$PROJECT_VERSION" != "$TAG_VERSION" ]; then
-              echo "::error title=Mismatched Versions!::Project version ($PROJECT_VERSION) does not match tag ($TAG_VERSION)"
+              echo "::error file=pubspec.yaml,line=19,title=Mismatched Versions!::Project version ($PROJECT_VERSION) does not match tag ($TAG_VERSION)"
               exit 1
           fi
 
