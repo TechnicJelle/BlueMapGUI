@@ -11,7 +11,29 @@ env:
   FLUTTER_VERSION: '3.32.4'
 
 jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: sudo apt-get install -y jq
+
+      - name: Install yt
+        run: pip install yq
+
+      - name: Check tag with project version
+        run: |
+          PROJECT_VERSION=$(yq .version pubspec.yaml --raw-output)
+          # Remove 'v' prefix from tag name
+          TAG_VERSION=$(sed 's/^v//g' <<< "$TAG_NAME")
+          if [ "$PROJECT_VERSION" != "$TAG_VERSION" ]; then
+              echo "Project version ($PROJECT_VERSION) does not match tag ($TAG_VERSION)"
+              exit 1
+          fi
+
   linux:
+    needs: check-version
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -47,6 +69,7 @@ jobs:
           path: './upload/'
 
   windows:
+    needs: check-version
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
