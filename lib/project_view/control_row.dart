@@ -125,7 +125,10 @@ class RunningProcess with WindowListener {
     return null;
   }
 
-  Future<void> fillArgsFromStartupConfig({required List<String> bluemapArgs}) async {
+  Future<void> fillArgsFromStartupConfig({
+    required List<String> jvmArgs,
+    required List<String> bluemapArgs,
+  }) async {
     //Load file
     final File startupConfigFile = File(
       p.join(_projectDirectory.path, "config", "startup.conf"),
@@ -148,6 +151,15 @@ class RunningProcess with WindowListener {
     );
     if (mcVersion != null) {
       bluemapArgs.addAll(["--mc-version", mcVersion]);
+    }
+
+    //Option: Max Ram Limit
+    String? maxRamLimit = extractOptionFromConfig(
+      configContent: startupConfigContent,
+      optionName: "max-ram-limit",
+    );
+    if (maxRamLimit != null) {
+      jvmArgs.add("-XX:MaxRAM=$maxRamLimit");
     }
   }
 
@@ -176,12 +188,13 @@ class RunningProcess with WindowListener {
       );
     }
 
+    List<String> jvmArgs = [];
     List<String> bluemapArgs = ["--render", "--watch", "--webserver"];
-    await fillArgsFromStartupConfig(bluemapArgs: bluemapArgs);
+    await fillArgsFromStartupConfig(jvmArgs: jvmArgs, bluemapArgs: bluemapArgs);
 
     final process = await Process.start(
       _javaPath,
-      ["-jar", bluemapJar.path, ...bluemapArgs],
+      ["-jar", ...jvmArgs, bluemapJar.path, ...bluemapArgs],
       workingDirectory: _projectDirectory.path,
       mode: ProcessStartMode.normal,
       runInShell: false,
