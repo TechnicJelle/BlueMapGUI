@@ -39,7 +39,7 @@ class UpdateButton extends ConsumerWidget {
 
     return Tooltip(
       message:
-          "BlueMapGUI Update Available\n"
+          "BlueMap GUI Update Available\n"
           "${UpdateChecker.removePrefix(version)} -> ${update.value}",
       child: ElevatedButton.icon(
         onPressed: () {

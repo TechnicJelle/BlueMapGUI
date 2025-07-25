@@ -260,7 +260,7 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
       mapsDir.createSync(); //recreate maps dir (now empty)
     }
 
-    // == Copy BlueMapGUI Configs ==
+    // == Copy BlueMap GUI Configs ==
     ref.read(_openingStateProvider.notifier).set(_OpeningStep.copying);
     final File startupConfigFile = File(
       p.join(projectDirectory.path, "config", "startup.conf"),
@@ -327,7 +327,7 @@ class _OpenProjectDialog extends ConsumerWidget {
                 "Turning BlueMap's default map configs into templates...",
               ),
               _OpeningStep.copying => const Text(
-                "Copying BlueMapGUI configs into the project...",
+                "Copying BlueMap GUI configs into the project...",
               ),
               _OpeningStep.opening => const Text("Opening project..."),
             },
@@ -374,7 +374,7 @@ class _OpenProjectDialog extends ConsumerWidget {
                   ),
                 ],
                 _OpenError.copyFail => [
-                  const Text("Failed to copy BlueMapGUI config into the project!"),
+                  const Text("Failed to copy BlueMap GUI config into the project!"),
                   const SizedBox(height: 8),
                   Text(
                     ref.read(_openingStateProvider.notifier).getErrorDetails(),
