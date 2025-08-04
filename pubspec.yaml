@@ -34,7 +34,7 @@ dependencies:
   file_picker: ^10.2.1
   flutter:
     sdk: flutter
-  flutter_riverpod: ^2.5.1
+  flutter_riverpod: ^3.0.0-dev.17
   meta: ^1.16.0
   path: ^1.9.0
   path_provider: ^2.1.4
@@ -52,8 +52,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
-  custom_lint: ^0.7.6
-  riverpod_lint: ^2.3.13
+  custom_lint: ^0.8.0
+  riverpod_lint: ^3.0.0-dev.17
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
