@@ -17,6 +17,14 @@ class OutputNotifier extends Notifier<List<String>> {
         case AsyncError(:final error):
           state = [...state, "ERR: $error"];
           break;
+        case AsyncLoading(:final num? progress):
+          if (progress == null) {
+            state = [...state, "Loading..."];
+          } else {
+            int percent = (progress * 100).toInt();
+            state = [...state, "Loading... $percent%"];
+          }
+          break;
       }
     });
 
