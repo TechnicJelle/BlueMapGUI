@@ -53,7 +53,7 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
   custom_lint: ^0.8.0
-  riverpod_lint: ^3.0.0-dev.17
+  riverpod_lint: ^3.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
