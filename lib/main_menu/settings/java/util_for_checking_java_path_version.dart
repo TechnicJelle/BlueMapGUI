@@ -29,19 +29,36 @@ Future<int> checkJavaVersion(String javaPath) async {
       throw "Process exited with $exitCode.\n$stderr";
     }
 
-    RegExp r = RegExp(r"\d+");
+    RegExp r = RegExp(r'^.*"(\d+\.\d+)');
     final Match? match = r.firstMatch(stderr);
     if (match == null) {
       throw "Version message did not contain a version number.";
     }
 
-    int? version = int.tryParse(match.group(0) ?? "");
+    String? versionString = match.group(1);
+    if (versionString == null) {
+      throw "Version message match did not have a group 1.";
+    }
+
+    if (versionString.startsWith("1.")) {
+      // java 1.8 aka java 8
+      versionString = versionString.substring(2);
+    } else {
+      // java all the other ones
+      versionString = versionString.split(".").first;
+    }
+
+    int? version = int.tryParse(versionString);
     if (version == null) {
       throw "Couldn't parse version message.";
     }
 
     if (version < _minJavaVersion) {
-      throw "System Java version $version is too old. Please install Java $_minJavaVersion or newer.";
+      if (javaPath == "java") {
+        throw "System Java version $version is too old. Please install Java $_minJavaVersion or newer.";
+      } else {
+        throw "This Java version $version is too old. Please select Java $_minJavaVersion or newer.";
+      }
     }
 
     return version;
