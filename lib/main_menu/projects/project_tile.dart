@@ -182,8 +182,7 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
     // == Open opening progress dialog ==
     showDialog(
       context: context,
-      builder: (context) =>
-          _OpenProjectDialog(openingStateProvider: _openingStateProvider),
+      builder: (context) => _OpenProjectDialog(_openingStateProvider),
       barrierDismissible: false,
     );
 
@@ -294,19 +293,15 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
 }
 
 class _OpenProjectDialog extends ConsumerWidget {
-  //TODO: Is there a way to add an explicit type annotation?
-  // Technically, the type is `NotifierProviderImpl<_OpeningStateNotifier, _OpeningStep?>`
-  // But "The member 'NotifierProviderImpl' can only be used within its package."
-  final _openingStateProvider;
+  final NotifierProvider<_OpeningStateNotifier, _OpeningStep?> openingStateProvider;
 
-  const _OpenProjectDialog({required openingStateProvider})
-    : _openingStateProvider = openingStateProvider;
+  const _OpenProjectDialog(this.openingStateProvider);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final _OpeningStep? pickingStep = ref.watch(_openingStateProvider);
+    final _OpeningStep? pickingStep = ref.watch(openingStateProvider);
     final bool isError = pickingStep == null;
-    final _OpenError? openError = ref.read(_openingStateProvider.notifier).getError();
+    final _OpenError? openError = ref.read(openingStateProvider.notifier).getError();
     return AlertDialog(
       title: isError
           ? const Text(
@@ -348,7 +343,7 @@ class _OpenProjectDialog extends ConsumerWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    ref.read(_openingStateProvider.notifier).getErrorDetails(),
+                    "${ref.read(openingStateProvider.notifier).getErrorDetails()}",
                     //sub text
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
@@ -368,7 +363,7 @@ class _OpenProjectDialog extends ConsumerWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    ref.read(_openingStateProvider.notifier).getErrorDetails(),
+                    "${ref.read(openingStateProvider.notifier).getErrorDetails()}",
                     //sub text
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
@@ -377,7 +372,7 @@ class _OpenProjectDialog extends ConsumerWidget {
                   const Text("Failed to copy BlueMap GUI config into the project!"),
                   const SizedBox(height: 8),
                   Text(
-                    ref.read(_openingStateProvider.notifier).getErrorDetails(),
+                    "${ref.read(openingStateProvider.notifier).getErrorDetails()}",
                     //sub text
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
