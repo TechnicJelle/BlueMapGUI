@@ -12,6 +12,7 @@ import "../../hover.dart";
 import "../../main.dart";
 import "../../prefs.dart";
 import "../../utils.dart";
+import "../settings/java/check_java_version.dart";
 import "projects_screen.dart";
 
 enum _OpeningStep {
@@ -229,10 +230,36 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
 
     // == Run BlueMap CLI JAR to generate default configs ==
     ref.read(_openingStateProvider.notifier).set(_OpeningStep.running);
-    ProcessResult run = await Process.run(ref.read(javaPathProvider)!, [
-      "-jar",
-      bluemapJar.path,
-    ], workingDirectory: projectDirectory.path);
+
+    final String? javaPath = ref.read(javaPathProvider);
+    if (javaPath == null) {
+      ref
+          .read(_openingStateProvider.notifier)
+          .error(error: _OpenError.runFail, details: "Java Path was null");
+      return;
+    }
+
+    try {
+      await checkJavaVersion(javaPath);
+    } catch (e) {
+      ref
+          .read(_openingStateProvider.notifier)
+          .error(error: _OpenError.runFail, details: e.toString());
+      return;
+    }
+
+    final ProcessResult run;
+    try {
+      run = await Process.run(javaPath, [
+        "-jar",
+        bluemapJar.path,
+      ], workingDirectory: projectDirectory.path);
+    } catch (e) {
+      ref
+          .read(_openingStateProvider.notifier)
+          .error(error: _OpenError.runFail, details: e.toString());
+      return;
+    }
 
     final String stdout = run.stdout;
     if (!stdout.contains("Generated default config files for you")) {
