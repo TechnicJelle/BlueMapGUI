@@ -28,6 +28,11 @@ class JavaPathNotifier extends Notifier<String?> {
     state = javaPath;
     _prefs.setString(_javaPathKey, javaPath);
   }
+
+  void clearJavaPath() {
+    state = null;
+    _prefs.remove(_javaPathKey);
+  }
 }
 
 final javaPathProvider = NotifierProvider<JavaPathNotifier, String?>(
