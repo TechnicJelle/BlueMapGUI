@@ -19,13 +19,12 @@ don't have a server, or just want a more user-friendly experience.
 
 ## Usage Guide
 ### 1. Setting up Java
-When you first open the program, you will need to choose which Java version you want to use.  
+When you first open the program, you will need to choose which Java installation you want to use.  
 Go to the `Settings` tab in the sidebar on the left to select whether you want to:
-- automatically detect the Java version installed on your system.
-- pick a Java version manually. Useful if it couldn't automatically find it.  
-
-_I am planning on adding an Automatic Download button for Java
-[in the future](https://github.com/TechnicJelle/BlueMapGUI/issues/18)._
+- Use the Java installation on your system.
+- Automatically download a suitable installation of Java for your system.
+- Pick a Java installation manually. Useful if you don't have Java installed on your system or if it's too old.  
+  Also useful if your system isn't supported by the automatic downloader.
 
 ### 2. Creating a project
 Once you've supplied a working Java version, go back to the `Projects` tab in the sidebar.  
