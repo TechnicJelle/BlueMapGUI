@@ -34,7 +34,12 @@ class ProjectsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (ref.watch(javaPathProvider.select((path) => path == null))) {
-      return const Center(child: Text("⬅ Please select your Java in the settings"));
+      return const Center(
+        child: Text(
+          "⟵\n\nPlease set up your Java in the settings\n\n⟵",
+          textAlign: TextAlign.center,
+        ),
+      );
     }
 
     final List<Directory> projects = ref.watch(knownProjectsProvider);
