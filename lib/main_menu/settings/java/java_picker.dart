@@ -6,8 +6,6 @@ import "../../../prefs.dart";
 import "../../../utils.dart";
 import "check_java_version.dart";
 
-enum JavaPickerMode { unset, system, custom }
-
 enum _SystemRadioState { loading, success, errored }
 
 enum _CustomRadioState { empty, success, errored }
@@ -22,7 +20,7 @@ class JavaPicker extends ConsumerStatefulWidget {
 class _JavaPickerState extends ConsumerState<JavaPicker> {
   final _javaPickerModeProvider = javaPathProvider.select((javaPath) {
     if (javaPath != null) {
-      return javaPath == "java" ? JavaPickerMode.system : JavaPickerMode.custom;
+      return javaPath.type;
     }
     return null;
   });
@@ -59,14 +57,14 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
     );
 
     // Custom
-    if (ref.read(_javaPickerModeProvider) == JavaPickerMode.custom) {
-      String javaPath = ref.read(javaPathProvider)!;
+    if (ref.read(_javaPickerModeProvider) == JavaPathMode.custom) {
+      JavaPath javaPath = ref.read(javaPathProvider)!;
       customRadioState = _CustomRadioState.success;
       customJavaVersion = 0;
-      customJavaPath = javaPath;
+      customJavaPath = javaPath.path;
       customError = null;
 
-      checkJavaVersion(javaPath).then(
+      checkJavaVersion(javaPath.path).then(
         (javaVersion) {
           setState(() {
             customJavaVersion = javaVersion;
@@ -85,22 +83,22 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
 
   @override
   Widget build(BuildContext context) {
-    final JavaPickerMode javaPickerMode =
-        ref.watch(_javaPickerModeProvider) ?? JavaPickerMode.unset;
+    final JavaPathMode javaPickerMode =
+        ref.watch(_javaPickerModeProvider) ?? JavaPathMode.unset;
 
     const TextStyle red = TextStyle(color: Colors.red);
 
     return RadioGroup(
       groupValue: javaPickerMode,
-      onChanged: (JavaPickerMode? newJavaPickerMode) async {
+      onChanged: (JavaPathMode? newJavaPickerMode) async {
         switch (newJavaPickerMode) {
-          case JavaPickerMode.unset:
+          case JavaPathMode.unset:
             onUnset();
             break;
-          case JavaPickerMode.system:
+          case JavaPathMode.system:
             onSystem();
             break;
-          case JavaPickerMode.custom:
+          case JavaPathMode.custom:
             onCustom();
             break;
           case null:
@@ -113,12 +111,12 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           RadioListTile(
-            value: JavaPickerMode.unset,
-            title: Text(JavaPickerMode.unset.name.capitalize()),
+            value: JavaPathMode.unset,
+            title: Text(JavaPathMode.unset.name.capitalize()),
           ),
-          RadioListTile<JavaPickerMode>(
-            value: JavaPickerMode.system,
-            title: Text(JavaPickerMode.system.name.capitalize()),
+          RadioListTile<JavaPathMode>(
+            value: JavaPathMode.system,
+            title: Text(JavaPathMode.system.name.capitalize()),
 
             subtitle: switch (systemRadioState) {
               _SystemRadioState.loading => const Text("Checking System Java version..."),
@@ -130,9 +128,9 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
 
             enabled: systemRadioState == _SystemRadioState.success,
           ),
-          RadioListTile<JavaPickerMode>(
-            value: JavaPickerMode.custom,
-            title: Text(JavaPickerMode.custom.name.capitalize()),
+          RadioListTile<JavaPathMode>(
+            value: JavaPathMode.custom,
+            title: Text(JavaPathMode.custom.name.capitalize()),
 
             subtitle: switch (customRadioState) {
               _CustomRadioState.empty => const Text(
@@ -157,7 +155,9 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
   }
 
   void onSystem() {
-    ref.read(javaPathProvider.notifier).setJavaPath("java");
+    ref
+        .read(javaPathProvider.notifier)
+        .setJavaPath(JavaPath(JavaPathMode.system, "java"));
   }
 
   Future<void> onCustom() async {
@@ -188,7 +188,9 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
         customRadioState = _CustomRadioState.success;
         customJavaVersion = javaVersion;
         customError = null;
-        ref.read(javaPathProvider.notifier).setJavaPath(javaPath);
+        ref
+            .read(javaPathProvider.notifier)
+            .setJavaPath(JavaPath(JavaPathMode.custom, javaPath));
       });
     } catch (e) {
       setState(() {

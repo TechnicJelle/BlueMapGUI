@@ -10,23 +10,51 @@ Future<void> initPrefs() async {
     cacheOptions: const SharedPreferencesWithCacheOptions(
       allowList: {
         JavaPathNotifier._javaPathKey,
+        JavaPathNotifier._javaPathTypeKey,
         KnownProjectsNotifier._knownProjectsKey,
       },
     ),
   );
 }
 
-class JavaPathNotifier extends Notifier<String?> {
+enum JavaPathMode { unset, system, custom }
+
+class JavaPath {
+  JavaPathMode type;
+  String path;
+
+  JavaPath(this.type, this.path);
+}
+
+class JavaPathNotifier extends Notifier<JavaPath?> {
   static const String _javaPathKey = "java_path";
+  static const String _javaPathTypeKey = "java_path_type";
 
   @override
-  String? build() {
-    return _prefs.getString(_javaPathKey);
+  JavaPath? build() {
+    final String? path = _prefs.getString(_javaPathKey);
+    if (path == null) return null;
+    final String? typeString = _prefs.getString(_javaPathTypeKey);
+    if (typeString == null) return null;
+
+    JavaPathMode type;
+    if (typeString == JavaPathMode.unset.name) {
+      type = JavaPathMode.unset;
+    } else if (typeString == JavaPathMode.system.name) {
+      type = JavaPathMode.system;
+    } else if (typeString == JavaPathMode.custom.name) {
+      type = JavaPathMode.custom;
+    } else {
+      return null;
+    }
+
+    return JavaPath(type, path);
   }
 
-  void setJavaPath(String javaPath) {
+  void setJavaPath(JavaPath javaPath) {
     state = javaPath;
-    _prefs.setString(_javaPathKey, javaPath);
+    _prefs.setString(_javaPathKey, javaPath.path);
+    _prefs.setString(_javaPathTypeKey, javaPath.type.name);
   }
 
   void clearJavaPath() {
@@ -35,7 +63,7 @@ class JavaPathNotifier extends Notifier<String?> {
   }
 }
 
-final javaPathProvider = NotifierProvider<JavaPathNotifier, String?>(
+final javaPathProvider = NotifierProvider<JavaPathNotifier, JavaPath?>(
   () => JavaPathNotifier(),
 );
 

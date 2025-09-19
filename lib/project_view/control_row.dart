@@ -21,9 +21,9 @@ final portExtractionRegex = RegExp(r"(?:port\s*|:)(\d{4,5})$");
 final _processProvider = Provider<RunningProcess?>((ref) {
   final Directory? projectDirectory = ref.watch(openProjectProvider);
   if (projectDirectory == null) return null;
-  final String? javaPath = ref.watch(javaPathProvider);
+  final JavaPath? javaPath = ref.watch(javaPathProvider);
   if (javaPath == null) return null;
-  final process = RunningProcess(projectDirectory, javaPath);
+  final process = RunningProcess(projectDirectory, javaPath.path);
   ref.onDispose(() => process.dispose());
   return process;
 });

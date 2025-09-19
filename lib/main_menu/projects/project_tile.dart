@@ -231,7 +231,7 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
     // == Run BlueMap CLI JAR to generate default configs ==
     ref.read(_openingStateProvider.notifier).set(_OpeningStep.running);
 
-    final String? javaPath = ref.read(javaPathProvider);
+    final JavaPath? javaPath = ref.read(javaPathProvider);
     if (javaPath == null) {
       ref
           .read(_openingStateProvider.notifier)
@@ -240,7 +240,7 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
     }
 
     try {
-      await checkJavaVersion(javaPath);
+      await checkJavaVersion(javaPath.path);
     } catch (e) {
       ref
           .read(_openingStateProvider.notifier)
@@ -250,7 +250,7 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
 
     final ProcessResult run;
     try {
-      run = await Process.run(javaPath, [
+      run = await Process.run(javaPath.path, [
         "-jar",
         bluemapJar.path,
       ], workingDirectory: projectDirectory.path);
