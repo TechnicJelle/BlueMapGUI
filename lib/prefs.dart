@@ -17,7 +17,7 @@ Future<void> initPrefs() async {
   );
 }
 
-enum JavaPathMode { unset, system, custom }
+enum JavaPathMode { unset, system, bundled, custom }
 
 class JavaPath {
   JavaPathMode type;
@@ -42,6 +42,8 @@ class JavaPathNotifier extends Notifier<JavaPath?> {
       type = JavaPathMode.unset;
     } else if (typeString == JavaPathMode.system.name) {
       type = JavaPathMode.system;
+    } else if (typeString == JavaPathMode.bundled.name) {
+      type = JavaPathMode.bundled;
     } else if (typeString == JavaPathMode.custom.name) {
       type = JavaPathMode.custom;
     } else {
