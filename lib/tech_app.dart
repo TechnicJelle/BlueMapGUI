@@ -28,7 +28,7 @@ class TechApp extends MaterialApp {
          builder: (BuildContext context, Widget? child) {
            return Theme(
              data: Theme.of(context).copyWith(
-               appBarTheme: AppBarTheme(color: primary),
+               appBarTheme: AppBarTheme(backgroundColor: primary),
                textTheme: Theme.of(context).textTheme.apply(
                  fontSizeFactor: fontSizeFactor ?? 1.0,
                  fontFamily: fontFamily,
