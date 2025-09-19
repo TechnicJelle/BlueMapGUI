@@ -14,7 +14,7 @@ class SettingsScreen extends StatelessWidget {
           SettingsBodyText("You can download Java "),
           SettingsBodyLink("here", "https://adoptium.net/temurin/releases/"),
         ]),
-        JavaPicker(),
+        const JavaPicker(),
       ],
     );
   }

@@ -34,7 +34,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
 
-  WindowOptions windowOptions = WindowOptions(minimumSize: const Size(600, 300));
+  WindowOptions windowOptions = const WindowOptions(minimumSize: Size(600, 300));
   windowManager.waitUntilReadyToShow(windowOptions, () async {
     await windowManager.show();
     await windowManager.focus();
@@ -82,7 +82,7 @@ class MyHomePage extends ConsumerWidget {
       body: Stack(
         children: [
           projectDirectory == null ? const MainMenu() : const ProjectView(),
-          _VersionText(),
+          const _VersionText(),
         ],
       ),
     );

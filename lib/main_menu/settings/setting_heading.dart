@@ -33,7 +33,7 @@ class SettingHeading extends StatelessWidget {
           text: TextSpan(
             children: [
               TextSpan(text: "$title\n", style: titleStyle),
-              WidgetSpan(child: SizedBox(height: 22)),
+              const WidgetSpan(child: SizedBox(height: 22)),
               ...textSpans,
             ],
           ),
