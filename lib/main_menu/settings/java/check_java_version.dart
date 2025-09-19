@@ -55,9 +55,9 @@ Future<int> checkJavaVersion(String javaPath) async {
 
     if (version < _minJavaVersion) {
       if (javaPath == "java") {
-        throw "System Java version ($version) is too old. Please install Java $_minJavaVersion or newer.";
+        throw "System Java version is $version, which is too old. Please install Java $_minJavaVersion or newer.";
       } else {
-        throw "This Java version ($version) is too old. Please select Java $_minJavaVersion or newer.";
+        throw "This Java version is $version, which is too old. Please select Java $_minJavaVersion or newer.";
       }
     }
 
