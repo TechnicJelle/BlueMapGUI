@@ -214,6 +214,24 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
         .setJavaPath(JavaPath(JavaPathMode.system, "java"));
   }
 
+  File? findJavaExecutableInDirectory(Directory dir) {
+    final File javaExe = File(p.join(dir.path, "java.exe"));
+    if (javaExe.existsSync()) return javaExe;
+
+    final File java = File(p.join(dir.path, "java"));
+    if (java.existsSync()) return java;
+
+    final FileSystemEntity fallback = dir.listSync().firstWhere(
+      (file) => p.basename(file.path).startsWith("java"),
+    );
+
+    if (fallback is File) {
+      return fallback;
+    }
+
+    return null;
+  }
+
   Future<void> onBundled() async {
     final Uri? downloadLink = bundledDownloadLink;
     if (downloadLink == null) return;
@@ -285,17 +303,21 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
       p.join(javaBundleDirectory.listSync().first.path, "bin"),
     );
 
-    final String javaPath = binDir
-        .listSync()
-        .firstWhere((file) => p.basename(file.path).startsWith("java"))
-        .path;
+    final File? javaExecutable = findJavaExecutableInDirectory(binDir);
+    if (javaExecutable == null) {
+      setState(() {
+        bundledRadioState = _BundledRadioState.errored;
+        bundledError = "Could not find Java Executable in the downloaded bundle.";
+      });
+      return;
+    }
 
     setState(() {
       bundledRadioState = _BundledRadioState.success;
       bundledError = null;
       ref
           .read(javaPathProvider.notifier)
-          .setJavaPath(JavaPath(JavaPathMode.bundled, javaPath));
+          .setJavaPath(JavaPath(JavaPathMode.bundled, javaExecutable.path));
     });
   }
 
