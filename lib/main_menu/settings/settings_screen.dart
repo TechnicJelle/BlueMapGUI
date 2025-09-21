@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 
 import "java/java_picker.dart";
 import "setting_heading.dart";
+import "theme_mode_picker.dart";
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -16,6 +17,10 @@ class SettingsScreen extends StatelessWidget {
           SettingsBodyText(", or use the automatic Bundled mode."),
         ]),
         const JavaPicker(),
+        SettingHeading(context, "Application Theme", const [
+          SettingsBodyText("Choose your theme"),
+        ]),
+        const ThemeModePicker(),
       ],
     );
   }

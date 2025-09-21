@@ -1,5 +1,6 @@
 import "dart:io";
 
+import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:shared_preferences/shared_preferences.dart";
 
@@ -12,6 +13,7 @@ Future<void> initPrefs() async {
         JavaPathNotifier._javaPathKey,
         JavaPathNotifier._javaPathTypeKey,
         KnownProjectsNotifier._knownProjectsKey,
+        ThemeModeProvider._themeModeKey,
       },
     ),
   );
@@ -34,6 +36,7 @@ class JavaPathNotifier extends Notifier<JavaPath?> {
   JavaPath? build() {
     final String? path = _prefs.getString(_javaPathKey);
     if (path == null) return null;
+
     final String? typeString = _prefs.getString(_javaPathTypeKey);
     if (typeString == null) return null;
     final JavaPathMode? type = JavaPathMode.values.asNameMap()[typeString];
@@ -90,4 +93,26 @@ class KnownProjectsNotifier extends Notifier<List<Directory>> {
 
 final knownProjectsProvider = NotifierProvider<KnownProjectsNotifier, List<Directory>>(
   () => KnownProjectsNotifier(),
+);
+
+class ThemeModeProvider extends Notifier<ThemeMode> {
+  static const String _themeModeKey = "theme_mode";
+
+  @override
+  ThemeMode build() {
+    final String? themeModeString = _prefs.getString(_themeModeKey);
+    final ThemeMode? themeMode = ThemeMode.values.asNameMap()[themeModeString];
+    if (themeMode == null) return ThemeMode.system;
+
+    return themeMode;
+  }
+
+  void set(ThemeMode newThemeMode) {
+    state = newThemeMode;
+    _prefs.setString(_themeModeKey, newThemeMode.name);
+  }
+}
+
+final themeModeProvider = NotifierProvider<ThemeModeProvider, ThemeMode>(
+  () => ThemeModeProvider(),
 );

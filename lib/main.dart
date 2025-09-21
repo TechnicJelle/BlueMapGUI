@@ -43,16 +43,17 @@ Future<void> main() async {
   runApp(const ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeModeProvider);
     return TechApp(
       title: "BlueMap GUI",
       primary: Colors.blue,
       secondary: Colors.blueAccent,
-      themeMode: ThemeMode.system,
+      themeMode: themeMode,
       home: const MyHomePage(),
     );
   }
