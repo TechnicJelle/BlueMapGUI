@@ -233,6 +233,13 @@ class RunningProcess with WindowListener {
         final String? portText = portExtractionRegex.firstMatch(event)?.group(1);
         _port = int.tryParse(portText ?? "") ?? 8100;
       }
+
+      if (event.contains("Start updating 0 maps")) {
+        _consoleOutputController.add(
+          "[WARNING] You don't have any maps, so BlueMap will be doing nothing!\n"
+          " You should create a map with the \"New Map\" button on the left.",
+        );
+      }
     });
 
     process.exitCode.then((int value) {
