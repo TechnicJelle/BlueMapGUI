@@ -144,8 +144,10 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
           RadioListTile(
             value: JavaPathMode.unset,
             title: Text(JavaPathMode.unset.name.capitalize()),
+
+            subtitle: const Text("No Java selected."),
           ),
-          RadioListTile<JavaPathMode>(
+          RadioListTile(
             value: JavaPathMode.system,
             title: Text(JavaPathMode.system.name.capitalize()),
 
@@ -161,7 +163,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
           ),
           RadioListTile(
             value: JavaPathMode.bundled,
-            title: Text("${JavaPathMode.bundled.name.capitalize()} (WIP)"),
+            title: Text(JavaPathMode.bundled.name.capitalize()),
 
             subtitle: bundledDownloadLink == null
                 ? const Text(
@@ -182,13 +184,13 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
 
             enabled: bundledDownloadLink != null,
           ),
-          RadioListTile<JavaPathMode>(
+          RadioListTile(
             value: JavaPathMode.custom,
             title: Text(JavaPathMode.custom.name.capitalize()),
 
             subtitle: switch (customRadioState) {
               _CustomRadioState.empty => const Text(
-                "Select a custom Java executable manually",
+                "Select a custom Java executable manually.",
               ),
               _CustomRadioState.success => Text(
                 "Detected Java version: $customJavaVersion  ( $customJavaPath )",

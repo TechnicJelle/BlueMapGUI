@@ -44,6 +44,8 @@ class SettingHeading extends StatelessWidget {
 }
 
 abstract class SettingsBodyBase {
+  const SettingsBodyBase();
+
   TextTheme getTextTheme(BuildContext context) => Theme.of(context).textTheme;
 
   TextStyle? getLabelStyle(BuildContext context) =>
@@ -63,7 +65,7 @@ abstract class SettingsBodyBase {
 class SettingsBodyText extends SettingsBodyBase {
   final String text;
 
-  SettingsBodyText(this.text);
+  const SettingsBodyText(this.text);
 
   @override
   TextSpan build(BuildContext context) {
@@ -75,7 +77,7 @@ class SettingsBodyLink extends SettingsBodyBase {
   final String text;
   final String url;
 
-  SettingsBodyLink(this.text, this.url);
+  const SettingsBodyLink(this.text, this.url);
 
   @override
   TextSpan build(BuildContext context) {
