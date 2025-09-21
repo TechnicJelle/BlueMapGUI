@@ -36,19 +36,8 @@ class JavaPathNotifier extends Notifier<JavaPath?> {
     if (path == null) return null;
     final String? typeString = _prefs.getString(_javaPathTypeKey);
     if (typeString == null) return null;
-
-    JavaPathMode type;
-    if (typeString == JavaPathMode.unset.name) {
-      type = JavaPathMode.unset;
-    } else if (typeString == JavaPathMode.system.name) {
-      type = JavaPathMode.system;
-    } else if (typeString == JavaPathMode.bundled.name) {
-      type = JavaPathMode.bundled;
-    } else if (typeString == JavaPathMode.custom.name) {
-      type = JavaPathMode.custom;
-    } else {
-      return null;
-    }
+    final JavaPathMode? type = JavaPathMode.values.asNameMap()[typeString];
+    if (type == null) return null;
 
     return JavaPath(type, path);
   }
