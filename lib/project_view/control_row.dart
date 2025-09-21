@@ -221,7 +221,7 @@ class RunningProcess with WindowListener {
           event.contains(" is already in use by some other program.")) {
         _consoleOutputController.add(
           " There is probably already a BlueMap process running.\n"
-          " Check that you don't have any BlueMap mods installed on your Minecraft client,\n"
+          " Make sure that you don't have BlueMap installed as a mod on your Minecraft client,\n"
           "  and check in your Task Manager for any orphaned BlueMapCLI processes and close them.\n"
           " If you are sure there is no other BlueMap process running and this error persists,\n"
           "  try restarting your computer.",
