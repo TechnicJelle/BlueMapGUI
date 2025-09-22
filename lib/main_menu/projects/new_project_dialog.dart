@@ -26,10 +26,26 @@ class NewProjectDialogState extends ConsumerState<NewProjectDialog> {
   String get _projectPath =>
       p.join(_locationController?.text ?? "", _nameController.text);
 
+  /// Protection against getting stored in a OneDrive folder
+  Directory oneDriveProtection(Directory osDocumentsDirectory) {
+    if (p.basename(osDocumentsDirectory.parent.path) == "OneDrive") {
+      // Protection against users called "OneDrive"
+      if (p.basename(osDocumentsDirectory.parent.parent.path) == "Users") {
+        return osDocumentsDirectory;
+      }
+
+      final String documentsName = p.basename(osDocumentsDirectory.path);
+      return Directory(p.join(osDocumentsDirectory.parent.parent.path, documentsName));
+    }
+
+    return osDocumentsDirectory;
+  }
+
   @override
   void initState() {
     super.initState();
-    getApplicationDocumentsDirectory().then((documentsDirectory) {
+    getApplicationDocumentsDirectory().then((final Directory osDocumentsDirectory) {
+      final documentsDirectory = oneDriveProtection(osDocumentsDirectory);
       final String projectDir = p.join(documentsDirectory.path, "BlueMapGUI");
       setState(() {
         _locationController = TextEditingController(text: projectDir);
