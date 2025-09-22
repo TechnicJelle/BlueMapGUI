@@ -22,9 +22,7 @@ class OpenFileNotifier extends Notifier<File?> {
   }
 }
 
-final openConfigProvider = NotifierProvider<OpenFileNotifier, File?>(
-  () => OpenFileNotifier(),
-);
+final openConfigProvider = NotifierProvider(() => OpenFileNotifier());
 
 class ProjectView extends ConsumerWidget {
   const ProjectView({super.key});

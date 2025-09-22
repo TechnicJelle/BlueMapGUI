@@ -37,9 +37,7 @@ class OutputNotifier extends Notifier<List<String>> {
   }
 }
 
-final outputNotifierProvider = NotifierProvider<OutputNotifier, List<String>>(
-  () => OutputNotifier(),
-);
+final outputNotifierProvider = NotifierProvider(() => OutputNotifier());
 
 class Console extends ConsumerStatefulWidget {
   const Console({super.key});

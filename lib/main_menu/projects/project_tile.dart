@@ -70,9 +70,7 @@ class ProjectTile extends ConsumerStatefulWidget {
 }
 
 class _PathPickerButtonState extends ConsumerState<ProjectTile> {
-  final _openingStateProvider = NotifierProvider<_OpeningStateNotifier, _OpeningStep?>(
-    () => _OpeningStateNotifier(),
-  );
+  final _openingStateProvider = NotifierProvider(() => _OpeningStateNotifier());
 
   StreamSubscription<FileSystemEvent>? fileWatchSub;
   late bool projectDirectoryExists;

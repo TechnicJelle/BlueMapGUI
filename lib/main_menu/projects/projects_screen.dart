@@ -24,9 +24,7 @@ class OpenProjectNotifier extends Notifier<Directory?> {
   }
 }
 
-final openProjectProvider = NotifierProvider<OpenProjectNotifier, Directory?>(
-  () => OpenProjectNotifier(),
-);
+final openProjectProvider = NotifierProvider(() => OpenProjectNotifier());
 
 class ProjectsScreen extends ConsumerWidget {
   const ProjectsScreen({super.key});

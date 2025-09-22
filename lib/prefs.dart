@@ -57,9 +57,7 @@ class JavaPathNotifier extends Notifier<JavaPath?> {
   }
 }
 
-final javaPathProvider = NotifierProvider<JavaPathNotifier, JavaPath?>(
-  () => JavaPathNotifier(),
-);
+final javaPathProvider = NotifierProvider(() => JavaPathNotifier());
 
 class KnownProjectsNotifier extends Notifier<List<Directory>> {
   static const String _knownProjectsKey = "known_projects";
@@ -91,9 +89,7 @@ class KnownProjectsNotifier extends Notifier<List<Directory>> {
   }
 }
 
-final knownProjectsProvider = NotifierProvider<KnownProjectsNotifier, List<Directory>>(
-  () => KnownProjectsNotifier(),
-);
+final knownProjectsProvider = NotifierProvider(() => KnownProjectsNotifier());
 
 class ThemeModeProvider extends Notifier<ThemeMode> {
   static const String _themeModeKey = "theme_mode";
@@ -113,6 +109,4 @@ class ThemeModeProvider extends Notifier<ThemeMode> {
   }
 }
 
-final themeModeProvider = NotifierProvider<ThemeModeProvider, ThemeMode>(
-  () => ThemeModeProvider(),
-);
+final themeModeProvider = NotifierProvider(() => ThemeModeProvider());
