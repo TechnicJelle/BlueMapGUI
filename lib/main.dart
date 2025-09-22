@@ -3,6 +3,7 @@ import "dart:io";
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:path/path.dart" as p;
+import "package:url_launcher/url_launcher_string.dart";
 import "package:window_manager/window_manager.dart";
 
 import "main_menu/main_menu.dart";
@@ -74,6 +75,13 @@ class MyHomePage extends ConsumerWidget {
       appBar: AppBar(
         title: Tooltip(message: projectDirectory?.path ?? "Hi :)", child: Text(title)),
         actions: [
+          IconButton(
+            tooltip: "Help",
+            onPressed: () {
+              launchUrlString("https://github.com/TechnicJelle/BlueMapGUI#readme");
+            },
+            icon: const Icon(Icons.help),
+          ),
           if (projectDirectory != null) ...[
             const OpenInFileManagerButton(),
             const CloseProjectButton(),
