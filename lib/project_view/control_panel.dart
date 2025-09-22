@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 
 import "console.dart";
-import "control_row.dart";
+import "control_row/control_row.dart";
 
 class ControlPanel extends StatelessWidget {
   const ControlPanel({super.key});

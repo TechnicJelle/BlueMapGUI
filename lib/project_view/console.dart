@@ -4,7 +4,7 @@ import "package:flutter_riverpod/flutter_riverpod.dart";
 
 import "../main_menu/projects/projects_screen.dart";
 import "../utils.dart";
-import "control_row.dart";
+import "control_row/control_row.dart";
 
 class OutputNotifier extends Notifier<List<String>> {
   @override

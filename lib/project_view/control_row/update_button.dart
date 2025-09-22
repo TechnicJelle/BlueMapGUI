@@ -2,8 +2,8 @@ import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:url_launcher/url_launcher_string.dart";
 
-import "../main.dart";
-import "../update_checker.dart";
+import "../../main.dart";
+import "../../update_checker.dart";
 
 final updateProvider = FutureProvider.autoDispose<String?>((ref) async {
   //Only check for updates in release versions

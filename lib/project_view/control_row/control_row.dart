@@ -7,18 +7,19 @@ import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:path/path.dart" as p;
 import "package:rxdart/rxdart.dart";
-import "package:url_launcher/url_launcher.dart";
 import "package:window_manager/window_manager.dart";
 
-import "../main.dart";
-import "../main_menu/projects/projects_screen.dart";
-import "../prefs.dart";
-import "../utils.dart";
+import "../../main.dart";
+import "../../main_menu/projects/projects_screen.dart";
+import "../../prefs.dart";
+import "../../utils.dart";
+import "open_button.dart";
+import "start_button.dart";
 import "update_button.dart";
 
 final portExtractionRegex = RegExp(r"(?:port\s*|:)(\d{4,5})$");
 
-final _processProvider = Provider<RunningProcess?>((ref) {
+final processProvider = Provider<RunningProcess?>((ref) {
   final Directory? projectDirectory = ref.watch(openProjectProvider);
   if (projectDirectory == null) return null;
   final JavaPath? javaPath = ref.watch(javaPathProvider);
@@ -29,13 +30,13 @@ final _processProvider = Provider<RunningProcess?>((ref) {
 });
 
 final processOutputProvider = StreamProvider<String>((ref) async* {
-  final RunningProcess? process = ref.watch(_processProvider);
+  final RunningProcess? process = ref.watch(processProvider);
   if (process == null) return;
   yield* process.consoleOutput;
 });
 
 final processStateProvider = StreamProvider<RunningProcessState>((ref) async* {
-  final RunningProcess? process = ref.watch(_processProvider);
+  final RunningProcess? process = ref.watch(processProvider);
   if (process == null) return;
   yield* process.state;
 });
@@ -234,6 +235,12 @@ class RunningProcess with WindowListener {
         _port = int.tryParse(portText ?? "") ?? 8100;
       }
 
+      if (event.contains("WebServer started")) {
+        _consoleOutputController.add(
+          " You can now click the open button above, to see your map!",
+        );
+      }
+
       if (event.contains("Start updating 0 maps")) {
         _consoleOutputController.add(
           "[WARNING] You don't have any maps, so BlueMap will be doing nothing!\n"
@@ -262,55 +269,20 @@ class RunningProcess with WindowListener {
   }
 }
 
-class ControlRow extends ConsumerWidget {
+class ControlRow extends StatelessWidget {
   const ControlRow({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final processState = ref.watch(processStateProvider).value;
-
-    return Row(
+  Widget build(BuildContext context) {
+    return const Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SizedBox(
-          width: 150,
-          child: ElevatedButton.icon(
-            onPressed: switch (processState) {
-              RunningProcessState.stopped => () => ref.read(_processProvider)?.start(),
-              RunningProcessState.running => () => ref.read(_processProvider)?.stop(),
-              _ => null,
-            },
-            label: Text(switch (processState) {
-              RunningProcessState.stopped => "Start",
-              RunningProcessState.running => "Stop",
-              RunningProcessState.starting => "Starting...",
-              RunningProcessState.stopping => "Stopping...",
-              null => "Unknown",
-            }),
-            icon: Icon(switch (processState) {
-              RunningProcessState.stopped => Icons.play_arrow,
-              RunningProcessState.running => Icons.stop,
-              null => Icons.error,
-              _ => Icons.hourglass_bottom,
-            }),
-          ),
-        ),
-        const SizedBox(width: 16),
-        ElevatedButton.icon(
-          onPressed: processState == RunningProcessState.running
-              ? () async {
-                  final int port = ref.read(_processProvider)?.port ?? 8100;
-                  if (!await launchUrl(Uri.parse("http://localhost:$port"))) {
-                    throw Exception("Could not launch url!");
-                  }
-                }
-              : null,
-          label: const Text("Open"),
-          icon: const Icon(Icons.open_in_browser),
-        ),
-        const SizedBox(width: 32),
-        const Spacer(),
-        const UpdateButton(),
+        StartButton(),
+        SizedBox(width: 16),
+        OpenButton(),
+        SizedBox(width: 32),
+        Spacer(),
+        UpdateButton(),
       ],
     );
   }
