@@ -29,11 +29,13 @@ class OutputNotifier extends Notifier<List<String>> {
     });
 
     //clear output when project directory changes
-    ref.listen(openProjectProvider, (previous, next) {
-      state = [];
-    });
+    ref.listen(openProjectProvider, (_, _) => clear());
 
     return [];
+  }
+
+  void clear() {
+    state = [];
   }
 }
 

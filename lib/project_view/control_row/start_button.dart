@@ -1,6 +1,8 @@
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 
+import "../../prefs.dart";
+import "../console.dart";
 import "control_row.dart";
 
 class StartButton extends ConsumerWidget {
@@ -14,7 +16,16 @@ class StartButton extends ConsumerWidget {
       width: 150,
       child: ElevatedButton.icon(
         onPressed: switch (processState) {
-          RunningProcessState.stopped => () => ref.read(processProvider)?.start(),
+          RunningProcessState.stopped => () async {
+            final bool clearConsoleBeforeStart =
+                ref.read(consoleClearProvider) ?? ConsoleClearProvider.defaultOption;
+            if (clearConsoleBeforeStart) {
+              ref.read(outputNotifierProvider.notifier).clear();
+              // small delay to let the console be fully empty for a moment
+              await Future.delayed(const Duration(milliseconds: 50));
+            }
+            ref.read(processProvider)?.start();
+          },
           RunningProcessState.running => () => ref.read(processProvider)?.stop(),
           _ => null,
         },

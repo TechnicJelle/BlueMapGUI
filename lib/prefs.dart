@@ -14,6 +14,7 @@ Future<void> initPrefs() async {
         JavaPathNotifier._javaPathTypeKey,
         KnownProjectsNotifier._knownProjectsKey,
         ThemeModeProvider._themeModeKey,
+        ConsoleClearProvider._consoleClearKey,
       },
     ),
   );
@@ -112,3 +113,24 @@ class ThemeModeProvider extends Notifier<ThemeMode> {
 }
 
 final themeModeProvider = NotifierProvider(() => ThemeModeProvider());
+
+class ConsoleClearProvider extends Notifier<bool> {
+  static const String _consoleClearKey = "console_clear";
+
+  static const bool defaultOption = true;
+
+  @override
+  bool build() {
+    bool? option = _prefs.getBool(_consoleClearKey);
+    if (option == null) return defaultOption;
+
+    return option;
+  }
+
+  void set(bool newOption) {
+    state = newOption;
+    _prefs.setBool(_consoleClearKey, newOption);
+  }
+}
+
+final consoleClearProvider = NotifierProvider(() => ConsoleClearProvider());
