@@ -196,9 +196,7 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
 
     // == Checking for BlueMap CLI JAR ==
     ref.read(_openingStateProvider.notifier).set(_OpeningStep.checking);
-    final File potentialBlueMapJar = File(
-      p.join(projectDirectory.path, blueMapCliJarName),
-    );
+    final File potentialBlueMapJar = getBlueMapJarFile(projectDirectory);
 
     final File bluemapJar;
     // == If needed, download BlueMap CLI JAR ==

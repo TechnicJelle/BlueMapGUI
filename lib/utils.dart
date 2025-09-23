@@ -15,6 +15,16 @@ extension StringExtension on String {
   }
 }
 
+extension UriExtension on Uri {
+  String getFileName() {
+    return p.basename(path);
+  }
+}
+
+File getBlueMapJarFile(Directory projectDirectory) {
+  return File(p.join(projectDirectory.path, blueMapCliJarUrl.getFileName()));
+}
+
 const TextStyle pixelCode = TextStyle(
   fontFamily: "PixelCode",
   fontSize: 14,
@@ -44,11 +54,10 @@ class NonHashedFile {
 
 @useResult
 Future<NonHashedFile> downloadBlueMap(Directory projectDirectory) async {
-  Uri link = Uri.parse(blueMapCliJarUrl);
   final client = HttpClient();
-  final request = await client.getUrl(link);
+  final request = await client.getUrl(blueMapCliJarUrl);
   final response = await request.close();
-  final File bluemapJar = File(p.join(projectDirectory.path, blueMapCliJarName));
+  final File bluemapJar = getBlueMapJarFile(projectDirectory);
   await response.pipe(bluemapJar.openWrite());
   client.close();
   return NonHashedFile(bluemapJar);

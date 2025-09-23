@@ -170,7 +170,7 @@ class RunningProcess with WindowListener {
     }
 
     _consoleOutputController.add("Starting...");
-    final File bluemapJar = File(p.join(_projectDirectory.path, blueMapCliJarName));
+    final File bluemapJar = getBlueMapJarFile(_projectDirectory);
 
     if (!bluemapJar.existsSync()) {
       _consoleOutputController.add(
