@@ -14,25 +14,9 @@ import "check_java_version.dart";
 
 enum _SystemRadioState { loading, success, errored }
 
-enum _BundledRadioState { empty, downloading, unpacking, success, errored }
+enum _BundledRadioState { empty, downloading, hashing, unpacking, success, errored }
 
 enum _CustomRadioState { empty, success, errored }
-
-Uri? createBundleDownloadLink() {
-  const int javaVersion = 21;
-  Uri createLink(String platform, String architecture) {
-    return Uri.https(
-      "api.adoptium.net",
-      "/v3/binary/latest/$javaVersion/ga/$platform/$architecture/jre/hotspot/normal/eclipse",
-    );
-  }
-
-  return switch (Abi.current()) {
-    Abi.linuxX64 => createLink("linux", "x64"),
-    Abi.windowsX64 => createLink("windows", "x64"),
-    _ => null,
-  };
-}
 
 class JavaPicker extends ConsumerStatefulWidget {
   const JavaPicker({super.key});
@@ -54,8 +38,30 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
   String? systemError;
 
   _BundledRadioState bundledRadioState = _BundledRadioState.empty;
-  late final Uri? bundledDownloadLink = createBundleDownloadLink();
+
+  late final Uri? bundledDownloadLink;
+  late final String? bundleHash;
   String? bundledError;
+
+  void initBundleDownloadLink() {
+    const String javaVersion = "jdk-21.0.8+9";
+    Uri createLink(String platform, String architecture) {
+      return Uri.https(
+        "api.adoptium.net",
+        "/v3/binary/version/$javaVersion/$platform/$architecture/jre/hotspot/normal/eclipse",
+      );
+    }
+
+    // Hashes are SHA256
+    switch (Abi.current()) {
+      case Abi.linuxX64:
+        bundledDownloadLink = createLink("linux", "x64");
+        bundleHash = "968c283e104059dae86ea1d670672a80170f27a39529d815843ec9c1f0fa2a03";
+      case Abi.windowsX64:
+        bundledDownloadLink = createLink("windows", "x64");
+        bundleHash = "238d74ec4ec9422d416fa98805ba375eecd8bc8f971bd0c61a21051a4fe42db8";
+    }
+  }
 
   _CustomRadioState customRadioState = _CustomRadioState.empty;
   int? customJavaVersion;
@@ -65,6 +71,8 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
   @override
   void initState() {
     super.initState();
+
+    initBundleDownloadLink();
 
     // System
     checkJavaVersion("java").then(
@@ -175,6 +183,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
                       "Automatically download Java. Use this if you don't have a working System Installation, and you don't want to use a custom one either.",
                     ),
                     _BundledRadioState.downloading => const Text("Downloading..."),
+                    _BundledRadioState.hashing => const Text("Verifying..."),
                     _BundledRadioState.unpacking => const Text("Unpacking..."),
                     _BundledRadioState.success => const Text(
                       "Successfully downloaded! You are ready to go!",
@@ -236,7 +245,8 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
 
   Future<void> onBundled() async {
     final Uri? downloadLink = bundledDownloadLink;
-    if (downloadLink == null) return;
+    final String? hash = bundleHash;
+    if (downloadLink == null || hash == null) return;
 
     setState(() {
       bundledRadioState = _BundledRadioState.downloading;
@@ -258,16 +268,9 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
       }
     }
 
-    final File javaBundleArchive;
+    final NonHashedFile susBundleArchive;
     try {
-      final client = HttpClient();
-      final request = await client.getUrl(downloadLink);
-      final response = await request.close();
-      final String filename = p.basename(response.redirects.first.location.path);
-      javaBundleArchive = File(p.join(supportDir.path, filename));
-      await response.pipe(javaBundleArchive.openWrite());
-      client.close();
-      //TODO: Maybe some verification, like what happens with the BlueMap-cli.jar as well?
+      susBundleArchive = await downloadJava(downloadLink, supportDir);
     } catch (e) {
       setState(() {
         bundledRadioState = _BundledRadioState.errored;
@@ -275,6 +278,22 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
       });
       return;
     }
+
+    setState(() {
+      bundledRadioState = _BundledRadioState.hashing;
+    });
+
+    final File? hashedBundleArchive = await susBundleArchive.hashFile(hash);
+    if (hashedBundleArchive == null) {
+      setState(() {
+        bundledRadioState = _BundledRadioState.errored;
+        bundledError =
+            "Could not verify the downloaded Java Bundle archive's integrity!\n"
+            "The hash of the downloaded file does not match the expected hash.";
+      });
+      return;
+    }
+    final File javaBundleArchive = hashedBundleArchive;
 
     setState(() {
       bundledRadioState = _BundledRadioState.unpacking;

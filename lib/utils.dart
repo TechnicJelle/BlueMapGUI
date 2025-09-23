@@ -62,3 +62,15 @@ Future<NonHashedFile> downloadBlueMap(Directory projectDirectory) async {
   client.close();
   return NonHashedFile(bluemapJar);
 }
+
+@useResult
+Future<NonHashedFile> downloadJava(Uri downloadLink, Directory supportDir) async {
+  final client = HttpClient();
+  final request = await client.getUrl(downloadLink);
+  final response = await request.close();
+  final String filename = response.redirects.first.location.getFileName();
+  final javaBundleArchive = File(p.join(supportDir.path, filename));
+  await response.pipe(javaBundleArchive.openWrite());
+  client.close();
+  return NonHashedFile(javaBundleArchive);
+}
