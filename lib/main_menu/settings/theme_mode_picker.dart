@@ -14,7 +14,9 @@ class ThemeModePicker extends ConsumerWidget {
     return RadioGroup(
       groupValue: themeMode,
       onChanged: (ThemeMode? newThemeMode) {
-        ref.read(themeModeProvider.notifier).set(newThemeMode ?? ThemeMode.system);
+        ref
+            .read(themeModeProvider.notifier)
+            .set(newThemeMode ?? ThemeModeProvider.defaultOption);
       },
       child: Column(
         mainAxisSize: MainAxisSize.min,

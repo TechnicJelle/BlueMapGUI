@@ -94,11 +94,13 @@ final knownProjectsProvider = NotifierProvider(() => KnownProjectsNotifier());
 class ThemeModeProvider extends Notifier<ThemeMode> {
   static const String _themeModeKey = "theme_mode";
 
+  static const ThemeMode defaultOption = ThemeMode.system;
+
   @override
   ThemeMode build() {
     final String? themeModeString = _prefs.getString(_themeModeKey);
     final ThemeMode? themeMode = ThemeMode.values.asNameMap()[themeModeString];
-    if (themeMode == null) return ThemeMode.system;
+    if (themeMode == null) return defaultOption;
 
     return themeMode;
   }
