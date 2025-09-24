@@ -45,8 +45,11 @@ class ProjectsScreen extends ConsumerWidget {
     return Stack(
       children: [
         ListView.builder(
-          itemCount: projects.length,
+          itemCount: projects.length + 1,
           itemBuilder: (BuildContext context, int index) {
+            if (index == projects.length) {
+              return const SizedBox(height: 64 + 24);
+            }
             final projectDirectory = projects[index];
             return ProjectTile(projectDirectory);
           },
