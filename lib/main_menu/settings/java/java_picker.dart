@@ -270,7 +270,16 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
 
     final NonHashedFile susBundleArchive;
     try {
-      susBundleArchive = await downloadJava(downloadLink, supportDir);
+      susBundleArchive = await downloadFile(
+        uri: downloadLink,
+        outputFileGenerator: (response) {
+          final String filename = response.redirects.first.location.getFileName();
+          return File(p.join(supportDir.path, filename));
+        },
+        // onProgress: (double progress) {
+        //   print(progress);
+        // },
+      );
     } catch (e) {
       setState(() {
         bundledRadioState = _BundledRadioState.errored;

@@ -206,7 +206,13 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
       ref.read(_openingStateProvider.notifier).set(_OpeningStep.downloading);
       final NonHashedFile susBlueMapJar;
       try {
-        susBlueMapJar = await downloadBlueMap(projectDirectory);
+        susBlueMapJar = await downloadFile(
+          uri: blueMapCliJarUrl,
+          outputFileGenerator: (_) => getBlueMapJarFile(projectDirectory),
+          // onProgress: (double progress) {
+          //   print(progress);
+          // },
+        );
       } catch (e) {
         ref
             .read(_openingStateProvider.notifier)

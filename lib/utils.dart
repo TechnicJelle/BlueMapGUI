@@ -2,7 +2,6 @@ import "dart:io";
 
 import "package:crypto/crypto.dart";
 import "package:flutter/material.dart";
-import "package:meta/meta.dart";
 import "package:path/path.dart" as p;
 
 import "main.dart";
@@ -52,25 +51,29 @@ class NonHashedFile {
   }
 }
 
-@useResult
-Future<NonHashedFile> downloadBlueMap(Directory projectDirectory) async {
+/// [progress] is a double between 0 and 1.
+Future<NonHashedFile> downloadFile({
+  required Uri uri,
+  required File Function(HttpClientResponse response) outputFileGenerator,
+  void Function(double progress)? onProgress,
+}) async {
   final client = HttpClient();
-  final request = await client.getUrl(blueMapCliJarUrl);
+  final request = await client.getUrl(uri);
   final response = await request.close();
-  final File bluemapJar = getBlueMapJarFile(projectDirectory);
-  await response.pipe(bluemapJar.openWrite());
-  client.close();
-  return NonHashedFile(bluemapJar);
-}
 
-@useResult
-Future<NonHashedFile> downloadJava(Uri downloadLink, Directory supportDir) async {
-  final client = HttpClient();
-  final request = await client.getUrl(downloadLink);
-  final response = await request.close();
-  final String filename = response.redirects.first.location.getFileName();
-  final javaBundleArchive = File(p.join(supportDir.path, filename));
-  await response.pipe(javaBundleArchive.openWrite());
+  final File outputFile = outputFileGenerator(response);
+  final IOSink sink = outputFile.openWrite();
+
+  int current = 0;
+  await response.forEach((List<int> buffer) {
+    if (onProgress != null) {
+      current += buffer.length;
+      double progress = current.toDouble() / response.contentLength.toDouble();
+      onProgress(progress);
+    }
+    sink.add(buffer);
+  });
+
   client.close();
-  return NonHashedFile(javaBundleArchive);
+  return NonHashedFile(outputFile);
 }
