@@ -42,6 +42,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
   late final Uri? bundledDownloadLink;
   late final String? bundleHash;
   String? bundledError;
+  double? bundleProgress;
 
   void initBundleDownloadLink() {
     const String javaVersion = "jdk-21.0.8+9";
@@ -178,18 +179,28 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
                     "Your computer is incompatible with the automatic download. Please try the Custom mode below.",
                     style: red,
                   )
-                : switch (bundledRadioState) {
-                    _BundledRadioState.empty => const Text(
-                      "Automatically download Java. Use this if you don't have a working System Installation, and you don't want to use a custom one either.",
-                    ),
-                    _BundledRadioState.downloading => const Text("Downloading..."),
-                    _BundledRadioState.hashing => const Text("Verifying..."),
-                    _BundledRadioState.unpacking => const Text("Unpacking..."),
-                    _BundledRadioState.success => const Text(
-                      "Successfully downloaded! You are ready to go!",
-                    ),
-                    _BundledRadioState.errored => Text("$bundledError", style: red),
-                  },
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      switch (bundledRadioState) {
+                        _BundledRadioState.empty => const Text(
+                          "Automatically download Java. Use this if you don't have a working System Installation, and you don't want to use a custom one either.",
+                        ),
+                        _BundledRadioState.downloading => const Text("Downloading..."),
+                        _BundledRadioState.hashing => const Text("Verifying..."),
+                        _BundledRadioState.unpacking => const Text("Unpacking..."),
+                        _BundledRadioState.success => const Text(
+                          "Successfully downloaded! You are ready to go!",
+                        ),
+                        _BundledRadioState.errored => Text("$bundledError", style: red),
+                      },
+                      if (bundledRadioState == _BundledRadioState.downloading ||
+                          bundledRadioState == _BundledRadioState.hashing ||
+                          bundledRadioState == _BundledRadioState.unpacking)
+                        LinearProgressIndicator(value: bundleProgress),
+                    ],
+                  ),
 
             enabled: bundledDownloadLink != null,
           ),
@@ -250,6 +261,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
 
     setState(() {
       bundledRadioState = _BundledRadioState.downloading;
+      bundleProgress = null;
     });
 
     final Directory supportDir = await getApplicationSupportDirectory();
@@ -263,6 +275,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
         setState(() {
           bundledRadioState = _BundledRadioState.errored;
           bundledError = e.toString();
+          bundleProgress = null;
         });
         return;
       }
@@ -276,20 +289,24 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
           final String filename = response.redirects.first.location.getFileName();
           return File(p.join(supportDir.path, filename));
         },
-        // onProgress: (double progress) {
-        //   print(progress);
-        // },
+        onProgress: (double progress) {
+          setState(() {
+            bundleProgress = progress;
+          });
+        },
       );
     } catch (e) {
       setState(() {
         bundledRadioState = _BundledRadioState.errored;
         bundledError = e.toString();
+        bundleProgress = null;
       });
       return;
     }
 
     setState(() {
       bundledRadioState = _BundledRadioState.hashing;
+      bundleProgress = null;
     });
 
     final File? hashedBundleArchive = await susBundleArchive.hashFile(hash);
@@ -299,6 +316,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
         bundledError =
             "Could not verify the downloaded Java Bundle archive's integrity!\n"
             "The hash of the downloaded file does not match the expected hash.";
+        bundleProgress = null;
       });
       return;
     }
@@ -314,6 +332,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
       setState(() {
         bundledRadioState = _BundledRadioState.errored;
         bundledError = e.toString();
+        bundleProgress = null;
       });
       return;
     }
@@ -325,6 +344,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
       setState(() {
         bundledRadioState = _BundledRadioState.errored;
         bundledError = e.toString();
+        bundleProgress = null;
       });
       return;
     }
@@ -338,6 +358,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
       setState(() {
         bundledRadioState = _BundledRadioState.errored;
         bundledError = "Could not find Java Executable in the downloaded bundle.";
+        bundleProgress = null;
       });
       return;
     }
@@ -345,6 +366,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
     setState(() {
       bundledRadioState = _BundledRadioState.success;
       bundledError = null;
+      bundleProgress = null;
       ref
           .read(javaPathProvider.notifier)
           .setJavaPath(JavaPath(JavaPathMode.bundled, javaExecutable.path));

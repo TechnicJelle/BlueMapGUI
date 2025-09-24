@@ -71,6 +71,7 @@ class ProjectTile extends ConsumerStatefulWidget {
 
 class _PathPickerButtonState extends ConsumerState<ProjectTile> {
   final _openingStateProvider = NotifierProvider(() => _OpeningStateNotifier());
+  final _progressNotifier = NotifierProvider(() => ProgressNotifier());
 
   StreamSubscription<FileSystemEvent>? fileWatchSub;
   late bool projectDirectoryExists;
@@ -178,10 +179,12 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
   }
 
   Future<void> openProject() async {
+    ref.read(_progressNotifier.notifier).indeterminate();
+
     // == Open opening progress dialog ==
     showDialog(
       context: context,
-      builder: (context) => _OpenProjectDialog(_openingStateProvider),
+      builder: (context) => _OpenProjectDialog(_openingStateProvider, _progressNotifier),
       barrierDismissible: false,
     );
 
@@ -209,10 +212,11 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
         susBlueMapJar = await downloadFile(
           uri: blueMapCliJarUrl,
           outputFileGenerator: (_) => getBlueMapJarFile(projectDirectory),
-          // onProgress: (double progress) {
-          //   print(progress);
-          // },
+          onProgress: (double progress) {
+            ref.read(_progressNotifier.notifier).set(progress);
+          },
         );
+        ref.read(_progressNotifier.notifier).indeterminate();
       } catch (e) {
         ref
             .read(_openingStateProvider.notifier)
@@ -323,8 +327,9 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
 
 class _OpenProjectDialog extends ConsumerWidget {
   final NotifierProvider<_OpeningStateNotifier, _OpeningStep?> _openingStateProvider;
+  final NotifierProvider<ProgressNotifier, double?> _progressNotifier;
 
-  const _OpenProjectDialog(this._openingStateProvider);
+  const _OpenProjectDialog(this._openingStateProvider, this._progressNotifier);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -410,7 +415,7 @@ class _OpenProjectDialog extends ConsumerWidget {
             )
           : ConstrainedBox(
               constraints: const BoxConstraints(minWidth: 500),
-              child: const LinearProgressIndicator(),
+              child: LinearProgressIndicator(value: ref.watch(_progressNotifier)),
             ),
       actions: isError
           ? [

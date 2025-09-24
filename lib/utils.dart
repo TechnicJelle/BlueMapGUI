@@ -2,6 +2,7 @@ import "dart:io";
 
 import "package:crypto/crypto.dart";
 import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:path/path.dart" as p;
 
 import "main.dart";
@@ -48,6 +49,21 @@ class NonHashedFile {
     } else {
       return null;
     }
+  }
+}
+
+class ProgressNotifier extends Notifier<double?> {
+  @override
+  double? build() {
+    return null;
+  }
+
+  void set(double progress) {
+    state = progress;
+  }
+
+  void indeterminate() {
+    state = null;
   }
 }
 
