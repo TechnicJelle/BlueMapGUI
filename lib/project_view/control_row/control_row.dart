@@ -32,6 +32,7 @@ final processProvider = Provider<RunningProcess?>((ref) {
 final processOutputProvider = StreamProvider<String>((ref) async* {
   final RunningProcess? process = ref.watch(processProvider);
   if (process == null) return;
+  yield "Loading done!";
   yield* process.consoleOutput;
 });
 
