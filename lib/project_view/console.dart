@@ -7,31 +7,26 @@ import "../utils.dart";
 import "control_row/control_row.dart";
 
 class OutputNotifier extends Notifier<List<String>> {
+  String _convert(AsyncValue<String> next) {
+    print(next);
+    return switch (next) {
+      AsyncData(value: final String message) => message,
+      AsyncError(:final error) => "ERR: $error",
+      AsyncLoading(progress: null) => "Loading...",
+      AsyncLoading(:final num progress) => "Loading... ${(progress * 100).toInt()}%",
+    };
+  }
+
   @override
   List<String> build() {
-    ref.listen(processOutputProvider, (_, next) {
-      switch (next) {
-        case AsyncData(value: final String message):
-          state = [...state, message];
-          break;
-        case AsyncError(:final error):
-          state = [...state, "ERR: $error"];
-          break;
-        case AsyncLoading(:final num? progress):
-          if (progress == null) {
-            state = [...state, "Loading..."];
-          } else {
-            int percent = (progress * 100).toInt();
-            state = [...state, "Loading... $percent%"];
-          }
-          break;
-      }
-    });
-
     //clear output when project directory changes
     ref.listen(openProjectProvider, (_, _) => clear());
 
-    return [];
+    final sub = ref.listen(processOutputProvider, (_, next) {
+      state = [...state, _convert(next)];
+    });
+
+    return [_convert(sub.read())];
   }
 
   void clear() {
