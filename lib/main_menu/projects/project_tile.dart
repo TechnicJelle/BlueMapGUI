@@ -60,6 +60,9 @@ class _OpeningStateNotifier extends Notifier<_OpeningStep?> {
   }
 }
 
+final _openingStateProvider = NotifierProvider(() => _OpeningStateNotifier());
+final _progressNotifier = NotifierProvider(() => ProgressNotifier());
+
 class ProjectTile extends ConsumerStatefulWidget {
   final Directory projectDirectory;
 
@@ -70,9 +73,6 @@ class ProjectTile extends ConsumerStatefulWidget {
 }
 
 class _PathPickerButtonState extends ConsumerState<ProjectTile> {
-  final _openingStateProvider = NotifierProvider(() => _OpeningStateNotifier());
-  final _progressNotifier = NotifierProvider(() => ProgressNotifier());
-
   StreamSubscription<FileSystemEvent>? fileWatchSub;
   late bool projectDirectoryExists;
 
@@ -184,7 +184,7 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
     // == Open opening progress dialog ==
     showDialog(
       context: context,
-      builder: (context) => _OpenProjectDialog(_openingStateProvider, _progressNotifier),
+      builder: (context) => const _OpenProjectDialog(),
       barrierDismissible: false,
     );
 
@@ -326,10 +326,7 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
 }
 
 class _OpenProjectDialog extends ConsumerWidget {
-  final NotifierProvider<_OpeningStateNotifier, _OpeningStep?> _openingStateProvider;
-  final NotifierProvider<ProgressNotifier, double?> _progressNotifier;
-
-  const _OpenProjectDialog(this._openingStateProvider, this._progressNotifier);
+  const _OpenProjectDialog();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
