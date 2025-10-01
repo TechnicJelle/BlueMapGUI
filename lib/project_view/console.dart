@@ -8,7 +8,6 @@ import "control_row/control_row.dart";
 
 class OutputNotifier extends Notifier<List<String>> {
   String _convert(AsyncValue<String> next) {
-    print(next);
     return switch (next) {
       AsyncData(value: final String message) => message,
       AsyncError(:final error) => "ERR: $error",
