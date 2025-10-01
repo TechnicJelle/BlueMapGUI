@@ -91,7 +91,7 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
       fileWatchSub = parent.watch().listen((FileSystemEvent event) {
         projectDirectory.exists().then((bool projectDirectoryExists) {
           if (!mounted) return;
-          setState(() => projectDirectoryExists = projectDirectoryExists);
+          setState(() => this.projectDirectoryExists = projectDirectoryExists);
         });
       });
     });
