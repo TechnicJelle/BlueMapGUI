@@ -1,3 +1,4 @@
+import "dart:async";
 import "dart:io";
 
 import "package:flutter/material.dart";
@@ -14,6 +15,8 @@ class OpenProjectNotifier extends Notifier<Directory?> {
     return null;
   }
 
+  // Notifiers should not use setters
+  // ignore: use_setters_to_change_properties
   void openProject(Directory projectDirectory) {
     state = projectDirectory;
   }
@@ -24,7 +27,9 @@ class OpenProjectNotifier extends Notifier<Directory?> {
   }
 }
 
-final openProjectProvider = NotifierProvider(() => OpenProjectNotifier());
+// I don't want these for providers; too long
+// ignore: specify_nonobvious_property_types
+final openProjectProvider = NotifierProvider(OpenProjectNotifier.new);
 
 class ProjectsScreen extends ConsumerWidget {
   const ProjectsScreen({super.key});
@@ -60,9 +65,11 @@ class ProjectsScreen extends ConsumerWidget {
           child: FloatingActionButton(
             child: const Icon(Icons.add),
             onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) => const NewProjectDialog(),
+              unawaited(
+                showDialog<void>(
+                  context: context,
+                  builder: (context) => const NewProjectDialog(),
+                ),
               );
             },
           ),

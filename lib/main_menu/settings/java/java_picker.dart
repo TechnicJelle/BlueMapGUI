@@ -1,3 +1,4 @@
+import "dart:async";
 import "dart:ffi";
 import "dart:io";
 
@@ -10,6 +11,7 @@ import "package:path_provider/path_provider.dart";
 
 import "../../../prefs.dart";
 import "../../../utils.dart";
+import "../../../versions.dart";
 import "check_java_version.dart";
 
 enum _SystemRadioState { loading, success, errored }
@@ -26,6 +28,8 @@ class JavaPicker extends ConsumerStatefulWidget {
 }
 
 class _JavaPickerState extends ConsumerState<JavaPicker> {
+  // I don't want these for providers; too long
+  // ignore: specify_nonobvious_property_types
   final _javaPickerModeProvider = javaPathProvider.select((javaPath) {
     if (javaPath != null) {
       return javaPath.type;
@@ -45,11 +49,10 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
   double? bundleProgress;
 
   void initBundleDownloadLink() {
-    const String javaVersion = "jdk-21.0.8+9";
     Uri createLink(String platform, String architecture) {
       return Uri.https(
         "api.adoptium.net",
-        "/v3/binary/version/$javaVersion/$platform/$architecture/jre/hotspot/normal/eclipse",
+        "/v3/binary/version/$javaBundleVersion/$platform/$architecture/jre/hotspot/normal/eclipse",
       );
     }
 
@@ -57,10 +60,10 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
     switch (Abi.current()) {
       case Abi.linuxX64:
         bundledDownloadLink = createLink("linux", "x64");
-        bundleHash = "968c283e104059dae86ea1d670672a80170f27a39529d815843ec9c1f0fa2a03";
+        bundleHash = javaBundleLinuxX64Hash;
       case Abi.windowsX64:
         bundledDownloadLink = createLink("windows", "x64");
-        bundleHash = "238d74ec4ec9422d416fa98805ba375eecd8bc8f971bd0c61a21051a4fe42db8";
+        bundleHash = javaBundleWindowsX64Hash;
     }
   }
 
@@ -76,44 +79,48 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
     initBundleDownloadLink();
 
     // System
-    checkJavaVersion("java").then(
-      (javaVersion) {
-        setState(() {
-          systemRadioState = _SystemRadioState.success;
-          systemJavaVersion = javaVersion;
-          systemError = null;
-        });
-      },
-      onError: (e) {
-        setState(() {
-          systemRadioState = _SystemRadioState.errored;
-          systemJavaVersion = null;
-          systemError = e.toString();
-        });
-      },
+    unawaited(
+      checkJavaVersion("java").then(
+        (javaVersion) {
+          setState(() {
+            systemRadioState = _SystemRadioState.success;
+            systemJavaVersion = javaVersion;
+            systemError = null;
+          });
+        },
+        onError: (Object e) {
+          setState(() {
+            systemRadioState = _SystemRadioState.errored;
+            systemJavaVersion = null;
+            systemError = e is JavaVersionCheckException ? e.message : e.toString();
+          });
+        },
+      ),
     );
 
     // Custom
     if (ref.read(_javaPickerModeProvider) == JavaPathMode.custom) {
-      JavaPath javaPath = ref.read(javaPathProvider)!;
+      final JavaPath javaPath = ref.read(javaPathProvider)!;
       customRadioState = _CustomRadioState.success;
       customJavaVersion = 0;
       customJavaPath = javaPath.path;
       customError = null;
 
-      checkJavaVersion(javaPath.path).then(
-        (javaVersion) {
-          setState(() {
-            customJavaVersion = javaVersion;
-          });
-        },
-        onError: (e) {
-          setState(() {
-            customRadioState = _CustomRadioState.errored;
-            customJavaVersion = null;
-            customError = e.toString();
-          });
-        },
+      unawaited(
+        checkJavaVersion(javaPath.path).then(
+          (javaVersion) {
+            setState(() {
+              customJavaVersion = javaVersion;
+            });
+          },
+          onError: (Object e) {
+            setState(() {
+              customRadioState = _CustomRadioState.errored;
+              customJavaVersion = null;
+              customError = e is JavaVersionCheckException ? e.message : e.toString();
+            });
+          },
+        ),
       );
     }
   }
@@ -127,28 +134,22 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
 
     return RadioGroup(
       groupValue: javaPickerMode,
-      onChanged: (JavaPathMode? newJavaPickerMode) async {
+      onChanged: (JavaPathMode? newJavaPickerMode) {
         switch (newJavaPickerMode) {
           case JavaPathMode.unset:
             onUnset();
-            break;
           case JavaPathMode.system:
             onSystem();
-            break;
           case JavaPathMode.bundled:
-            onBundled();
-            break;
+            unawaited(onBundled());
           case JavaPathMode.custom:
-            onCustom();
-            break;
+            unawaited(onCustom());
           case null:
             break;
         }
       },
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           RadioListTile(
             value: JavaPathMode.unset,
@@ -271,7 +272,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
     if (javaBundleDirectory.existsSync()) {
       try {
         javaBundleDirectory.deleteSync(recursive: true);
-      } catch (e) {
+      } on FileSystemException catch (e) {
         setState(() {
           bundledRadioState = _BundledRadioState.errored;
           bundledError = e.toString();
@@ -295,7 +296,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
           });
         },
       );
-    } catch (e) {
+    } on IOException catch (e) {
       setState(() {
         bundledRadioState = _BundledRadioState.errored;
         bundledError = e.toString();
@@ -328,7 +329,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
 
     try {
       await extractFileToDisk(javaBundleArchive.path, javaBundleDirectory.path);
-    } catch (e) {
+    } on IOException catch (e) {
       setState(() {
         bundledRadioState = _BundledRadioState.errored;
         bundledError = e.toString();
@@ -340,7 +341,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
     // Delete the archive; it is not needed anymore.
     try {
       javaBundleArchive.deleteSync(recursive: true);
-    } catch (e) {
+    } on FileSystemException catch (e) {
       setState(() {
         bundledRadioState = _BundledRadioState.errored;
         bundledError = e.toString();
@@ -376,7 +377,9 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
   Future<void> onCustom() async {
     final FilePickerResult? browsed = await FilePicker.platform.pickFiles(
       dialogTitle: "Select Java executable",
-      //cannot use FileType.custom, because it doesn't support files with no extension, which is the case for executables on linux
+      // Specifically mention this, because we can't use FileType.custom, which would be expected here.
+      // This is because it doesn't support files with no extension, which is the case for executables on linux.
+      // ignore: avoid_redundant_argument_values
       type: FileType.any,
     );
     if (browsed == null) {
@@ -396,7 +399,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
 
     customJavaPath = javaPath;
     try {
-      int javaVersion = await checkJavaVersion(javaPath);
+      final int javaVersion = await checkJavaVersion(javaPath);
       setState(() {
         customRadioState = _CustomRadioState.success;
         customJavaVersion = javaVersion;
@@ -405,11 +408,11 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
             .read(javaPathProvider.notifier)
             .setJavaPath(JavaPath(JavaPathMode.custom, javaPath));
       });
-    } catch (e) {
+    } on JavaVersionCheckException catch (e) {
       setState(() {
         customRadioState = _CustomRadioState.errored;
         customJavaVersion = null;
-        customError = e.toString();
+        customError = e.message;
       });
     }
   }

@@ -1,3 +1,5 @@
+import "dart:async";
+
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 
@@ -15,7 +17,6 @@ class NewMapButton extends ConsumerWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(80)),
         tileColor: Theme.of(context).colorScheme.primary,
         title: Row(
-          mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.add, color: onPrimary),
@@ -26,7 +27,12 @@ class NewMapButton extends ConsumerWidget {
           ],
         ),
         onTap: () {
-          showDialog(context: context, builder: (context) => const NewMapDialog());
+          unawaited(
+            showDialog<void>(
+              context: context,
+              builder: (context) => const NewMapDialog(),
+            ),
+          );
         },
       ),
     );

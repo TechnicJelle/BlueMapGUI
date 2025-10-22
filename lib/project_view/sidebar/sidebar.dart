@@ -48,59 +48,50 @@ class _SidebarState extends ConsumerState<Sidebar> {
           }
 
           //watch for changes to files in the maps directory
-          final sub = entity
-              .watch(
-                events:
-                    FileSystemEvent.create |
-                    FileSystemEvent.delete |
-                    FileSystemEvent.move |
-                    FileSystemEvent.modify,
-              )
-              .listen((FileSystemEvent event) {
-                switch (event.type) {
-                  case FileSystemEvent.create:
-                    addMap(File(event.path));
-                    break;
-                  case FileSystemEvent.delete:
-                    removeMap(File(event.path));
-                    break;
-                  case FileSystemEvent.move:
-                    final FileSystemMoveEvent moveEvent = event as FileSystemMoveEvent;
-                    String? destination = moveEvent.destination;
-                    if (destination != null) {
-                      removeMap(File(moveEvent.path));
-                      addMap(File(destination));
+          final sub = entity.watch().listen((FileSystemEvent event) {
+            switch (event.type) {
+              case FileSystemEvent.create:
+                addMap(File(event.path));
+              case FileSystemEvent.delete:
+                removeMap(File(event.path));
+              case FileSystemEvent.move:
+                final FileSystemMoveEvent moveEvent = event as FileSystemMoveEvent;
+                final String? destination = moveEvent.destination;
+                if (destination != null) {
+                  removeMap(File(moveEvent.path));
+                  addMap(File(destination));
 
-                      final String prevMapID = p.basenameWithoutExtension(
-                        moveEvent.path,
-                      );
-                      final String nextMapID = p.basenameWithoutExtension(destination);
+                  final String prevMapID = p.basenameWithoutExtension(
+                    moveEvent.path,
+                  );
+                  final String nextMapID = p.basenameWithoutExtension(destination);
 
-                      //Also rename the map data directory:
-                      final Directory mapDataDir = Directory(
-                        p.join(projectPath, "web", "maps", prevMapID),
-                      );
-                      if (mapDataDir.existsSync()) {
-                        mapDataDir.rename(p.join(projectPath, "web", "maps", nextMapID));
-                      }
-                    } else {
-                      //could not get destination, so we nuke everything and re-add it all
-                      maps.clear();
-                      for (final FileSystemEntity map in entity.listSync()) {
-                        if (map is File && map.path.endsWith(".conf")) {
-                          maps.add(map);
-                        }
-                      }
+                  //Also rename the map data directory:
+                  final Directory mapDataDir = Directory(
+                    p.join(projectPath, "web", "maps", prevMapID),
+                  );
+                  if (mapDataDir.existsSync()) {
+                    unawaited(
+                      mapDataDir.rename(
+                        p.join(projectPath, "web", "maps", nextMapID),
+                      ),
+                    );
+                  }
+                } else {
+                  //could not get destination, so we nuke everything and re-add it all
+                  maps.clear();
+                  for (final FileSystemEntity map in entity.listSync()) {
+                    if (map is File && map.path.endsWith(".conf")) {
+                      maps.add(map);
                     }
-                    break;
-                  case FileSystemEvent.modify:
-                    final FileSystemModifyEvent modifyEvent =
-                        event as FileSystemModifyEvent;
-                    if (!modifyEvent.contentChanged) return;
-                    sortMaps();
-                    break;
+                  }
                 }
-              });
+              case FileSystemEvent.modify:
+                final FileSystemModifyEvent modifyEvent = event as FileSystemModifyEvent;
+                if (!modifyEvent.contentChanged) return;
+                unawaited(sortMaps());
+            }
+          });
           subscriptions.add(sub);
         }
       }
@@ -108,24 +99,24 @@ class _SidebarState extends ConsumerState<Sidebar> {
 
     //sort all lists alphabetically
     configs.sort((a, b) => a.path.compareTo(b.path));
-    sortMaps();
+    unawaited(sortMaps());
   }
 
   void addMap(File newMap) {
     setState(() {
       maps.add(newMap);
-      sortMaps();
+      unawaited(sortMaps());
     });
   }
 
   void removeMap(File toRemoveMap) {
     setState(() {
       maps.removeWhere((File map) => p.equals(map.path, toRemoveMap.path));
-      sortMaps();
+      unawaited(sortMaps());
     });
   }
 
-  void sortMaps() async {
+  Future<void> sortMaps() async {
     final Map<File, int> mapSortings = {};
     await Future.wait(
       maps.map((File map) async {
@@ -148,8 +139,8 @@ class _SidebarState extends ConsumerState<Sidebar> {
 
     setState(() {
       maps.sort((a, b) {
-        int? sortingA = mapSortings[a];
-        int? sortingB = mapSortings[b];
+        final int? sortingA = mapSortings[a];
+        final int? sortingB = mapSortings[b];
         if (sortingA == null) throw Exception("Map $a has no sorting!");
         if (sortingB == null) throw Exception("Map $b has no sorting!");
 
@@ -166,8 +157,8 @@ class _SidebarState extends ConsumerState<Sidebar> {
 
   @override
   void dispose() {
-    for (var sub in subscriptions) {
-      sub.cancel();
+    for (final sub in subscriptions) {
+      unawaited(sub.cancel());
     }
     super.dispose();
   }

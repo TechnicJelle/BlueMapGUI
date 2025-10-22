@@ -40,7 +40,7 @@ class _ConfigEditorState extends ConsumerState<ConfigEditor> {
     if (!hasChanged) return;
 
     hasChanged = false;
-    file.writeAsString(codeController.text);
+    unawaited(file.writeAsString(codeController.text));
   }
 
   void readFile(File file) {

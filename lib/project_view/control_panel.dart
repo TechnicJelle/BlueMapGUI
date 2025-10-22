@@ -12,7 +12,6 @@ class ControlPanel extends StatelessWidget {
       padding: EdgeInsets.only(top: 16, left: 8, right: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.max,
         children: [
           ControlRow(),
           SizedBox(height: 16),

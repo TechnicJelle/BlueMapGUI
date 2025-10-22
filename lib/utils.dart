@@ -5,7 +5,7 @@ import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:path/path.dart" as p;
 
-import "main.dart";
+import "versions.dart";
 
 final RegExp regexSafeCharacters = RegExp(r"^[a-zA-Z0-9_-]+$");
 
@@ -34,7 +34,7 @@ const TextStyle pixelCode = TextStyle(
 /// Checks if the given file has the same SHA256 hash as the given hash.
 /// Returns true if the hashes match, false otherwise.
 Future<bool> checkHash(File file, String validHash) async {
-  String fileHash = await file.openRead().transform(sha256).join();
+  final String fileHash = await file.openRead().transform(sha256).join();
   return fileHash == validHash;
 }
 
@@ -58,6 +58,8 @@ class ProgressNotifier extends Notifier<double?> {
     return null;
   }
 
+  // Notifiers should not use setters
+  // ignore: use_setters_to_change_properties
   void set(double progress) {
     state = progress;
   }
@@ -67,7 +69,7 @@ class ProgressNotifier extends Notifier<double?> {
   }
 }
 
-/// [progress] is a double between 0 and 1.
+/// `progress` is a double between 0 and 1.
 Future<NonHashedFile> downloadFile({
   required Uri uri,
   required File Function(HttpClientResponse response) outputFileGenerator,
@@ -84,7 +86,7 @@ Future<NonHashedFile> downloadFile({
   await response.forEach((List<int> buffer) {
     if (onProgress != null) {
       current += buffer.length;
-      double progress = current.toDouble() / response.contentLength.toDouble();
+      final double progress = current.toDouble() / response.contentLength.toDouble();
       onProgress(progress);
     }
     sink.add(buffer);

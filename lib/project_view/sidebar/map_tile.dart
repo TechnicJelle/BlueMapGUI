@@ -1,3 +1,4 @@
+import "dart:async";
 import "dart:io";
 
 import "package:flutter/material.dart";
@@ -38,7 +39,7 @@ class _MapTileState extends ConsumerState<MapTile> {
         right: 16,
         top: 5,
         child: PopupMenuButton(
-          itemBuilder: (_) => <PopupMenuEntry>[
+          itemBuilder: (_) => <PopupMenuEntry<void>>[
             PopupMenuItem(
               child: const Row(
                 children: [Icon(Icons.delete), SizedBox(width: 8), Text("Delete map")],
@@ -82,7 +83,7 @@ class _MapTileState extends ConsumerState<MapTile> {
                     final Directory? projectDirectory = ref.watch(openProjectProvider);
                     //delete the file next frame, to ensure the editor is closed
                     WidgetsBinding.instance.addPostFrameCallback((_) {
-                      configFile.delete();
+                      unawaited(configFile.delete());
 
                       if (projectDirectory == null) return;
                       final String mapID = p.basenameWithoutExtension(configFile.path);
@@ -90,7 +91,7 @@ class _MapTileState extends ConsumerState<MapTile> {
                         p.join(projectDirectory.path, "web", "maps", mapID),
                       );
                       if (mapDirectory.existsSync()) {
-                        mapDirectory.delete(recursive: true);
+                        unawaited(mapDirectory.delete(recursive: true));
                       }
                     });
                   },

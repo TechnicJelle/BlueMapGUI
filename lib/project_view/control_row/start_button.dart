@@ -1,3 +1,5 @@
+import "dart:async";
+
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 
@@ -22,9 +24,9 @@ class StartButton extends ConsumerWidget {
             if (clearConsoleBeforeStart) {
               ref.read(outputNotifierProvider.notifier).clear();
               // small delay to let the console be fully empty for a moment
-              await Future.delayed(const Duration(milliseconds: 50));
+              await Future<void>.delayed(const Duration(milliseconds: 50));
             }
-            ref.read(processProvider)?.start();
+            unawaited(ref.read(processProvider)?.start());
           },
           RunningProcessState.running => () => ref.read(processProvider)?.stop(),
           _ => null,

@@ -4,7 +4,7 @@ class Hover extends StatefulWidget {
   final Widget alwaysChild;
   final Widget hoverChild;
 
-  const Hover({super.key, required this.alwaysChild, required this.hoverChild});
+  const Hover({required this.alwaysChild, required this.hoverChild, super.key});
 
   @override
   State<Hover> createState() => _HoverState();

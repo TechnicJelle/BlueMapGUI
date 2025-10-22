@@ -1,3 +1,4 @@
+import "dart:async";
 import "dart:io";
 
 import "package:flutter/material.dart";
@@ -16,7 +17,7 @@ class OpenInFileManagerButton extends ConsumerWidget {
       onPressed: () {
         final Directory? projectDirectory = ref.read(openProjectProvider);
         if (projectDirectory == null) return;
-        launchUrl(projectDirectory.uri);
+        unawaited(launchUrl(projectDirectory.uri));
       },
       icon: const Icon(Icons.folder_open),
     );
