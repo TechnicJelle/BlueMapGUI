@@ -52,7 +52,7 @@ abstract class SettingsBodyBase {
       getTextTheme(context).labelMedium?.copyWith(color: Colors.grey);
 
   TextStyle? getLinkStyle(BuildContext context) {
-    TextStyle? labelStyle = getLabelStyle(context);
+    final TextStyle? labelStyle = getLabelStyle(context);
     return labelStyle?.copyWith(
       color: Colors.blue,
       decoration: TextDecoration.underline,

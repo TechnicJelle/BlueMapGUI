@@ -1,3 +1,5 @@
+import "dart:async";
+
 import "package:flutter/material.dart";
 
 void showConfirmationDialog({
@@ -5,19 +7,21 @@ void showConfirmationDialog({
   required String title,
   required List<Widget> content,
   required String confirmAction,
-  required Function onConfirmed,
+  required void Function() onConfirmed,
 }) {
-  showDialog<bool>(
-    context: context,
-    builder: (context) => _ConfirmationDialog(
-      title: title,
-      content: content,
-      confirmAction: confirmAction,
-    ),
-  ).then((bool? confirmed) {
-    if (confirmed == null || confirmed == false) return;
-    onConfirmed();
-  });
+  unawaited(
+    showDialog<bool>(
+      context: context,
+      builder: (context) => _ConfirmationDialog(
+        title: title,
+        content: content,
+        confirmAction: confirmAction,
+      ),
+    ).then((bool? confirmed) {
+      if (confirmed == null || !confirmed) return;
+      onConfirmed();
+    }),
+  );
 }
 
 class _ConfirmationDialog extends StatelessWidget {

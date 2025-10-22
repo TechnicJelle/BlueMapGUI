@@ -20,8 +20,6 @@ class ThemeModePicker extends ConsumerWidget {
       },
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           RadioListTile(
             value: ThemeMode.system,

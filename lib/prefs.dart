@@ -1,3 +1,4 @@
+import "dart:async";
 import "dart:io";
 
 import "package:flutter/material.dart";
@@ -48,17 +49,19 @@ class JavaPathNotifier extends Notifier<JavaPath?> {
 
   void setJavaPath(JavaPath javaPath) {
     state = javaPath;
-    _prefs.setString(_javaPathKey, javaPath.path);
-    _prefs.setString(_javaPathTypeKey, javaPath.type.name);
+    unawaited(_prefs.setString(_javaPathKey, javaPath.path));
+    unawaited(_prefs.setString(_javaPathTypeKey, javaPath.type.name));
   }
 
   void clearJavaPath() {
     state = null;
-    _prefs.remove(_javaPathKey);
+    unawaited(_prefs.remove(_javaPathKey));
   }
 }
 
-final javaPathProvider = NotifierProvider(() => JavaPathNotifier());
+// I don't want these for providers; too long
+// ignore: specify_nonobvious_property_types
+final javaPathProvider = NotifierProvider(JavaPathNotifier.new);
 
 class KnownProjectsNotifier extends Notifier<List<Directory>> {
   static const String _knownProjectsKey = "known_projects";
@@ -67,30 +70,36 @@ class KnownProjectsNotifier extends Notifier<List<Directory>> {
   List<Directory> build() {
     final List<String> knownProjects = _prefs.getStringList(_knownProjectsKey) ?? [];
     final List<Directory> knownProjectsDirectories = knownProjects
-        .map((String path) => Directory(path))
+        .map(Directory.new)
         .toList();
     return knownProjectsDirectories;
   }
 
   void addProject(Directory projectDirectory) {
     state = [...state, projectDirectory];
-    projectDirectory.create(recursive: true);
-    _prefs.setStringList(
-      _knownProjectsKey,
-      state.map((Directory dir) => dir.path).toList(),
+    projectDirectory.createSync(recursive: true);
+    unawaited(
+      _prefs.setStringList(
+        _knownProjectsKey,
+        state.map((Directory dir) => dir.path).toList(),
+      ),
     );
   }
 
   void removeProject(Directory projectDirectory) {
     state = state.where((Directory dir) => dir != projectDirectory).toList();
-    _prefs.setStringList(
-      _knownProjectsKey,
-      state.map((Directory dir) => dir.path).toList(),
+    unawaited(
+      _prefs.setStringList(
+        _knownProjectsKey,
+        state.map((Directory dir) => dir.path).toList(),
+      ),
     );
   }
 }
 
-final knownProjectsProvider = NotifierProvider(() => KnownProjectsNotifier());
+// I don't want these for providers; too long
+// ignore: specify_nonobvious_property_types
+final knownProjectsProvider = NotifierProvider(KnownProjectsNotifier.new);
 
 class ThemeModeProvider extends Notifier<ThemeMode> {
   static const String _themeModeKey = "theme_mode";
@@ -108,11 +117,13 @@ class ThemeModeProvider extends Notifier<ThemeMode> {
 
   void set(ThemeMode newThemeMode) {
     state = newThemeMode;
-    _prefs.setString(_themeModeKey, newThemeMode.name);
+    unawaited(_prefs.setString(_themeModeKey, newThemeMode.name));
   }
 }
 
-final themeModeProvider = NotifierProvider(() => ThemeModeProvider());
+// I don't want these for providers; too long
+// ignore: specify_nonobvious_property_types
+final themeModeProvider = NotifierProvider(ThemeModeProvider.new);
 
 class ConsoleClearProvider extends Notifier<bool> {
   static const String _consoleClearKey = "console_clear";
@@ -121,16 +132,20 @@ class ConsoleClearProvider extends Notifier<bool> {
 
   @override
   bool build() {
-    bool? option = _prefs.getBool(_consoleClearKey);
+    final bool? option = _prefs.getBool(_consoleClearKey);
     if (option == null) return defaultOption;
 
     return option;
   }
 
+  // The function name and lack of other parameters makes it clear enough
+  // ignore: avoid_positional_boolean_parameters
   void set(bool newOption) {
     state = newOption;
-    _prefs.setBool(_consoleClearKey, newOption);
+    unawaited(_prefs.setBool(_consoleClearKey, newOption));
   }
 }
 
-final consoleClearProvider = NotifierProvider(() => ConsoleClearProvider());
+// I don't want these for providers; too long
+// ignore: specify_nonobvious_property_types
+final consoleClearProvider = NotifierProvider(ConsoleClearProvider.new);

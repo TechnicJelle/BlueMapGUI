@@ -9,10 +9,10 @@ import "package:path/path.dart" as p;
 import "package:rxdart/rxdart.dart";
 import "package:window_manager/window_manager.dart";
 
-import "../../main.dart";
 import "../../main_menu/projects/projects_screen.dart";
 import "../../prefs.dart";
 import "../../utils.dart";
+import "../../versions.dart";
 import "open_button.dart";
 import "start_button.dart";
 import "update_button.dart";
@@ -25,7 +25,7 @@ final processProvider = Provider<RunningProcess?>((ref) {
   final JavaPath? javaPath = ref.watch(javaPathProvider);
   if (javaPath == null) return null;
   final process = RunningProcess(projectDirectory, javaPath.path);
-  ref.onDispose(() => process.dispose());
+  ref.onDispose(process.dispose);
   return process;
 });
 
@@ -62,18 +62,18 @@ class RunningProcess with WindowListener {
     RunningProcessState.stopped,
   );
 
-  StreamSubscription? _processOutputStreamSub;
+  StreamSubscription<String>? _processOutputStreamSub;
 
   RunningProcess(this._projectDirectory, this._javaPath) {
     windowManager.addListener(this);
     // Add this line to override the default close handler
-    windowManager.setPreventClose(true);
+    unawaited(windowManager.setPreventClose(true));
   }
 
   /// "destructor"
   /// Actually called by the managing Provider
   void dispose() {
-    windowManager.setPreventClose(false);
+    unawaited(windowManager.setPreventClose(false));
     windowManager.removeListener(this);
 
     //Stop the process when the project is closed
@@ -83,8 +83,8 @@ class RunningProcess with WindowListener {
   }
 
   @override
-  void onWindowClose() async {
-    bool isPreventClose = await windowManager.isPreventClose();
+  Future<void> onWindowClose() async {
+    final bool isPreventClose = await windowManager.isPreventClose();
     if (isPreventClose) {
       if (_stateController.value != RunningProcessState.stopped) {
         //start looking for state to change to stopped
@@ -102,7 +102,7 @@ class RunningProcess with WindowListener {
         await stopFuture;
 
         //allow user to read the "Stopped." message
-        await Future.delayed(const Duration(seconds: 1));
+        await Future<void>.delayed(const Duration(seconds: 1));
       }
       await windowManager.setPreventClose(false);
       await windowManager.close();
@@ -138,7 +138,7 @@ class RunningProcess with WindowListener {
     final String startupConfigContent = await startupConfigFile.readAsString();
 
     //Option: Mods Path
-    String? modsPath = extractOptionFromConfig(
+    final String? modsPath = extractOptionFromConfig(
       configContent: startupConfigContent,
       optionName: "mods-path",
     );
@@ -147,7 +147,7 @@ class RunningProcess with WindowListener {
     }
 
     //Option: Minecraft Version
-    String? mcVersion = extractOptionFromConfig(
+    final String? mcVersion = extractOptionFromConfig(
       configContent: startupConfigContent,
       optionName: "minecraft-version",
     );
@@ -156,7 +156,7 @@ class RunningProcess with WindowListener {
     }
 
     //Option: Max Ram Limit
-    String? maxRamLimit = extractOptionFromConfig(
+    final String? maxRamLimit = extractOptionFromConfig(
       configContent: startupConfigContent,
       optionName: "max-ram-limit",
     );
@@ -190,27 +190,26 @@ class RunningProcess with WindowListener {
       );
     }
 
-    List<String> jvmArgs = [];
-    List<String> bluemapArgs = ["--render", "--watch", "--webserver"];
+    final List<String> jvmArgs = [];
+    final List<String> bluemapArgs = ["--render", "--watch", "--webserver"];
     await fillArgsFromStartupConfig(jvmArgs: jvmArgs, bluemapArgs: bluemapArgs);
 
-    final process = await Process.start(
-      _javaPath,
-      ["-jar", ...jvmArgs, bluemapJar.path, ...bluemapArgs],
-      workingDirectory: _projectDirectory.path,
-      mode: ProcessStartMode.normal,
-      runInShell: false,
-    );
+    final process = await Process.start(_javaPath, [
+      "-jar",
+      ...jvmArgs,
+      bluemapJar.path,
+      ...bluemapArgs,
+    ], workingDirectory: _projectDirectory.path);
     _process = process;
     _stateController.add(RunningProcessState.starting);
 
-    Stream<String> mergedStream = StreamGroup.merge([
+    final Stream<String> mergedStream = StreamGroup.merge([
       process.stdout,
       process.stderr,
     ]).transform(utf8.decoder).transform(const LineSplitter());
 
     _processOutputStreamSub = mergedStream.listen((event) {
-      int pleaseCheckIndex = event.indexOf("Please check:");
+      final int pleaseCheckIndex = event.indexOf("Please check:");
       if (pleaseCheckIndex != -1 && event.contains("core.conf")) {
         _consoleOutputController.add(
           "${event.substring(0, pleaseCheckIndex)}Please check the Core config in the bar on the left!",
@@ -250,11 +249,13 @@ class RunningProcess with WindowListener {
       }
     });
 
-    process.exitCode.then((int value) {
-      _stateController.add(RunningProcessState.stopped);
-      _processOutputStreamSub?.cancel();
-      _consoleOutputController.add("Stopped. ($value)");
-    });
+    unawaited(
+      process.exitCode.then((int value) {
+        _stateController.add(RunningProcessState.stopped);
+        unawaited(_processOutputStreamSub?.cancel());
+        _consoleOutputController.add("Stopped. ($value)");
+      }),
+    );
   }
 
   void stop() {
@@ -262,7 +263,7 @@ class RunningProcess with WindowListener {
       throw Exception("Process is stopped!");
     }
 
-    bool? success = _process?.kill(ProcessSignal.sigint);
+    final bool? success = _process?.kill(ProcessSignal.sigint);
     if (success == false) {
       _consoleOutputController.add("Failed to stop the process.");
     }

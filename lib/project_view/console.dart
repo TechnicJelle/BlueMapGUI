@@ -1,3 +1,5 @@
+import "dart:async";
+
 import "package:animated_visibility/animated_visibility.dart";
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
@@ -33,7 +35,9 @@ class OutputNotifier extends Notifier<List<String>> {
   }
 }
 
-final outputNotifierProvider = NotifierProvider(() => OutputNotifier());
+// I don't want these for providers; too long
+// ignore: specify_nonobvious_property_types
+final outputNotifierProvider = NotifierProvider(OutputNotifier.new);
 
 class Console extends ConsumerStatefulWidget {
   const Console({super.key});
@@ -112,7 +116,7 @@ class _ConsoleState extends ConsumerState<Console> {
             child: ListView.builder(
               controller: _scrollController,
               itemBuilder: (context, index) {
-                String message = output[index];
+                final String message = output[index];
                 if (message.contains("ERR")) {
                   colour = Colors.red;
                 } else if (message.contains("WARN")) {
@@ -140,15 +144,15 @@ class _ConsoleState extends ConsumerState<Console> {
                     mini: true,
                     child: const Icon(Icons.arrow_downward),
                     onPressed: () {
-                      _scrollController
-                          .animateTo(
-                            _scrollController.position.maxScrollExtent,
-                            duration: Durations.medium4,
-                            curve: Curves.easeInOut,
-                          )
-                          .then((_) {
-                            _scrollToBottom();
-                          });
+                      unawaited(
+                        _scrollController
+                            .animateTo(
+                              _scrollController.position.maxScrollExtent,
+                              duration: Durations.medium4,
+                              curve: Curves.easeInOut,
+                            )
+                            .then((_) => _scrollToBottom()),
+                      );
                     },
                   ),
                 );

@@ -9,9 +9,9 @@ import "package:url_launcher/url_launcher.dart";
 
 import "../../confirmation_dialog.dart";
 import "../../hover.dart";
-import "../../main.dart";
 import "../../prefs.dart";
 import "../../utils.dart";
+import "../../versions.dart";
 import "../settings/java/check_java_version.dart";
 import "projects_screen.dart";
 
@@ -60,8 +60,13 @@ class _OpeningStateNotifier extends Notifier<_OpeningStep?> {
   }
 }
 
-final _openingStateProvider = NotifierProvider(() => _OpeningStateNotifier());
-final _progressNotifier = NotifierProvider(() => ProgressNotifier());
+// I don't want these for providers; too long
+// ignore: specify_nonobvious_property_types
+final _openingStateProvider = NotifierProvider(_OpeningStateNotifier.new);
+
+// I don't want these for providers; too long
+// ignore: specify_nonobvious_property_types
+final _progressNotifier = NotifierProvider(ProgressNotifier.new);
 
 class ProjectTile extends ConsumerStatefulWidget {
   final Directory projectDirectory;
@@ -86,20 +91,29 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
     projectDirectoryExists = projectDirectory.existsSync();
 
     final Directory parent = projectDirectory.parent;
-    parent.exists().then((bool parentExists) {
-      if (!parentExists) return;
-      fileWatchSub = parent.watch().listen((FileSystemEvent event) {
-        projectDirectory.exists().then((bool projectDirectoryExists) {
-          if (!mounted) return;
-          setState(() => this.projectDirectoryExists = projectDirectoryExists);
+
+    unawaited(
+      // I actually want this to run later; I don't mind if it takes a bit
+      // ignore: avoid_slow_async_io
+      parent.exists().then((bool parentExists) {
+        if (!parentExists) return;
+        fileWatchSub = parent.watch().listen((FileSystemEvent event) {
+          unawaited(
+            // I actually want this to run later; I don't mind if it takes a bit
+            // ignore: avoid_slow_async_io
+            projectDirectory.exists().then((bool projectDirectoryExists) {
+              if (!mounted) return;
+              setState(() => this.projectDirectoryExists = projectDirectoryExists);
+            }),
+          );
         });
-      });
-    });
+      }),
+    );
   }
 
   @override
   void dispose() {
-    fileWatchSub?.cancel();
+    unawaited(fileWatchSub?.cancel());
     super.dispose();
   }
 
@@ -128,7 +142,7 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
         top: 12,
         child: projectDirectoryExists
             ? PopupMenuButton(
-                itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+                itemBuilder: (BuildContext context) => <PopupMenuItem<void>>[
                   PopupMenuItem(
                     enabled: projectDirectoryExists,
                     child: const Row(
@@ -142,6 +156,7 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
                     // does nothing when dir doesn't exist ↑
                   ),
                   PopupMenuItem(
+                    onTap: removeProjectFromList,
                     child: const Row(
                       children: [
                         Icon(Icons.clear),
@@ -149,12 +164,11 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
                         Text("Remove from projects"),
                       ],
                     ),
-                    onTap: () => removeProjectFromList(),
                   ),
                 ],
               )
             : IconButton(
-                onPressed: () => removeProjectFromList(),
+                onPressed: removeProjectFromList,
                 icon: const Icon(Icons.clear),
               ),
       ),
@@ -182,10 +196,12 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
     ref.read(_progressNotifier.notifier).indeterminate();
 
     // == Open opening progress dialog ==
-    showDialog(
-      context: context,
-      builder: (context) => const _OpenProjectDialog(),
-      barrierDismissible: false,
+    unawaited(
+      showDialog<void>(
+        context: context,
+        builder: (context) => const _OpenProjectDialog(),
+        barrierDismissible: false,
+      ),
     );
 
     // == Check if project directory exists ==
@@ -217,7 +233,7 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
           },
         );
         ref.read(_progressNotifier.notifier).indeterminate();
-      } catch (e) {
+      } on IOException catch (e) {
         ref
             .read(_openingStateProvider.notifier)
             .error(error: _OpenError.downloadFailed, details: e.toString());
@@ -247,10 +263,10 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
 
     try {
       await checkJavaVersion(javaPath.path);
-    } catch (e) {
+    } on JavaVersionCheckException catch (e) {
       ref
           .read(_openingStateProvider.notifier)
-          .error(error: _OpenError.runFail, details: e.toString());
+          .error(error: _OpenError.runFail, details: e.message);
       return;
     }
 
@@ -260,14 +276,14 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
         "-jar",
         bluemapJar.path,
       ], workingDirectory: projectDirectory.path);
-    } catch (e) {
+    } on ProcessException catch (e) {
       ref
           .read(_openingStateProvider.notifier)
           .error(error: _OpenError.runFail, details: e.toString());
       return;
     }
 
-    final String stdout = run.stdout;
+    final String stdout = run.stdout.toString();
     if (!stdout.contains("Generated default config files for you")) {
       ref
           .read(_openingStateProvider.notifier)
@@ -285,11 +301,9 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
     );
     //Make sure to support opening existing projects; only do this on fresh projects
     if (!templatesDir.existsSync()) {
-      final Directory mapsDir = Directory(
-        p.join(projectDirectory.path, "config", "maps"),
-      );
-      mapsDir.renameSync(templatesDir.path); //rename maps dir to templates dir
-      mapsDir.createSync(); //recreate maps dir (now empty)
+      Directory(p.join(projectDirectory.path, "config", "maps"))
+        ..renameSync(templatesDir.path) //rename maps dir to templates dir
+        ..createSync(); //recreate maps dir (now empty)
     }
 
     // == Copy BlueMap GUI Configs ==
@@ -305,7 +319,7 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
           mode: FileMode.writeOnly,
           flush: true,
         );
-      } catch (e) {
+      } on FileSystemException catch (e) {
         ref
             .read(_openingStateProvider.notifier)
             .error(error: _OpenError.copyFail, details: e.toString());

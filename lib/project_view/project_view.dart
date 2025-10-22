@@ -13,6 +13,8 @@ class OpenFileNotifier extends Notifier<File?> {
     return null;
   }
 
+  // Notifiers should not use setters
+  // ignore: use_setters_to_change_properties
   void open(File file) {
     state = file;
   }
@@ -22,14 +24,16 @@ class OpenFileNotifier extends Notifier<File?> {
   }
 }
 
-final openConfigProvider = NotifierProvider(() => OpenFileNotifier());
+// I don't want these for providers; too long
+// ignore: specify_nonobvious_property_types
+final openConfigProvider = NotifierProvider(OpenFileNotifier.new);
 
 class ProjectView extends ConsumerWidget {
   const ProjectView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    File? openConfig = ref.watch(openConfigProvider);
+    final File? openConfig = ref.watch(openConfigProvider);
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -1,3 +1,4 @@
+import "dart:async";
 import "dart:io";
 
 import "package:file_picker/file_picker.dart";
@@ -44,13 +45,15 @@ class NewProjectDialogState extends ConsumerState<NewProjectDialog> {
   @override
   void initState() {
     super.initState();
-    getApplicationDocumentsDirectory().then((final Directory osDocumentsDirectory) {
-      final documentsDirectory = oneDriveProtection(osDocumentsDirectory);
-      final String projectDir = p.join(documentsDirectory.path, "BlueMapGUI");
-      setState(() {
-        _locationController = TextEditingController(text: projectDir);
-      });
-    });
+    unawaited(
+      getApplicationDocumentsDirectory().then((Directory osDocumentsDirectory) {
+        final documentsDirectory = oneDriveProtection(osDocumentsDirectory);
+        final String projectDir = p.join(documentsDirectory.path, "BlueMapGUI");
+        setState(() {
+          _locationController = TextEditingController(text: projectDir);
+        });
+      }),
+    );
     _nameController.selection = TextSelection(
       baseOffset: 0,
       extentOffset: _nameController.value.text.length,
@@ -79,16 +82,14 @@ class NewProjectDialogState extends ConsumerState<NewProjectDialog> {
       final Directory projectDirectory = Directory(_projectPath);
       try {
         projectDirectory.createSync(recursive: true);
-      } catch (e) {
+      } on FileSystemException catch (e) {
         if (e.toString().toLowerCase().contains("perm")) {
           setState(() {
             specialError = "No file permissions to create project directory there!";
           });
         } else {
           setState(() {
-            specialError =
-                "Failed to create project directory!\n"
-                "${e.toString()}";
+            specialError = "Failed to create project directory!\n$e";
           });
         }
         return;
@@ -144,7 +145,6 @@ class NewProjectDialogState extends ConsumerState<NewProjectDialog> {
                       }),
                       decoration: const InputDecoration(labelText: "Location:"),
                       textInputAction: TextInputAction.done,
-                      textCapitalization: TextCapitalization.none,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       validator: (String? s) {
                         if (s == null || s.trim().isEmpty) {
@@ -201,10 +201,7 @@ class NewProjectDialogState extends ConsumerState<NewProjectDialog> {
           onPressed: () => Navigator.of(context).pop(),
           child: const Text("Cancel"),
         ),
-        ElevatedButton(
-          onPressed: () => validateAndCreate(),
-          child: const Text("Create"),
-        ),
+        ElevatedButton(onPressed: validateAndCreate, child: const Text("Create")),
       ],
     );
   }

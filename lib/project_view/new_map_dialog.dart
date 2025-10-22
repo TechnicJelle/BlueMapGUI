@@ -62,10 +62,12 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
   void validateAndCreate() {
     final formState = formKey.currentState;
     if (formState != null && formState.validate()) {
-      File template = selectedTemplate!;
-      String id = idController.text;
+      final File template = selectedTemplate!;
+      final String id = idController.text;
 
-      File newConfig = File(p.join(projectDirectory.path, "config", "maps", "$id.conf"));
+      final File newConfig = File(
+        p.join(projectDirectory.path, "config", "maps", "$id.conf"),
+      );
 
       template.copySync(newConfig.path);
 
@@ -118,7 +120,6 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
                     : "my-cool-${p.basenameWithoutExtension(selectedTemplate!.path)}-map",
               ),
               textInputAction: TextInputAction.done,
-              textCapitalization: TextCapitalization.none,
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (String? s) {
                 if (s == null || s.trim().isEmpty) {
@@ -127,7 +128,7 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
                 if (!regexSafeCharacters.hasMatch(s)) {
                   return "Invalid character";
                 }
-                File potentialNewConfig = File(
+                final File potentialNewConfig = File(
                   p.join(projectDirectory.path, "config", "maps", "$s.conf"),
                 );
                 if (potentialNewConfig.existsSync()) {
@@ -147,10 +148,7 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
           },
           child: const Text("Cancel"),
         ),
-        ElevatedButton(
-          onPressed: () => validateAndCreate(),
-          child: const Text("Create"),
-        ),
+        ElevatedButton(onPressed: validateAndCreate, child: const Text("Create")),
       ],
     );
   }

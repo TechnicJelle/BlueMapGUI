@@ -1,3 +1,4 @@
+import "dart:async";
 import "dart:io";
 
 import "package:flutter/material.dart";
@@ -13,20 +14,7 @@ import "project_view/close_project_button.dart";
 import "project_view/open_in_explorer_button.dart";
 import "project_view/project_view.dart";
 import "tech_app.dart";
-
-// == Hardcoded BlueMap CLI JAR download URL and hash ==
-const blueMapTag = "5.12";
-const blueMapCliJarHash =
-    "93eb5222580e8fba3b6873dd2735d25b5cf1c76a59ebb4c1dda27816fed4d293"; //SHA256
-
-// == Derived variables ==
-final blueMapCliJarUrl = Uri.https(
-  "github.com",
-  "BlueMap-Minecraft/BlueMap/releases/download/v$blueMapTag/bluemap-$blueMapTag-cli.jar",
-);
-
-const String vDev = "development";
-const String version = String.fromEnvironment("version", defaultValue: vDev);
+import "versions.dart";
 
 Future<void> main() async {
   await initPrefs();
@@ -34,8 +22,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
 
-  WindowOptions windowOptions = const WindowOptions(minimumSize: Size(600, 300));
-  windowManager.waitUntilReadyToShow(windowOptions, () async {
+  const WindowOptions windowOptions = WindowOptions(minimumSize: Size(600, 300));
+  await windowManager.waitUntilReadyToShow(windowOptions, () async {
     await windowManager.show();
     await windowManager.focus();
   });
@@ -77,7 +65,9 @@ class MyHomePage extends ConsumerWidget {
           IconButton(
             tooltip: "Help",
             onPressed: () {
-              launchUrlString("https://github.com/TechnicJelle/BlueMapGUI#readme");
+              unawaited(
+                launchUrlString("https://github.com/TechnicJelle/BlueMapGUI#readme"),
+              );
             },
             icon: const Icon(Icons.help),
           ),
@@ -89,7 +79,7 @@ class MyHomePage extends ConsumerWidget {
       ),
       body: Stack(
         children: [
-          projectDirectory == null ? const MainMenu() : const ProjectView(),
+          if (projectDirectory == null) const MainMenu() else const ProjectView(),
           const _VersionText(),
         ],
       ),

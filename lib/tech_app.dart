@@ -5,16 +5,17 @@ class TechApp extends MaterialApp {
   final Color secondary;
   final String? fontFamily;
   final double? fontSizeFactor;
+
   TechApp({
     required super.title,
-    super.debugShowCheckedModeBanner = false,
     required this.primary,
     required this.secondary,
     required super.themeMode,
+    required super.home,
+    super.debugShowCheckedModeBanner = false,
     this.fontFamily,
     this.fontSizeFactor,
     super.routes,
-    required super.home,
     super.key,
   }) : super(
          theme: ThemeData(

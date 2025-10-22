@@ -37,14 +37,14 @@ class UpdateChecker {
       final String? newUrl = response.headers.value("Location");
 
       if (newUrl == null) {
-        throw "Did not get a redirect";
+        throw const HttpException("Did not get a redirect");
       }
 
       // Get the latest version tag from the redirect URL
       final List<String> split = newUrl.split("/");
       return removePrefix(split[split.length - 1]);
-    } catch (e) {
-      throw "Exception trying to fetch the latest version:\n$e";
+    } on HttpException catch (e) {
+      throw HttpException("Exception trying to fetch the latest version:\n$e");
     }
   }
 
