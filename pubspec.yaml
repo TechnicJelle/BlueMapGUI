@@ -42,7 +42,7 @@ dependencies:
   re_editor: ^0.8.0
   re_highlight: ^0.0.3
   rxdart: ^0.28.0
-  shared_preferences: ^2.5.3
+  shared_preferences: ^2.5.4
   url_launcher: ^6.3.2
   window_manager: ^0.5.1
 
