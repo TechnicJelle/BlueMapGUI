@@ -64,7 +64,7 @@ jobs:
           mv ./build/linux/x64/release/bundle/ ./upload/BlueMapGUI_${{ github.event.inputs.TAG_NAME }}_Linux_x64/
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: "BlueMapGUI_${{ github.event.inputs.TAG_NAME }}_Linux_x64"
           path: './upload/'
@@ -95,7 +95,7 @@ jobs:
           Move-Item -Path "./build/windows/x64/runner/Release/" -Destination "./upload/BlueMapGUI_${{ github.event.inputs.TAG_NAME }}_Windows_x64/"
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: "BlueMapGUI_${{ github.event.inputs.TAG_NAME }}_Windows_x64"
           path: './upload/'
