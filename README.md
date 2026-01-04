@@ -23,7 +23,7 @@ When you first open the program, you will need to choose which Java installation
 Go to the `Settings` tab in the sidebar on the left to select whether you want to:
 - Use the Java installation on your system.
 - Automatically download a suitable installation of Java for your system.
-- Pick a Java installation manually. Useful if you don't have Java installed on your system or if it's too old.  
+- Pick a Java installation manually. Useful if you don't have Java installed system-wide or if it's too old.  
   Also useful if your system isn't supported by the automatic downloader.
 
 ### 2. Creating a project
