@@ -19,8 +19,8 @@ class ConsoleClearPicker extends ConsumerWidget {
       },
       title: const Text("Enabled"),
       subtitle: option ?? ConsoleClearProvider.defaultOption
-          ? const Text("Do clear the console.")
-          : const Text("Don't clear the console."),
+          ? const Text("The console will be cleared every time you start BlueMap.")
+          : const Text("The logs from previous runs will remain visible in the console."),
       controlAffinity: ListTileControlAffinity.leading,
     );
   }
