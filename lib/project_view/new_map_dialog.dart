@@ -34,9 +34,7 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
     if (projDir == null) return;
     projectDirectory = projDir;
 
-    final Directory mapTemplatesDirectory = Directory(
-      p.join(projectDirectory.path, "config", "map-templates"),
-    );
+    final mapTemplatesDirectory = getMapTemplatesDirectory(projectDirectory);
 
     final List<File> mapTemplates = mapTemplatesDirectory
         .listSync()

@@ -25,6 +25,12 @@ File getBlueMapJarFile(Directory projectDirectory) {
   return File(p.join(projectDirectory.path, blueMapCliJarUrl.getFileName()));
 }
 
+Directory getMapTemplatesDirectory(Directory projectDirectory) {
+  return Directory(
+    p.join(projectDirectory.path, "config", "map-templates-$blueMapTag"),
+  );
+}
+
 const TextStyle pixelCode = TextStyle(
   fontFamily: "PixelCode",
   fontSize: 14,
