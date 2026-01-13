@@ -80,7 +80,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
 
     // System
     unawaited(
-      checkJavaVersion("java").then(
+      checkJavaVersion(JavaPath(.system, "java")).then(
         (javaVersion) {
           setState(() {
             systemRadioState = _SystemRadioState.success;
@@ -107,8 +107,8 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
       customError = null;
 
       unawaited(
-        checkJavaVersion(javaPath.path).then(
-          (javaVersion) {
+        checkJavaVersion(javaPath).then(
+          (int javaVersion) {
             setState(() {
               customJavaVersion = javaVersion;
             });
@@ -399,14 +399,13 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
 
     customJavaPath = javaPath;
     try {
-      final int javaVersion = await checkJavaVersion(javaPath);
+      final JavaPath potentialJavaPath = JavaPath(JavaPathMode.custom, javaPath);
+      final int javaVersion = await checkJavaVersion(potentialJavaPath);
       setState(() {
         customRadioState = _CustomRadioState.success;
         customJavaVersion = javaVersion;
         customError = null;
-        ref
-            .read(javaPathProvider.notifier)
-            .setJavaPath(JavaPath(JavaPathMode.custom, javaPath));
+        ref.read(javaPathProvider.notifier).setJavaPath(potentialJavaPath);
       });
     } on JavaVersionCheckException catch (e) {
       setState(() {

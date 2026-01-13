@@ -28,6 +28,42 @@ class JavaPath {
   String path;
 
   JavaPath(this.type, this.path);
+
+  Future<ProcessResult> run({
+    required List<String> args,
+    Directory? workingDirectory,
+  }) {
+    return Process.run(
+      path,
+      args,
+      workingDirectory: workingDirectory?.path,
+    );
+  }
+
+  Future<ProcessResult> runJar(
+    File jar, {
+    List<String> jvmArgs = const [],
+    List<String> processArgs = const [],
+    Directory? workingDirectory,
+  }) async {
+    return run(
+      args: ["-jar", ...jvmArgs, jar.path, ...processArgs],
+      workingDirectory: workingDirectory,
+    );
+  }
+
+  Future<Process> startJar(
+    File jar, {
+    List<String> jvmArgs = const [],
+    List<String> processArgs = const [],
+    Directory? workingDirectory,
+  }) async {
+    return Process.start(
+      path,
+      ["-jar", ...jvmArgs, jar.path, ...processArgs],
+      workingDirectory: workingDirectory?.path,
+    );
+  }
 }
 
 class JavaPathNotifier extends Notifier<JavaPath?> {

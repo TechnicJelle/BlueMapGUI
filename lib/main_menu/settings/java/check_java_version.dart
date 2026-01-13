@@ -1,5 +1,7 @@
 import "dart:io";
 
+import "../../../prefs.dart";
+
 const int _minJavaVersion = 21;
 
 class JavaVersionCheckException implements Exception {
@@ -10,24 +12,25 @@ class JavaVersionCheckException implements Exception {
 
 /// Checks the Java version at the given path.
 /// Throws a [JavaVersionCheckException] if the Java version is too old, not installed, or the path is invalid.
-Future<int> checkJavaVersion(String javaPath) async {
-  if (javaPath.isEmpty) {
+Future<int> checkJavaVersion(JavaPath javaPath) async {
+  final String path = javaPath.path;
+  if (path.isEmpty) {
     throw JavaVersionCheckException("Provided path is empty.");
   }
 
-  if (!javaPath.contains("java")) {
+  if (!path.contains("java")) {
     throw JavaVersionCheckException("Provided path is not a Java executable.");
   }
 
   // If the path is not the system Java path, check if the file exists
-  if (javaPath != "java") {
-    if (!File(javaPath).existsSync()) {
+  if (path != "java") {
+    if (!File(path).existsSync()) {
       throw JavaVersionCheckException("File at provided path does not exist.");
     }
   }
 
   try {
-    final ProcessResult jv = await Process.run(javaPath, ["-fullversion"]);
+    final ProcessResult jv = await javaPath.run(args: ["-fullversion"]);
     final int exitCode = jv.exitCode;
     final String stderr = jv.stderr.toString();
 
@@ -62,7 +65,7 @@ Future<int> checkJavaVersion(String javaPath) async {
     }
 
     if (version < _minJavaVersion) {
-      if (javaPath == "java") {
+      if (path == "java") {
         throw JavaVersionCheckException(
           "System Java version is $version, which is too old. Please install Java $_minJavaVersion or newer.",
         );

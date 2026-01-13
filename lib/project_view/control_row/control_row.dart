@@ -24,7 +24,7 @@ final processProvider = Provider<RunningProcess?>((ref) {
   if (projectDirectory == null) return null;
   final JavaPath? javaPath = ref.watch(javaPathProvider);
   if (javaPath == null) return null;
-  final process = RunningProcess(projectDirectory, javaPath.path);
+  final process = RunningProcess(projectDirectory, javaPath);
   ref.onDispose(process.dispose);
   return process;
 });
@@ -46,7 +46,7 @@ enum RunningProcessState { stopped, starting, running, stopping }
 
 class RunningProcess with WindowListener {
   final Directory _projectDirectory;
-  final String _javaPath;
+  final JavaPath _javaPath;
 
   Process? _process;
 
@@ -194,12 +194,12 @@ class RunningProcess with WindowListener {
     final List<String> bluemapArgs = ["--render", "--watch", "--webserver"];
     await fillArgsFromStartupConfig(jvmArgs: jvmArgs, bluemapArgs: bluemapArgs);
 
-    final process = await Process.start(_javaPath, [
-      "-jar",
-      ...jvmArgs,
-      bluemapJar.path,
-      ...bluemapArgs,
-    ], workingDirectory: _projectDirectory.path);
+    final process = await _javaPath.startJar(
+      jvmArgs: jvmArgs,
+      bluemapJar,
+      processArgs: bluemapArgs,
+      workingDirectory: _projectDirectory,
+    );
     _process = process;
     _stateController.add(RunningProcessState.starting);
 
