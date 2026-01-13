@@ -82,10 +82,26 @@ class SettingsBodyLink extends SettingsBodyBase {
   @override
   TextSpan build(BuildContext context) {
     return TextSpan(
-      text: text,
-      style: getLinkStyle(context),
-      mouseCursor: SystemMouseCursors.click,
-      recognizer: TapGestureRecognizer()..onTap = () => launchUrl(Uri.parse(url)),
+      children: [
+        WidgetSpan(
+          child: Tooltip(
+            richMessage: _LinkSpan(url, url, getLinkStyle(context)),
+            child: RichText(
+              text: _LinkSpan(text, url, getLinkStyle(context)),
+            ),
+          ),
+        ),
+      ],
     );
   }
+}
+
+class _LinkSpan extends TextSpan {
+  _LinkSpan(String text, String url, TextStyle? style)
+    : super(
+        text: text,
+        style: style,
+        mouseCursor: SystemMouseCursors.click,
+        recognizer: TapGestureRecognizer()..onTap = () => launchUrl(Uri.parse(url)),
+      );
 }
