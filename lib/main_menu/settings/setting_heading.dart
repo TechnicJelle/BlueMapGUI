@@ -5,11 +5,13 @@ import "package:url_launcher/url_launcher.dart";
 class SettingHeading extends StatelessWidget {
   final String title;
   late final List<TextSpan> textSpans = [];
+  final EdgeInsets padding;
 
   SettingHeading(
     BuildContext context,
     this.title,
     List<SettingsBodyBase> text, {
+    this.padding = const EdgeInsets.only(left: 16, bottom: 8, top: 16),
     super.key,
   }) {
     for (final SettingsBodyBase body in text) {
@@ -17,7 +19,13 @@ class SettingHeading extends StatelessWidget {
     }
   }
 
-  SettingHeading.text(BuildContext context, this.title, String text, {super.key}) {
+  SettingHeading.text(
+    BuildContext context,
+    this.title,
+    String text, {
+    this.padding = const EdgeInsets.only(left: 16, bottom: 8, top: 16),
+    super.key,
+  }) {
     textSpans.add(SettingsBodyText(text).build(context));
   }
 
@@ -26,7 +34,7 @@ class SettingHeading extends StatelessWidget {
     final TextTheme textTheme = Theme.of(context).textTheme;
     final TextStyle? titleStyle = textTheme.headlineSmall;
     return Padding(
-      padding: const EdgeInsets.only(left: 16, bottom: 8, top: 16),
+      padding: padding,
       child: Padding(
         padding: const EdgeInsets.only(top: 4),
         child: RichText(
