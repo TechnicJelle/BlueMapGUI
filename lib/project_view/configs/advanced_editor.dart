@@ -7,19 +7,19 @@ import "package:re_editor/re_editor.dart";
 import "package:re_highlight/languages/yaml.dart" show langYaml;
 import "package:re_highlight/styles/ir-black.dart" show irBlackTheme;
 
-import "../utils.dart";
-import "project_view.dart";
+import "../../utils.dart";
+import "../project_view.dart";
 
-class ConfigEditor extends ConsumerStatefulWidget {
+class AdvancedEditor extends ConsumerStatefulWidget {
   final File openConfig;
 
-  const ConfigEditor(this.openConfig, {super.key});
+  const AdvancedEditor(this.openConfig, {super.key});
 
   @override
-  ConsumerState<ConfigEditor> createState() => _ConfigEditorState();
+  ConsumerState<AdvancedEditor> createState() => _AdvancedEditorState();
 }
 
-class _ConfigEditorState extends ConsumerState<ConfigEditor> {
+class _AdvancedEditorState extends ConsumerState<AdvancedEditor> {
   final codeController = CodeLineEditingController();
 
   late File openConfig;
@@ -29,7 +29,7 @@ class _ConfigEditorState extends ConsumerState<ConfigEditor> {
   @override
   void initState() {
     super.initState();
-    readFile(widget.openConfig);
+    unawaited(readFile(widget.openConfig));
 
     autoSaveTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
       writeFile(openConfig);
@@ -43,8 +43,8 @@ class _ConfigEditorState extends ConsumerState<ConfigEditor> {
     unawaited(file.writeAsString(codeController.text));
   }
 
-  void readFile(File file) {
-    codeController.text = file.readAsStringSync();
+  Future<void> readFile(File file) async {
+    codeController.text = await file.readAsString();
     codeController.clearHistory();
     openConfig = file;
   }
@@ -61,7 +61,7 @@ class _ConfigEditorState extends ConsumerState<ConfigEditor> {
   Widget build(BuildContext context) {
     ref.listen(openConfigProvider, (previous, next) {
       if (previous != null && next != null) writeFile(previous);
-      if (next != null) readFile(next);
+      if (next != null) unawaited(readFile(next));
     });
     return ScrollbarTheme(
       data: Theme.of(context).scrollbarTheme.copyWith(

@@ -3,7 +3,7 @@ import "dart:io";
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 
-import "config_editor.dart";
+import "configs/config_gui.dart";
 import "control_panel.dart";
 import "sidebar/sidebar.dart";
 
@@ -44,7 +44,7 @@ class ProjectView extends ConsumerWidget {
         ),
         const VerticalDivider(width: 2),
         Expanded(
-          child: openConfig == null ? const ControlPanel() : ConfigEditor(openConfig),
+          child: openConfig == null ? const ControlPanel() : ConfigGUI(openConfig),
         ),
       ],
     );
