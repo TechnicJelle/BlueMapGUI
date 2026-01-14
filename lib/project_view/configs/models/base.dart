@@ -49,15 +49,15 @@ class ConfigFile<T extends BaseConfigModel> {
     }
   }
 
-  Future<void> changeValueInFile(String optionName, String newValue) async {
+  void changeValueInFile(String optionName, String newValue) {
     final RegExp optionRegex = RegExp("(^\\s*$optionName:\\s*).*\$", multiLine: true);
 
-    final String fileContents = await file.readAsString();
+    final String fileContents = file.readAsStringSync();
     final String newContents = fileContents.replaceFirstMapped(
       optionRegex,
       (Match match) => "${match[1]}$newValue",
     );
-    await file.writeAsString(newContents);
+    file.writeAsStringSync(newContents);
   }
 }
 

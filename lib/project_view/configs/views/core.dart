@@ -76,11 +76,9 @@ class _CoreConfigViewState extends State<CoreConfigView> {
             if (value == null) return;
             setState(() => config = config.copyWith(acceptDownload: value));
 
-            unawaited(
-              widget.configFile.changeValueInFile(
-                CoreConfigKeys.acceptDownload,
-                config.toJson()[CoreConfigKeys.acceptDownload].toString(),
-              ),
+            widget.configFile.changeValueInFile(
+              CoreConfigKeys.acceptDownload,
+              config.toJson()[CoreConfigKeys.acceptDownload].toString(),
             );
           },
         ),
@@ -120,22 +118,14 @@ Be careful with setting this too high, as your whole computer may start to lag!"
                       divisions: Platform.numberOfProcessors - 1,
                       onChanged: config.renderThreadCount > Platform.numberOfProcessors
                           ? null
-                          : (double value) {
-                              setState(
-                                () => config = config.copyWith(
-                                  renderThreadCount: value.toInt(),
-                                ),
-                              );
-                            },
+                          : (double value) => setState(() {
+                              config = config.copyWith(renderThreadCount: value.toInt());
+                            }),
                       activeColor: sliderColor,
-                      onChangeEnd: (double value) {
-                        unawaited(
-                          widget.configFile.changeValueInFile(
-                            CoreConfigKeys.renderThreadCount,
-                            config.toJson()[CoreConfigKeys.renderThreadCount].toString(),
-                          ),
-                        );
-                      },
+                      onChangeEnd: (_) => widget.configFile.changeValueInFile(
+                        CoreConfigKeys.renderThreadCount,
+                        config.toJson()[CoreConfigKeys.renderThreadCount].toString(),
+                      ),
                     ),
                   ),
                 ],
