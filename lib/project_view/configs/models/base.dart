@@ -31,6 +31,11 @@ class ConfigFile<T extends BaseConfigModel> {
     //TODO: Error handling!
     final int exitCode = result.exitCode;
     final String stderr = result.stderr.toString();
+    if (exitCode != 0 || stderr.isNotEmpty) {
+      print("exitCode: $exitCode");
+      print("stderr: $stderr");
+      return null;
+    }
     final String stdout = result.stdout.toString();
 
     final configMap = jsonDecode(stdout) as Map<String, dynamic>;
