@@ -41,9 +41,9 @@ class _CoreConfigViewState extends State<CoreConfigView> {
           padding: const EdgeInsets.only(left: 16, top: 16, bottom: 12),
           child: Text(
             "Core Config",
-            style: TextTheme.of(
-              context,
-            ).headlineMedium?.copyWith(color: TextTheme.of(context).titleSmall?.color),
+            style: TextTheme.of(context).headlineMedium?.copyWith(
+              color: TextTheme.of(context).titleSmall?.color,
+            ),
           ),
         ),
         CheckboxListTile(

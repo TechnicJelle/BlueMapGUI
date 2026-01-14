@@ -49,9 +49,9 @@ class _WebserverConfigViewState extends State<WebserverConfigView> {
           padding: const EdgeInsets.only(left: 16, top: 16, bottom: 12),
           child: Text(
             "Webserver Config",
-            style: TextTheme.of(
-              context,
-            ).headlineMedium?.copyWith(color: TextTheme.of(context).titleSmall?.color),
+            style: TextTheme.of(context).headlineMedium?.copyWith(
+              color: TextTheme.of(context).titleSmall?.color,
+            ),
           ),
         ),
         ListTile(
