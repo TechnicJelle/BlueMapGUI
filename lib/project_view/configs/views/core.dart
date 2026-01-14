@@ -1,4 +1,4 @@
-import "dart:async";
+import "dart:convert";
 import "dart:io";
 import "dart:math";
 
@@ -78,7 +78,7 @@ class _CoreConfigViewState extends State<CoreConfigView> {
 
             widget.configFile.changeValueInFile(
               CoreConfigKeys.acceptDownload,
-              config.toJson()[CoreConfigKeys.acceptDownload].toString(),
+              jsonEncode(config.acceptDownload),
             );
           },
         ),
@@ -124,7 +124,7 @@ Be careful with setting this too high, as your whole computer may start to lag!"
                       activeColor: sliderColor,
                       onChangeEnd: (_) => widget.configFile.changeValueInFile(
                         CoreConfigKeys.renderThreadCount,
-                        config.toJson()[CoreConfigKeys.renderThreadCount].toString(),
+                        jsonEncode(config.renderThreadCount),
                       ),
                     ),
                   ),
