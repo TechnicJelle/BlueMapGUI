@@ -3,8 +3,12 @@ import "package:flutter/material.dart";
 import "../models/base.dart";
 import "../models/core.dart";
 import "../models/startup.dart";
+import "../models/webapp.dart";
+import "../models/webserver.dart";
 import "core.dart";
 import "startup.dart";
+import "webapp.dart";
+import "webserver.dart";
 
 class BaseConfigView<T extends BaseConfigModel> extends StatelessWidget {
   final ConfigFile<T> config;
@@ -17,7 +21,9 @@ class BaseConfigView<T extends BaseConfigModel> extends StatelessWidget {
     return switch (model) {
       CoreConfigModel() => CoreConfigView(ConfigFile(config.file, model)),
       StartupConfigModel() => StartupConfigView(ConfigFile(config.file, model)),
-      //TODO: The other configs
+      WebappConfigModel() => WebappConfigView(ConfigFile(config.file, model)),
+      WebserverConfigModel() => WebserverConfigView(ConfigFile(config.file, model)),
+      //TODO: The map config
       _ => const Center(
         child: Text(
           "Simple view currently not available for this config.\n"

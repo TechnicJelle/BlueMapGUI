@@ -8,6 +8,8 @@ import "package:path_provider/path_provider.dart";
 import "../../../prefs.dart";
 import "core.dart";
 import "startup.dart";
+import "webapp.dart";
+import "webserver.dart";
 
 class ConfigFile<T extends BaseConfigModel> {
   File file;
@@ -40,12 +42,13 @@ class ConfigFile<T extends BaseConfigModel> {
 
     final configMap = jsonDecode(stdout) as Map<String, dynamic>;
     if (p.basename(file.parent.path) == "maps") {
-      //this is a map config
+      //TODO: this is a map config
     }
     return switch (p.basename(file.path)) {
       "core.conf" => ConfigFile(file, CoreConfigModel.fromJson(configMap)),
       "startup.conf" => ConfigFile(file, StartupConfigModel.fromJson(configMap)),
-      //TODO: The other configs (this causes infinite loading for unsupported configs)
+      "webapp.conf" => ConfigFile(file, WebappConfigModel.fromJson(configMap)),
+      "webserver.conf" => ConfigFile(file, WebserverConfigModel.fromJson(configMap)),
       _ => null,
     };
   }
