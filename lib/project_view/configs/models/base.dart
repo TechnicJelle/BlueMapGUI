@@ -39,14 +39,15 @@ class ConfigFile<T extends BaseConfigModel> {
     final String stdout = result.stdout.toString();
 
     final configMap = jsonDecode(stdout) as Map<String, dynamic>;
-    if (p.basename(file.path) == "core.conf") {
-      return ConfigFile(file, CoreConfigModel.fromJson(configMap));
-    } else if (p.basename(file.path) == "startup.conf") {
-      return ConfigFile(file, StartupConfigModel.fromJson(configMap));
-    } else {
-      //TODO: The other configs (this causes infinite loading for unsupported configs)
-      return null;
+    if (p.basename(file.parent.path) == "maps") {
+      //this is a map config
     }
+    return switch (p.basename(file.path)) {
+      "core.conf" => ConfigFile(file, CoreConfigModel.fromJson(configMap)),
+      "startup.conf" => ConfigFile(file, StartupConfigModel.fromJson(configMap)),
+      //TODO: The other configs (this causes infinite loading for unsupported configs)
+      _ => null,
+    };
   }
 
   void changeValueInFile(String optionName, String newValue) {
