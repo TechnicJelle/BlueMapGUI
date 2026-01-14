@@ -2,7 +2,9 @@ import "package:flutter/material.dart";
 
 import "../models/base.dart";
 import "../models/core.dart";
+import "../models/startup.dart";
 import "core.dart";
+import "startup.dart";
 
 class BaseConfigView<T extends BaseConfigModel> extends StatelessWidget {
   final ConfigFile<T> config;
@@ -14,6 +16,7 @@ class BaseConfigView<T extends BaseConfigModel> extends StatelessWidget {
     final T model = config.model;
     return switch (model) {
       CoreConfigModel() => CoreConfigView(ConfigFile(config.file, model)),
+      StartupConfigModel() => StartupConfigView(ConfigFile(config.file, model)),
       //TODO: The other configs
       _ => const Center(
         child: Text(
