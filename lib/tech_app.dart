@@ -49,6 +49,12 @@ class TechApp extends MaterialApp {
                    ),
                  ),
                ),
+               checkboxTheme: CheckboxThemeData(
+                 fillColor: WidgetStateMapper<Color?>({WidgetState.selected: primary}),
+                 shape: RoundedRectangleBorder(
+                   borderRadius: BorderRadiusGeometry.circular(3),
+                 ),
+               ),
              ),
              child: child!,
            );
