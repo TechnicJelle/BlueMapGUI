@@ -50,7 +50,7 @@ class ConfigFile<T extends BaseConfigModel> {
   }
 
   Future<void> changeValueInFile(String optionName, String newValue) async {
-    final RegExp optionRegex = RegExp("(^$optionName:\\s*).*\$", multiLine: true);
+    final RegExp optionRegex = RegExp("(^\\s*$optionName:\\s*).*\$", multiLine: true);
 
     final String fileContents = await file.readAsString();
     final String newContents = fileContents.replaceFirstMapped(
