@@ -2,14 +2,13 @@ import "dart:async";
 import "dart:io";
 
 import "package:flutter/material.dart";
-import "package:flutter/services.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
-import "package:path/path.dart" as p;
-import "package:path_provider/path_provider.dart";
 
 import "../../prefs.dart";
 import "../project_view.dart";
 import "advanced_editor.dart";
+import "models/base.dart";
+import "views/base.dart";
 
 class AdvancedModeNotifier extends Notifier<bool> {
   @override
@@ -40,7 +39,7 @@ class ConfigGUI extends ConsumerStatefulWidget {
 }
 
 class _ConfigGUIState extends ConsumerState<ConfigGUI> {
-  String? content;
+  BaseConfigView? configWidget;
 
   @override
   void initState() {
@@ -50,29 +49,15 @@ class _ConfigGUIState extends ConsumerState<ConfigGUI> {
 
   Future<void> readFile(File file) async {
     setState(() {
-      content = null;
+      configWidget = null;
     });
-    final Directory supportDir = await getApplicationSupportDirectory();
-    final File hoconReaderFile = File(p.join(supportDir.path, "HOCONReader.jar"));
-    if (!hoconReaderFile.existsSync()) {
-      final hoconReaderAsset = await rootBundle.load("assets/HOCONReader.jar");
-      await hoconReaderFile.writeAsBytes(hoconReaderAsset.buffer.asUint8List());
-    }
 
     final JavaPath javaPath = ref.read(javaPathProvider)!;
-
-    final ProcessResult result = await javaPath.runJar(
-      hoconReaderFile,
-      processArgs: [file.path],
-    );
-
-    //TODO: Error handling!
-    final int exitCode = result.exitCode;
-    final String stderr = result.stderr.toString();
-    final String stdout = result.stdout.toString();
+    final ConfigFile? configFile = await ConfigFile.fromFile(file, javaPath);
+    if (configFile == null) return;
 
     setState(() {
-      content = stdout;
+      configWidget = BaseConfigView(configFile);
     });
   }
 
@@ -87,33 +72,32 @@ class _ConfigGUIState extends ConsumerState<ConfigGUI> {
       return Stack(
         children: [
           AdvancedEditor(widget.openConfig),
-          AdvancedModeToggle(widget.openConfig),
+          _AdvancedModeToggle(widget.openConfig),
         ],
       );
     }
 
-    ref.listen(openConfigProvider, (previous, next) {
-      // if (previous != null && next != null) writeFile(previous);
+    ref.listen(openConfigProvider, (_, next) {
       if (next != null) unawaited(readFile(next));
     });
-    final String? thisContent = content;
+    final BaseConfigView? thisConfig = configWidget;
 
     return Stack(
       children: [
-        if (thisContent == null)
+        if (thisConfig == null)
           const Center(child: CircularProgressIndicator())
         else
-          Text(thisContent),
-        AdvancedModeToggle(widget.openConfig),
+          thisConfig,
+        _AdvancedModeToggle(widget.openConfig),
       ],
     );
   }
 }
 
-class AdvancedModeToggle extends ConsumerWidget {
+class _AdvancedModeToggle extends ConsumerWidget {
   final File openConfig;
 
-  const AdvancedModeToggle(this.openConfig, {super.key});
+  const _AdvancedModeToggle(this.openConfig);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -121,7 +105,7 @@ class AdvancedModeToggle extends ConsumerWidget {
     return Align(
       alignment: .topRight,
       child: Padding(
-        padding: const EdgeInsets.only(right: 12, top: 4),
+        padding: const EdgeInsets.only(right: 12, top: 6),
         child: Row(
           mainAxisSize: .min,
           children: [

@@ -1,0 +1,16 @@
+targets:
+  $default:
+    builders:
+      source_gen:combining_builder:
+        options:
+          preamble: |
+            // ignore_for_file: type=lint, unused_field
+      json_serializable:
+        options:
+          create_json_keys: true
+          field_rename: kebab
+        generate_for:
+          - lib/project_view/configs/models/*.dart
+      freezed:
+        generate_for:
+          - lib/project_view/configs/models/*.dart

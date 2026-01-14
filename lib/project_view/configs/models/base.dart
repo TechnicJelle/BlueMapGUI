@@ -1,0 +1,61 @@
+import "dart:convert";
+import "dart:io";
+
+import "package:flutter/services.dart";
+import "package:path/path.dart" as p;
+import "package:path_provider/path_provider.dart";
+
+import "../../../prefs.dart";
+import "core.dart";
+import "startup.dart";
+
+class ConfigFile<T extends BaseConfigModel> {
+  File file;
+  T model;
+
+  ConfigFile(this.file, this.model);
+
+  static Future<ConfigFile?> fromFile(File file, JavaPath javaPath) async {
+    final Directory supportDir = await getApplicationSupportDirectory();
+    final File hoconReaderFile = File(p.join(supportDir.path, "HOCONReader.jar"));
+    if (!hoconReaderFile.existsSync()) {
+      final hoconReaderAsset = await rootBundle.load("assets/HOCONReader.jar");
+      await hoconReaderFile.writeAsBytes(hoconReaderAsset.buffer.asUint8List());
+    }
+
+    final ProcessResult result = await javaPath.runJar(
+      hoconReaderFile,
+      processArgs: [file.path],
+    );
+
+    //TODO: Error handling!
+    final int exitCode = result.exitCode;
+    final String stderr = result.stderr.toString();
+    final String stdout = result.stdout.toString();
+
+    final configMap = jsonDecode(stdout) as Map<String, dynamic>;
+    if (p.basename(file.path) == "core.conf") {
+      return ConfigFile(file, CoreConfigModel.fromJson(configMap));
+    } else if (p.basename(file.path) == "startup.conf") {
+      return ConfigFile(file, StartupConfigModel.fromJson(configMap));
+    } else {
+      //TODO: The other configs (this causes infinite loading for unsupported configs)
+      return null;
+    }
+  }
+
+  Future<void> changeValueInFile(String optionName, String newValue) async {
+    final RegExp optionRegex = RegExp("(^$optionName:\\s*).*\$", multiLine: true);
+
+    final String fileContents = await file.readAsString();
+    final String newContents = fileContents.replaceFirstMapped(
+      optionRegex,
+      (Match match) => "${match[1]}$newValue",
+    );
+    await file.writeAsString(newContents);
+  }
+}
+
+abstract class BaseConfigModel {
+  const BaseConfigModel();
+}

@@ -13,6 +13,8 @@ import "../../main_menu/projects/projects_screen.dart";
 import "../../prefs.dart";
 import "../../utils.dart";
 import "../../versions.dart";
+import "../configs/models/base.dart";
+import "../configs/models/startup.dart";
 import "open_button.dart";
 import "start_button.dart";
 import "update_button.dart";
@@ -109,58 +111,35 @@ class RunningProcess with WindowListener {
     }
   }
 
-  String? extractOptionFromConfig({
-    required String configContent,
-    required String optionName,
-  }) {
-    //TODO: Do not use regexes for this, but parse the config file properly.
-    // Perhaps use a new program that converts HOCON to JSON, which can then be loaded.
-    final RegExp optionRegex = RegExp("^$optionName:.*?\"(.*)\"", multiLine: true);
-    final Match? match = optionRegex.firstMatch(configContent);
-    String? optionValue;
-    if (match != null && match.groupCount > 0) {
-      optionValue = match.group(1);
-    }
-    if (optionValue != null && optionValue.isNotEmpty) {
-      return optionValue;
-    }
-    return null;
-  }
-
   Future<void> fillArgsFromStartupConfig({
     required List<String> jvmArgs,
     required List<String> bluemapArgs,
   }) async {
-    //Load file
     final File startupConfigFile = File(
       p.join(_projectDirectory.path, "config", "startup.conf"),
     );
-    final String startupConfigContent = await startupConfigFile.readAsString();
+    final ConfigFile? configFile = await ConfigFile.fromFile(
+      startupConfigFile,
+      _javaPath,
+    );
+    if (configFile == null) return;
+    final StartupConfigModel startupConfigModel = configFile.model as StartupConfigModel;
 
     //Option: Mods Path
-    final String? modsPath = extractOptionFromConfig(
-      configContent: startupConfigContent,
-      optionName: "mods-path",
-    );
-    if (modsPath != null) {
+    final String modsPath = startupConfigModel.modsPath;
+    if (modsPath.isNotEmpty) {
       bluemapArgs.addAll(["--mods", modsPath]);
     }
 
     //Option: Minecraft Version
-    final String? mcVersion = extractOptionFromConfig(
-      configContent: startupConfigContent,
-      optionName: "minecraft-version",
-    );
-    if (mcVersion != null) {
+    final String mcVersion = startupConfigModel.minecraftVersion;
+    if (mcVersion.isNotEmpty) {
       bluemapArgs.addAll(["--mc-version", mcVersion]);
     }
 
     //Option: Max Ram Limit
-    final String? maxRamLimit = extractOptionFromConfig(
-      configContent: startupConfigContent,
-      optionName: "max-ram-limit",
-    );
-    if (maxRamLimit != null) {
+    final String maxRamLimit = startupConfigModel.maxRamLimit;
+    if (maxRamLimit.isNotEmpty) {
       jvmArgs.add("-XX:MaxRAM=$maxRamLimit");
     }
   }
