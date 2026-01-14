@@ -34,6 +34,7 @@ class _CoreConfigViewState extends State<CoreConfigView> {
       sliderColor = null;
     }
 
+    const padding = EdgeInsets.only(bottom: 8);
     return ListView(
       children: [
         Padding(
@@ -49,7 +50,7 @@ class _CoreConfigViewState extends State<CoreConfigView> {
           title: SettingHeading(
             context,
             "Accept Download",
-            padding: const EdgeInsets.only(bottom: 8),
+            padding: padding,
             const [
               SettingsBodyText(
                 "By enabling this setting you are indicating that you have accepted ",
@@ -86,7 +87,7 @@ class _CoreConfigViewState extends State<CoreConfigView> {
           title: SettingHeading(
             context,
             "Render Thread Count",
-            padding: const EdgeInsets.only(bottom: 8),
+            padding: padding,
             const [
               SettingsBodyText(
                 """
