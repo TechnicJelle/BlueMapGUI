@@ -1,3 +1,4 @@
+import "package:file_picker/file_picker.dart";
 import "package:flutter/material.dart";
 
 import "../models/base.dart";
@@ -32,5 +33,36 @@ class BaseConfigView<T extends BaseConfigModel> extends StatelessWidget {
         ),
       ),
     };
+  }
+}
+
+class PathPickerButton extends StatelessWidget {
+  final String purpose;
+  final void Function(String? path) onPicked;
+  final String initialDirectory;
+
+  const PathPickerButton({
+    required this.purpose,
+    required this.onPicked,
+    required this.initialDirectory,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 6),
+      child: TextButton.icon(
+        icon: const Icon(Icons.drive_folder_upload_rounded),
+        label: Text("Pick $purpose folder"),
+        onPressed: () async {
+          final String? picked = await FilePicker.platform.getDirectoryPath(
+            dialogTitle: "Pick your $purpose folder",
+            initialDirectory: initialDirectory,
+          );
+          onPicked(picked);
+        },
+      ),
+    );
   }
 }

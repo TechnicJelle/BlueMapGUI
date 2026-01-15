@@ -1,11 +1,11 @@
 import "dart:convert";
 
-import "package:file_picker/file_picker.dart";
 import "package:flutter/material.dart";
 
 import "../../../main_menu/settings/setting_heading.dart";
 import "../models/base.dart";
 import "../models/startup.dart";
+import "base.dart";
 
 class StartupConfigView extends StatefulWidget {
   final ConfigFile<StartupConfigModel> configFile;
@@ -67,42 +67,31 @@ class _StartupConfigViewState extends State<StartupConfigView> {
               SettingsBodyText("\nLeave empty to not use any mods."),
             ],
           ),
-          subtitle: Row(
-            children: [
-              IconButton(
-                tooltip: "Pick your mods folder",
-                onPressed: () async {
-                  final String? picked = await FilePicker.platform.getDirectoryPath(
-                    dialogTitle: "Pick your mods folder",
-                    initialDirectory: config.modsPath.isNotEmpty ? config.modsPath : "~",
-                  );
-                  if (picked == null) return;
-                  setState(
-                    () => config = config.copyWith(
-                      modsPath: modsPathController.text = picked,
-                    ),
-                  );
+          subtitle: TextField(
+            controller: modsPathController,
+            decoration: InputDecoration(
+              border: const OutlineInputBorder(),
+              hintText: "No mods active.",
+              prefixIcon: PathPickerButton(
+                purpose: "mods",
+                onPicked: (String? path) {
+                  if (path == null) return;
+                  setState(() {
+                    config = config.copyWith(
+                      modsPath: modsPathController.text = path,
+                    );
+                  });
                 },
-                icon: const Icon(Icons.folder),
+                initialDirectory: config.modsPath.isNotEmpty ? config.modsPath : "~",
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: TextField(
-                  controller: modsPathController,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: "No mods active.",
-                  ),
-                  onChanged: (String value) {
-                    setState(() => config = config.copyWith(modsPath: value));
-                  },
-                  onEditingComplete: () => widget.configFile.changeValueInFile(
-                    StartupConfigKeys.modsPath,
-                    jsonEncode(config.modsPath),
-                  ),
-                ),
-              ),
-            ],
+            ),
+            onChanged: (String value) {
+              setState(() => config = config.copyWith(modsPath: value));
+            },
+            onEditingComplete: () => widget.configFile.changeValueInFile(
+              StartupConfigKeys.modsPath,
+              jsonEncode(config.modsPath),
+            ),
           ),
         ),
         ListTile(
