@@ -47,6 +47,13 @@ class _ConfirmationDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(true),
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.red,
+            textStyle: TextTheme.of(context).bodyLarge?.copyWith(
+              fontWeight: .bold,
+              fontSize: 15,
+            ),
+          ),
           child: Text(confirmAction),
         ),
         ElevatedButton(
