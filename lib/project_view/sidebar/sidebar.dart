@@ -13,6 +13,7 @@ import "new_map_button.dart";
 
 ///Group 1: Is commented?
 ///Group 2: Actual sorting value
+//TODO: Replace with actual MapConfigModel loading
 final RegExp sortingRegex = RegExp(r"^(#|//)*\s*sorting\s*:\s*(-?\d+)", multiLine: true);
 
 class Sidebar extends ConsumerStatefulWidget {
