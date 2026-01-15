@@ -7,6 +7,7 @@ import "package:path_provider/path_provider.dart";
 
 import "../../../prefs.dart";
 import "core.dart";
+import "map.dart";
 import "startup.dart";
 import "webapp.dart";
 import "webserver.dart";
@@ -42,7 +43,7 @@ class ConfigFile<T extends BaseConfigModel> {
 
     final configMap = jsonDecode(stdout) as Map<String, dynamic>;
     if (p.basename(file.parent.path) == "maps") {
-      //TODO: this is a map config
+      return ConfigFile(file, MapConfigModel.fromJson(configMap));
     }
     return switch (p.basename(file.path)) {
       "core.conf" => ConfigFile(file, CoreConfigModel.fromJson(configMap)),

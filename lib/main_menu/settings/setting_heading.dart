@@ -2,6 +2,8 @@ import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
 import "package:url_launcher/url_launcher.dart";
 
+import "../../utils.dart";
+
 class SettingHeading extends StatelessWidget {
   final String title;
   late final List<TextSpan> textSpans = [];
@@ -59,6 +61,9 @@ abstract class SettingsBodyBase {
   TextStyle? getLabelStyle(BuildContext context) =>
       getTextTheme(context).labelMedium?.copyWith(color: Colors.grey);
 
+  TextStyle? getCodeStyle(BuildContext context) =>
+      getLabelStyle(context)?.copyWith(fontFamily: pixelCode.fontFamily);
+
   TextStyle? getLinkStyle(BuildContext context) {
     final TextStyle? labelStyle = getLabelStyle(context);
     return labelStyle?.copyWith(
@@ -78,6 +83,17 @@ class SettingsBodyText extends SettingsBodyBase {
   @override
   TextSpan build(BuildContext context) {
     return TextSpan(text: text, style: getLabelStyle(context));
+  }
+}
+
+class SettingsBodyCode extends SettingsBodyBase {
+  final String text;
+
+  const SettingsBodyCode(this.text);
+
+  @override
+  TextSpan build(BuildContext context) {
+    return TextSpan(text: text, style: getCodeStyle(context));
   }
 }
 
