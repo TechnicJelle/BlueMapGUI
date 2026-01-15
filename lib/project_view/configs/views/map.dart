@@ -94,7 +94,7 @@ class _MapConfigViewState extends State<MapConfigView> {
             decoration: InputDecoration(
               border: const OutlineInputBorder(),
               hintText: "Must not be empty!",
-              prefixIcon: PathPickerButton(
+              suffixIcon: PathPickerButton(
                 purpose: "world",
                 initialDirectory: config.world.isNotEmpty ? config.world : "~",
                 onPicked: (String? path) {

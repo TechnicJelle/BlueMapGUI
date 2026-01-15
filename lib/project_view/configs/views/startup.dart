@@ -72,7 +72,7 @@ class _StartupConfigViewState extends State<StartupConfigView> {
             decoration: InputDecoration(
               border: const OutlineInputBorder(),
               hintText: "No mods active.",
-              prefixIcon: PathPickerButton(
+              suffixIcon: PathPickerButton(
                 purpose: "mods",
                 onPicked: (String? path) {
                   if (path == null) return;
