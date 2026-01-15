@@ -21,20 +21,25 @@ class BaseConfigView<T extends BaseConfigModel> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final T model = config.model;
-    return switch (model) {
-      CoreConfigModel() => CoreConfigView(ConfigFile(config.file, model)),
-      StartupConfigModel() => StartupConfigView(ConfigFile(config.file, model)),
-      WebappConfigModel() => WebappConfigView(ConfigFile(config.file, model)),
-      WebserverConfigModel() => WebserverConfigView(ConfigFile(config.file, model)),
-      MapConfigModel() => MapConfigView(ConfigFile(config.file, model)),
-      _ => const Center(
-        child: Text(
-          "Simple view currently not available for this config.\n"
-          "Please use the Advanced Mode for the time being.",
-          textAlign: .center,
-        ),
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 1500),
+        child: switch (model) {
+          CoreConfigModel() => CoreConfigView(ConfigFile(config.file, model)),
+          StartupConfigModel() => StartupConfigView(ConfigFile(config.file, model)),
+          WebappConfigModel() => WebappConfigView(ConfigFile(config.file, model)),
+          WebserverConfigModel() => WebserverConfigView(ConfigFile(config.file, model)),
+          MapConfigModel() => MapConfigView(ConfigFile(config.file, model)),
+          _ => const Center(
+            child: Text(
+              "Simple view currently not available for this config.\n"
+              "Please use the Advanced Mode for the time being.",
+              textAlign: .center,
+            ),
+          ),
+        },
       ),
-    };
+    );
   }
 }
 
