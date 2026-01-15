@@ -32,7 +32,7 @@ class JavaPath {
   Future<ProcessResult> run({
     required List<String> args,
     Directory? workingDirectory,
-  }) {
+  }) async {
     return Process.run(
       path,
       args,
@@ -62,6 +62,40 @@ class JavaPath {
       path,
       ["-jar", ...jvmArgs, jar.path, ...processArgs],
       workingDirectory: workingDirectory?.path,
+    );
+  }
+
+  Future<ProcessResult> runJarTimeout(
+    File jar,
+    Duration timeout, {
+    List<String> jvmArgs = const [],
+    List<String> processArgs = const [],
+    Directory? workingDirectory,
+  }) async {
+    final StringBuffer stdoutBuffer = StringBuffer();
+    final StringBuffer stderrBuffer = StringBuffer();
+    final Process process =
+        await startJar(
+            jar,
+            jvmArgs: jvmArgs,
+            processArgs: processArgs,
+            workingDirectory: workingDirectory,
+          )
+          ..stdout.listen((List<int> e) => e.forEach(stdoutBuffer.writeCharCode))
+          ..stderr.listen((List<int> e) => e.forEach(stderrBuffer.writeCharCode));
+
+    //We kill the process after the duration
+    final Timer killer = Timer(timeout, process.kill);
+
+    //If the process has already stopped, we cancel the killer
+    final int exitCode = await process.exitCode;
+    killer.cancel();
+
+    return ProcessResult(
+      process.pid,
+      exitCode,
+      stdoutBuffer.toString(),
+      stderrBuffer.toString(),
     );
   }
 }

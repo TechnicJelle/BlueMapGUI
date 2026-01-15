@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$MapConfigModel {
 
- String get world; String get dimension; String get name; int get sorting; String get skyColor; String get voidColor; double get skyLight; double get ambientLight; int get removeCavesBelowY; int get caveDetectionOceanFloor; bool get caveDetectionUsesBlockLight; int get minInhabitedTime; bool get renderEdges; int get edgeLightStrength; bool get enablePerspectiveView; bool get enableFlatView; bool get enableFreeFlightView; bool get enableHires;
+ String get world; String get dimension; String get name; int get sorting; String get skyColor; String get voidColor; double? get skyLight; double get ambientLight; int get removeCavesBelowY; int get caveDetectionOceanFloor; bool get caveDetectionUsesBlockLight; int get minInhabitedTime; bool get renderEdges; int? get edgeLightStrength; bool? get enablePerspectiveView; bool? get enableFlatView; bool? get enableFreeFlightView; bool? get enableHires;
 /// Create a copy of MapConfigModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $MapConfigModelCopyWith<$Res>  {
   factory $MapConfigModelCopyWith(MapConfigModel value, $Res Function(MapConfigModel) _then) = _$MapConfigModelCopyWithImpl;
 @useResult
 $Res call({
- String world, String dimension, String name, int sorting, String skyColor, String voidColor, double skyLight, double ambientLight, int removeCavesBelowY, int caveDetectionOceanFloor, bool caveDetectionUsesBlockLight, int minInhabitedTime, bool renderEdges, int edgeLightStrength, bool enablePerspectiveView, bool enableFlatView, bool enableFreeFlightView, bool enableHires
+ String world, String dimension, String name, int sorting, String skyColor, String voidColor, double? skyLight, double ambientLight, int removeCavesBelowY, int caveDetectionOceanFloor, bool caveDetectionUsesBlockLight, int minInhabitedTime, bool renderEdges, int? edgeLightStrength, bool? enablePerspectiveView, bool? enableFlatView, bool? enableFreeFlightView, bool? enableHires
 });
 
 
@@ -65,7 +65,7 @@ class _$MapConfigModelCopyWithImpl<$Res>
 
 /// Create a copy of MapConfigModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? world = null,Object? dimension = null,Object? name = null,Object? sorting = null,Object? skyColor = null,Object? voidColor = null,Object? skyLight = null,Object? ambientLight = null,Object? removeCavesBelowY = null,Object? caveDetectionOceanFloor = null,Object? caveDetectionUsesBlockLight = null,Object? minInhabitedTime = null,Object? renderEdges = null,Object? edgeLightStrength = null,Object? enablePerspectiveView = null,Object? enableFlatView = null,Object? enableFreeFlightView = null,Object? enableHires = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? world = null,Object? dimension = null,Object? name = null,Object? sorting = null,Object? skyColor = null,Object? voidColor = null,Object? skyLight = freezed,Object? ambientLight = null,Object? removeCavesBelowY = null,Object? caveDetectionOceanFloor = null,Object? caveDetectionUsesBlockLight = null,Object? minInhabitedTime = null,Object? renderEdges = null,Object? edgeLightStrength = freezed,Object? enablePerspectiveView = freezed,Object? enableFlatView = freezed,Object? enableFreeFlightView = freezed,Object? enableHires = freezed,}) {
   return _then(_self.copyWith(
 world: null == world ? _self.world : world // ignore: cast_nullable_to_non_nullable
 as String,dimension: null == dimension ? _self.dimension : dimension // ignore: cast_nullable_to_non_nullable
@@ -73,19 +73,19 @@ as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non
 as String,sorting: null == sorting ? _self.sorting : sorting // ignore: cast_nullable_to_non_nullable
 as int,skyColor: null == skyColor ? _self.skyColor : skyColor // ignore: cast_nullable_to_non_nullable
 as String,voidColor: null == voidColor ? _self.voidColor : voidColor // ignore: cast_nullable_to_non_nullable
-as String,skyLight: null == skyLight ? _self.skyLight : skyLight // ignore: cast_nullable_to_non_nullable
-as double,ambientLight: null == ambientLight ? _self.ambientLight : ambientLight // ignore: cast_nullable_to_non_nullable
+as String,skyLight: freezed == skyLight ? _self.skyLight : skyLight // ignore: cast_nullable_to_non_nullable
+as double?,ambientLight: null == ambientLight ? _self.ambientLight : ambientLight // ignore: cast_nullable_to_non_nullable
 as double,removeCavesBelowY: null == removeCavesBelowY ? _self.removeCavesBelowY : removeCavesBelowY // ignore: cast_nullable_to_non_nullable
 as int,caveDetectionOceanFloor: null == caveDetectionOceanFloor ? _self.caveDetectionOceanFloor : caveDetectionOceanFloor // ignore: cast_nullable_to_non_nullable
 as int,caveDetectionUsesBlockLight: null == caveDetectionUsesBlockLight ? _self.caveDetectionUsesBlockLight : caveDetectionUsesBlockLight // ignore: cast_nullable_to_non_nullable
 as bool,minInhabitedTime: null == minInhabitedTime ? _self.minInhabitedTime : minInhabitedTime // ignore: cast_nullable_to_non_nullable
 as int,renderEdges: null == renderEdges ? _self.renderEdges : renderEdges // ignore: cast_nullable_to_non_nullable
-as bool,edgeLightStrength: null == edgeLightStrength ? _self.edgeLightStrength : edgeLightStrength // ignore: cast_nullable_to_non_nullable
-as int,enablePerspectiveView: null == enablePerspectiveView ? _self.enablePerspectiveView : enablePerspectiveView // ignore: cast_nullable_to_non_nullable
-as bool,enableFlatView: null == enableFlatView ? _self.enableFlatView : enableFlatView // ignore: cast_nullable_to_non_nullable
-as bool,enableFreeFlightView: null == enableFreeFlightView ? _self.enableFreeFlightView : enableFreeFlightView // ignore: cast_nullable_to_non_nullable
-as bool,enableHires: null == enableHires ? _self.enableHires : enableHires // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,edgeLightStrength: freezed == edgeLightStrength ? _self.edgeLightStrength : edgeLightStrength // ignore: cast_nullable_to_non_nullable
+as int?,enablePerspectiveView: freezed == enablePerspectiveView ? _self.enablePerspectiveView : enablePerspectiveView // ignore: cast_nullable_to_non_nullable
+as bool?,enableFlatView: freezed == enableFlatView ? _self.enableFlatView : enableFlatView // ignore: cast_nullable_to_non_nullable
+as bool?,enableFreeFlightView: freezed == enableFreeFlightView ? _self.enableFreeFlightView : enableFreeFlightView // ignore: cast_nullable_to_non_nullable
+as bool?,enableHires: freezed == enableHires ? _self.enableHires : enableHires // ignore: cast_nullable_to_non_nullable
+as bool?,
   ));
 }
 
@@ -170,7 +170,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String world,  String dimension,  String name,  int sorting,  String skyColor,  String voidColor,  double skyLight,  double ambientLight,  int removeCavesBelowY,  int caveDetectionOceanFloor,  bool caveDetectionUsesBlockLight,  int minInhabitedTime,  bool renderEdges,  int edgeLightStrength,  bool enablePerspectiveView,  bool enableFlatView,  bool enableFreeFlightView,  bool enableHires)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String world,  String dimension,  String name,  int sorting,  String skyColor,  String voidColor,  double? skyLight,  double ambientLight,  int removeCavesBelowY,  int caveDetectionOceanFloor,  bool caveDetectionUsesBlockLight,  int minInhabitedTime,  bool renderEdges,  int? edgeLightStrength,  bool? enablePerspectiveView,  bool? enableFlatView,  bool? enableFreeFlightView,  bool? enableHires)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _MapConfigModel() when $default != null:
 return $default(_that.world,_that.dimension,_that.name,_that.sorting,_that.skyColor,_that.voidColor,_that.skyLight,_that.ambientLight,_that.removeCavesBelowY,_that.caveDetectionOceanFloor,_that.caveDetectionUsesBlockLight,_that.minInhabitedTime,_that.renderEdges,_that.edgeLightStrength,_that.enablePerspectiveView,_that.enableFlatView,_that.enableFreeFlightView,_that.enableHires);case _:
@@ -191,7 +191,7 @@ return $default(_that.world,_that.dimension,_that.name,_that.sorting,_that.skyCo
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String world,  String dimension,  String name,  int sorting,  String skyColor,  String voidColor,  double skyLight,  double ambientLight,  int removeCavesBelowY,  int caveDetectionOceanFloor,  bool caveDetectionUsesBlockLight,  int minInhabitedTime,  bool renderEdges,  int edgeLightStrength,  bool enablePerspectiveView,  bool enableFlatView,  bool enableFreeFlightView,  bool enableHires)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String world,  String dimension,  String name,  int sorting,  String skyColor,  String voidColor,  double? skyLight,  double ambientLight,  int removeCavesBelowY,  int caveDetectionOceanFloor,  bool caveDetectionUsesBlockLight,  int minInhabitedTime,  bool renderEdges,  int? edgeLightStrength,  bool? enablePerspectiveView,  bool? enableFlatView,  bool? enableFreeFlightView,  bool? enableHires)  $default,) {final _that = this;
 switch (_that) {
 case _MapConfigModel():
 return $default(_that.world,_that.dimension,_that.name,_that.sorting,_that.skyColor,_that.voidColor,_that.skyLight,_that.ambientLight,_that.removeCavesBelowY,_that.caveDetectionOceanFloor,_that.caveDetectionUsesBlockLight,_that.minInhabitedTime,_that.renderEdges,_that.edgeLightStrength,_that.enablePerspectiveView,_that.enableFlatView,_that.enableFreeFlightView,_that.enableHires);case _:
@@ -211,7 +211,7 @@ return $default(_that.world,_that.dimension,_that.name,_that.sorting,_that.skyCo
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String world,  String dimension,  String name,  int sorting,  String skyColor,  String voidColor,  double skyLight,  double ambientLight,  int removeCavesBelowY,  int caveDetectionOceanFloor,  bool caveDetectionUsesBlockLight,  int minInhabitedTime,  bool renderEdges,  int edgeLightStrength,  bool enablePerspectiveView,  bool enableFlatView,  bool enableFreeFlightView,  bool enableHires)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String world,  String dimension,  String name,  int sorting,  String skyColor,  String voidColor,  double? skyLight,  double ambientLight,  int removeCavesBelowY,  int caveDetectionOceanFloor,  bool caveDetectionUsesBlockLight,  int minInhabitedTime,  bool renderEdges,  int? edgeLightStrength,  bool? enablePerspectiveView,  bool? enableFlatView,  bool? enableFreeFlightView,  bool? enableHires)?  $default,) {final _that = this;
 switch (_that) {
 case _MapConfigModel() when $default != null:
 return $default(_that.world,_that.dimension,_that.name,_that.sorting,_that.skyColor,_that.voidColor,_that.skyLight,_that.ambientLight,_that.removeCavesBelowY,_that.caveDetectionOceanFloor,_that.caveDetectionUsesBlockLight,_that.minInhabitedTime,_that.renderEdges,_that.edgeLightStrength,_that.enablePerspectiveView,_that.enableFlatView,_that.enableFreeFlightView,_that.enableHires);case _:
@@ -235,18 +235,18 @@ class _MapConfigModel extends MapConfigModel {
 @override final  int sorting;
 @override final  String skyColor;
 @override final  String voidColor;
-@override final  double skyLight;
+@override final  double? skyLight;
 @override final  double ambientLight;
 @override final  int removeCavesBelowY;
 @override final  int caveDetectionOceanFloor;
 @override final  bool caveDetectionUsesBlockLight;
 @override final  int minInhabitedTime;
 @override final  bool renderEdges;
-@override final  int edgeLightStrength;
-@override final  bool enablePerspectiveView;
-@override final  bool enableFlatView;
-@override final  bool enableFreeFlightView;
-@override final  bool enableHires;
+@override final  int? edgeLightStrength;
+@override final  bool? enablePerspectiveView;
+@override final  bool? enableFlatView;
+@override final  bool? enableFreeFlightView;
+@override final  bool? enableHires;
 
 /// Create a copy of MapConfigModel
 /// with the given fields replaced by the non-null parameter values.
@@ -281,7 +281,7 @@ abstract mixin class _$MapConfigModelCopyWith<$Res> implements $MapConfigModelCo
   factory _$MapConfigModelCopyWith(_MapConfigModel value, $Res Function(_MapConfigModel) _then) = __$MapConfigModelCopyWithImpl;
 @override @useResult
 $Res call({
- String world, String dimension, String name, int sorting, String skyColor, String voidColor, double skyLight, double ambientLight, int removeCavesBelowY, int caveDetectionOceanFloor, bool caveDetectionUsesBlockLight, int minInhabitedTime, bool renderEdges, int edgeLightStrength, bool enablePerspectiveView, bool enableFlatView, bool enableFreeFlightView, bool enableHires
+ String world, String dimension, String name, int sorting, String skyColor, String voidColor, double? skyLight, double ambientLight, int removeCavesBelowY, int caveDetectionOceanFloor, bool caveDetectionUsesBlockLight, int minInhabitedTime, bool renderEdges, int? edgeLightStrength, bool? enablePerspectiveView, bool? enableFlatView, bool? enableFreeFlightView, bool? enableHires
 });
 
 
@@ -298,7 +298,7 @@ class __$MapConfigModelCopyWithImpl<$Res>
 
 /// Create a copy of MapConfigModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? world = null,Object? dimension = null,Object? name = null,Object? sorting = null,Object? skyColor = null,Object? voidColor = null,Object? skyLight = null,Object? ambientLight = null,Object? removeCavesBelowY = null,Object? caveDetectionOceanFloor = null,Object? caveDetectionUsesBlockLight = null,Object? minInhabitedTime = null,Object? renderEdges = null,Object? edgeLightStrength = null,Object? enablePerspectiveView = null,Object? enableFlatView = null,Object? enableFreeFlightView = null,Object? enableHires = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? world = null,Object? dimension = null,Object? name = null,Object? sorting = null,Object? skyColor = null,Object? voidColor = null,Object? skyLight = freezed,Object? ambientLight = null,Object? removeCavesBelowY = null,Object? caveDetectionOceanFloor = null,Object? caveDetectionUsesBlockLight = null,Object? minInhabitedTime = null,Object? renderEdges = null,Object? edgeLightStrength = freezed,Object? enablePerspectiveView = freezed,Object? enableFlatView = freezed,Object? enableFreeFlightView = freezed,Object? enableHires = freezed,}) {
   return _then(_MapConfigModel(
 world: null == world ? _self.world : world // ignore: cast_nullable_to_non_nullable
 as String,dimension: null == dimension ? _self.dimension : dimension // ignore: cast_nullable_to_non_nullable
@@ -306,19 +306,19 @@ as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non
 as String,sorting: null == sorting ? _self.sorting : sorting // ignore: cast_nullable_to_non_nullable
 as int,skyColor: null == skyColor ? _self.skyColor : skyColor // ignore: cast_nullable_to_non_nullable
 as String,voidColor: null == voidColor ? _self.voidColor : voidColor // ignore: cast_nullable_to_non_nullable
-as String,skyLight: null == skyLight ? _self.skyLight : skyLight // ignore: cast_nullable_to_non_nullable
-as double,ambientLight: null == ambientLight ? _self.ambientLight : ambientLight // ignore: cast_nullable_to_non_nullable
+as String,skyLight: freezed == skyLight ? _self.skyLight : skyLight // ignore: cast_nullable_to_non_nullable
+as double?,ambientLight: null == ambientLight ? _self.ambientLight : ambientLight // ignore: cast_nullable_to_non_nullable
 as double,removeCavesBelowY: null == removeCavesBelowY ? _self.removeCavesBelowY : removeCavesBelowY // ignore: cast_nullable_to_non_nullable
 as int,caveDetectionOceanFloor: null == caveDetectionOceanFloor ? _self.caveDetectionOceanFloor : caveDetectionOceanFloor // ignore: cast_nullable_to_non_nullable
 as int,caveDetectionUsesBlockLight: null == caveDetectionUsesBlockLight ? _self.caveDetectionUsesBlockLight : caveDetectionUsesBlockLight // ignore: cast_nullable_to_non_nullable
 as bool,minInhabitedTime: null == minInhabitedTime ? _self.minInhabitedTime : minInhabitedTime // ignore: cast_nullable_to_non_nullable
 as int,renderEdges: null == renderEdges ? _self.renderEdges : renderEdges // ignore: cast_nullable_to_non_nullable
-as bool,edgeLightStrength: null == edgeLightStrength ? _self.edgeLightStrength : edgeLightStrength // ignore: cast_nullable_to_non_nullable
-as int,enablePerspectiveView: null == enablePerspectiveView ? _self.enablePerspectiveView : enablePerspectiveView // ignore: cast_nullable_to_non_nullable
-as bool,enableFlatView: null == enableFlatView ? _self.enableFlatView : enableFlatView // ignore: cast_nullable_to_non_nullable
-as bool,enableFreeFlightView: null == enableFreeFlightView ? _self.enableFreeFlightView : enableFreeFlightView // ignore: cast_nullable_to_non_nullable
-as bool,enableHires: null == enableHires ? _self.enableHires : enableHires // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,edgeLightStrength: freezed == edgeLightStrength ? _self.edgeLightStrength : edgeLightStrength // ignore: cast_nullable_to_non_nullable
+as int?,enablePerspectiveView: freezed == enablePerspectiveView ? _self.enablePerspectiveView : enablePerspectiveView // ignore: cast_nullable_to_non_nullable
+as bool?,enableFlatView: freezed == enableFlatView ? _self.enableFlatView : enableFlatView // ignore: cast_nullable_to_non_nullable
+as bool?,enableFreeFlightView: freezed == enableFreeFlightView ? _self.enableFreeFlightView : enableFreeFlightView // ignore: cast_nullable_to_non_nullable
+as bool?,enableHires: freezed == enableHires ? _self.enableHires : enableHires // ignore: cast_nullable_to_non_nullable
+as bool?,
   ));
 }
 

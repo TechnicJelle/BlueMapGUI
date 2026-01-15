@@ -286,16 +286,26 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
 
     final ProcessResult run;
     try {
-      run = await javaPath.runJar(bluemapJar, workingDirectory: projectDirectory);
+      run = await javaPath.runJarTimeout(
+        bluemapJar,
+        const Duration(seconds: 5),
+        workingDirectory: projectDirectory,
+      );
     } on ProcessException catch (e) {
       ref
           .read(_openingStateProvider.notifier)
           .error(error: _OpenError.runFail, details: e.toString());
       return;
     }
-
     final String stdout = run.stdout.toString();
-    if (!stdout.contains("Generated default config files for you")) {
+
+    final bool startSuccess = stdout.contains("Generated default config files for you");
+
+    //If there's an issue with a map (e.g. outdated configs), continue opening anyway; don't error out
+    //The user will see the error later, when they try to start BlueMap itself
+    final bool mapConfigProblem = stdout.contains(RegExp("Failed to load map.?config"));
+
+    if (!startSuccess && !mapConfigProblem) {
       ref
           .read(_openingStateProvider.notifier)
           .error(

@@ -208,6 +208,14 @@ class RunningProcess with WindowListener {
         );
       }
 
+      if (event.contains(RegExp("Failed to load map.?config"))) {
+        //If the map configs failed to load, BlueMap gets stuck due to a bug, so we kill it after a bit
+        final Timer killer = Timer(const Duration(seconds: 5), process.kill);
+
+        //If the process has already stopped, we cancel the killer
+        unawaited(process.exitCode.then((_) => killer.cancel()));
+      }
+
       if (event.contains("WebServer bound to")) {
         _stateController.add(RunningProcessState.running);
         final String? portText = portExtractionRegex.firstMatch(event)?.group(1);

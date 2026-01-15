@@ -18,7 +18,7 @@ abstract class MapConfigModel extends BaseConfigModel with _$MapConfigModel {
     required String skyColor,
     required String voidColor,
 
-    required double skyLight,
+    required double? skyLight,
     required double ambientLight,
 
     required int removeCavesBelowY,
@@ -28,13 +28,13 @@ abstract class MapConfigModel extends BaseConfigModel with _$MapConfigModel {
     required int minInhabitedTime,
 
     required bool renderEdges,
-    required int edgeLightStrength,
+    required int? edgeLightStrength,
 
-    required bool enablePerspectiveView,
-    required bool enableFlatView,
-    required bool enableFreeFlightView,
+    required bool? enablePerspectiveView,
+    required bool? enableFlatView,
+    required bool? enableFreeFlightView,
 
-    required bool enableHires,
+    required bool? enableHires,
   }) = _MapConfigModel;
 
   const MapConfigModel._();
