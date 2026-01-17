@@ -1,12 +1,7 @@
-import "dart:async";
-import "dart:io";
-
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 
-import "../../prefs.dart";
-import "../project_view.dart";
-import "advanced_editor.dart";
+import "../../project_configs_provider.dart";
 import "models/base.dart";
 import "views/base.dart";
 
@@ -29,75 +24,40 @@ class AdvancedModeNotifier extends Notifier<bool> {
 // ignore: specify_nonobvious_property_types
 final advancedModeProvider = NotifierProvider(AdvancedModeNotifier.new);
 
-class ConfigGUI extends ConsumerStatefulWidget {
-  final File openConfig;
-
-  const ConfigGUI(this.openConfig, {super.key});
+class ConfigGUI extends ConsumerWidget {
+  const ConfigGUI({super.key});
 
   @override
-  ConsumerState<ConfigGUI> createState() => _ConfigGUIState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    //TODO: Reinstate the advanced mode
+    // ref.listen(advancedModeProvider, (_, next) {
+    //   if (!next) readFile(widget.openConfig);
+    // });
+    //
+    // final bool advancedMode = ref.watch(advancedModeProvider);
+    // if (advancedMode) {
+    //   return Stack(
+    //     children: [
+    //       AdvancedEditor(widget.openConfig),
+    //       const _AdvancedModeToggle(),
+    //     ],
+    //   );
+    // }
 
-class _ConfigGUIState extends ConsumerState<ConfigGUI> {
-  BaseConfigView? configWidget;
-
-  @override
-  void initState() {
-    super.initState();
-    unawaited(readFile(widget.openConfig));
-  }
-
-  Future<void> readFile(File file) async {
-    setState(() {
-      configWidget = null;
-    });
-
-    final JavaPath javaPath = ref.read(javaPathProvider)!;
-    final ConfigFile? configFile = await ConfigFile.fromFile(file, javaPath);
-    if (configFile == null) return;
-
-    setState(() {
-      configWidget = BaseConfigView(configFile);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    ref.listen(advancedModeProvider, (_, next) {
-      if (!next) unawaited(readFile(widget.openConfig));
-    });
-
-    final bool advancedMode = ref.watch(advancedModeProvider);
-    if (advancedMode) {
-      return Stack(
-        children: [
-          AdvancedEditor(widget.openConfig),
-          _AdvancedModeToggle(widget.openConfig),
-        ],
-      );
-    }
-
-    ref.listen(openConfigProvider, (_, next) {
-      if (next != null) unawaited(readFile(next));
-    });
-    final BaseConfigView? thisConfig = configWidget;
+    final ConfigFile openConfig = ref.watch(openConfigProvider)!;
+    print(openConfig.path);
 
     return Stack(
       children: [
-        if (thisConfig == null)
-          const Center(child: CircularProgressIndicator())
-        else
-          thisConfig,
-        _AdvancedModeToggle(widget.openConfig),
+        BaseConfigView(openConfig),
+        const _AdvancedModeToggle(),
       ],
     );
   }
 }
 
 class _AdvancedModeToggle extends ConsumerWidget {
-  final File openConfig;
-
-  const _AdvancedModeToggle(this.openConfig);
+  const _AdvancedModeToggle();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

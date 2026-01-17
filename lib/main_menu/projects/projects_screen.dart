@@ -5,31 +5,8 @@ import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 
 import "../../prefs.dart";
-import "../../project_view/project_view.dart";
 import "new_project_dialog.dart";
 import "project_tile.dart";
-
-class OpenProjectNotifier extends Notifier<Directory?> {
-  @override
-  Directory? build() {
-    return null;
-  }
-
-  // Notifiers should not use setters
-  // ignore: use_setters_to_change_properties
-  void openProject(Directory projectDirectory) {
-    state = projectDirectory;
-  }
-
-  void closeProject() {
-    ref.read(openConfigProvider.notifier).close();
-    state = null;
-  }
-}
-
-// I don't want these for providers; too long
-// ignore: specify_nonobvious_property_types
-final openProjectProvider = NotifierProvider(OpenProjectNotifier.new);
 
 class ProjectsScreen extends ConsumerWidget {
   const ProjectsScreen({super.key});

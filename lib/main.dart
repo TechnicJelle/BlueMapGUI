@@ -1,5 +1,4 @@
 import "dart:async";
-import "dart:io";
 
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
@@ -8,8 +7,8 @@ import "package:url_launcher/url_launcher_string.dart";
 import "package:window_manager/window_manager.dart";
 
 import "main_menu/main_menu.dart";
-import "main_menu/projects/projects_screen.dart";
 import "prefs.dart";
+import "project_configs_provider.dart";
 import "project_view/close_project_button.dart";
 import "project_view/open_in_explorer_button.dart";
 import "project_view/project_view.dart";
@@ -52,15 +51,18 @@ class MyHomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final Directory? projectDirectory = ref.watch(openProjectProvider);
+    final ProjectConfigs? project = ref.watch(projectProvider);
 
-    final String title = projectDirectory == null
+    final String title = project == null
         ? "BlueMap GUI"
-        : "Project: ${p.basename(projectDirectory.path)}";
+        : "Project: ${p.basename(project.projectLocation.path)}";
 
     return Scaffold(
       appBar: AppBar(
-        title: Tooltip(message: projectDirectory?.path ?? "Hi :)", child: Text(title)),
+        title: Tooltip(
+          message: project?.projectLocation.path ?? "Hi :)",
+          child: Text(title),
+        ),
         actions: [
           IconButton(
             tooltip: "Help",
@@ -71,7 +73,7 @@ class MyHomePage extends ConsumerWidget {
             },
             icon: const Icon(Icons.help),
           ),
-          if (projectDirectory != null) ...[
+          if (project != null) ...[
             const OpenInFileManagerButton(),
             const CloseProjectButton(),
           ],
@@ -79,7 +81,7 @@ class MyHomePage extends ConsumerWidget {
       ),
       body: Stack(
         children: [
-          if (projectDirectory == null) const MainMenu() else const ProjectView(),
+          if (project == null) const MainMenu() else const ProjectView(),
           const _VersionText(),
         ],
       ),

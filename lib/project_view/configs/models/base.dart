@@ -18,6 +18,8 @@ class ConfigFile<T extends BaseConfigModel> {
 
   ConfigFile(this.file, this.model);
 
+  String get path => file.path;
+
   static Future<ConfigFile?> fromFile(File file, JavaPath javaPath) async {
     final Directory supportDir = await getApplicationSupportDirectory();
     final File hoconReaderFile = File(p.join(supportDir.path, "HOCONReader.jar"));

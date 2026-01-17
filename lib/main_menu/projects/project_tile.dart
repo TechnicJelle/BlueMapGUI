@@ -10,10 +10,10 @@ import "package:url_launcher/url_launcher.dart";
 import "../../confirmation_dialog.dart";
 import "../../hover.dart";
 import "../../prefs.dart";
+import "../../project_configs_provider.dart";
 import "../../utils.dart";
 import "../../versions.dart";
 import "../settings/java/check_java_version.dart";
-import "projects_screen.dart";
 
 enum _OpeningStep {
   nothing,
@@ -358,7 +358,8 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
 
     // == Open project ==
     ref.read(_openingStateProvider.notifier).set(_OpeningStep.opening);
-    ref.read(openProjectProvider.notifier).openProject(projectDirectory);
+
+    await ref.read(projectProvider.notifier).openProject(projectDirectory);
 
     // == Close opening progress dialog ==
     //TODO: Is there a better way to do this?

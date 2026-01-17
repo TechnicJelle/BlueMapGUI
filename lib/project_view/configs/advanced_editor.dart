@@ -1,5 +1,4 @@
 import "dart:async";
-import "dart:io";
 
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
@@ -7,11 +6,12 @@ import "package:re_editor/re_editor.dart";
 import "package:re_highlight/languages/yaml.dart" show langYaml;
 import "package:re_highlight/styles/ir-black.dart" show irBlackTheme;
 
+import "../../project_configs_provider.dart";
 import "../../utils.dart";
-import "../project_view.dart";
+import "models/base.dart";
 
 class AdvancedEditor extends ConsumerStatefulWidget {
-  final File openConfig;
+  final ConfigFile openConfig;
 
   const AdvancedEditor(this.openConfig, {super.key});
 
@@ -22,7 +22,7 @@ class AdvancedEditor extends ConsumerStatefulWidget {
 class _AdvancedEditorState extends ConsumerState<AdvancedEditor> {
   final codeController = CodeLineEditingController();
 
-  late File openConfig;
+  late ConfigFile openConfig;
   late final Timer autoSaveTimer;
   bool hasChanged = false;
 
@@ -36,15 +36,15 @@ class _AdvancedEditorState extends ConsumerState<AdvancedEditor> {
     });
   }
 
-  void writeFile(File file) {
+  void writeFile(ConfigFile file) {
     if (!hasChanged) return;
 
     hasChanged = false;
-    unawaited(file.writeAsString(codeController.text));
+    unawaited(file.file.writeAsString(codeController.text));
   }
 
-  Future<void> readFile(File file) async {
-    codeController.text = await file.readAsString();
+  Future<void> readFile(ConfigFile file) async {
+    codeController.text = await file.file.readAsString();
     codeController.clearHistory();
     openConfig = file;
   }
@@ -59,10 +59,15 @@ class _AdvancedEditorState extends ConsumerState<AdvancedEditor> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(openConfigProvider, (previous, next) {
-      if (previous != null && next != null) writeFile(previous);
-      if (next != null) unawaited(readFile(next));
-    });
+    ref.listen(
+      projectProvider.select(
+        (project) => project?.openConfig,
+      ),
+      (previous, next) {
+        if (previous != null && next != null) writeFile(previous);
+        if (next != null) unawaited(readFile(next));
+      },
+    );
     return ScrollbarTheme(
       data: Theme.of(context).scrollbarTheme.copyWith(
         thumbColor: WidgetStateProperty.resolveWith((states) {

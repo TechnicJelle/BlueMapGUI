@@ -1,42 +1,46 @@
-import "dart:async";
 import "dart:convert";
-import "dart:io";
 
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:path/path.dart" as p;
 
 import "../../../confirmation_dialog.dart";
-import "../../../main_menu/projects/projects_screen.dart";
 import "../../../main_menu/settings/setting_heading.dart";
+import "../../../project_configs_provider.dart";
 import "../../../utils.dart";
-import "../../project_view.dart";
 import "../models/base.dart";
 import "../models/map.dart";
 import "base.dart";
 
-class MapConfigView extends StatefulWidget {
-  final ConfigFile<MapConfigModel> configFile;
+class MapConfigView extends ConsumerStatefulWidget {
+  final ConfigFile<MapConfigModel> initialConfig;
 
-  const MapConfigView(this.configFile, {super.key});
+  const MapConfigView(this.initialConfig, {super.key});
 
   @override
-  State<MapConfigView> createState() => _MapConfigViewState();
+  ConsumerState<MapConfigView> createState() => _MapConfigViewState();
 }
 
-class _MapConfigViewState extends State<MapConfigView> {
-  late MapConfigModel config = widget.configFile.model;
-  late final String filename = p.basenameWithoutExtension(widget.configFile.file.path);
+class _MapConfigViewState extends ConsumerState<MapConfigView> {
+  ConfigFile<MapConfigModel>? configFile;
 
-  late final TextEditingController worldController = TextEditingController(
-    text: config.world,
-  );
-  late final TextEditingController dimensionController = TextEditingController(
-    text: config.dimension,
-  );
-  late final TextEditingController nameController = TextEditingController(
-    text: config.name,
-  );
+  MapConfigModel get config => configFile!.model;
+
+  set config(MapConfigModel newModel) => configFile!.model = newModel;
+
+  String get filename => p.basenameWithoutExtension(configFile!.path);
+
+  late TextEditingController worldController;
+  late TextEditingController dimensionController;
+  late TextEditingController nameController;
+
+  @override
+  void initState() {
+    super.initState();
+    openConfigFile(widget.initialConfig);
+    print(configFile);
+    print(configFile!.model);
+  }
 
   @override
   void dispose() {
@@ -47,24 +51,44 @@ class _MapConfigViewState extends State<MapConfigView> {
     super.dispose();
   }
 
+  void openConfigFile(ConfigFile<MapConfigModel> newConfig) {
+    //don't open something that is already open
+    if (p.equals(newConfig.path, configFile?.path ?? "")) return;
+
+    //save and close previously open config
+    if (configFile != null) {
+      validateAndSaveOptionsThatCannotBeBlank();
+      worldController.dispose();
+      dimensionController.dispose();
+      nameController.dispose();
+    }
+
+    setState(() {
+      configFile = newConfig;
+      worldController = TextEditingController(text: config.world);
+      dimensionController = TextEditingController(text: config.dimension);
+      nameController = TextEditingController(text: config.name);
+    });
+  }
+
   void validateAndSaveOptionsThatCannotBeBlank() {
     if (worldController.text.trim().isNotEmpty) {
       config = config.copyWith(world: worldController.text);
-      widget.configFile.changeValueInFile(
+      configFile!.changeValueInFile(
         MapConfigKeys.world,
         jsonEncode(config.world),
       );
     }
     if (dimensionController.text.trim().isNotEmpty) {
       config = config.copyWith(dimension: dimensionController.text);
-      widget.configFile.changeValueInFile(
+      configFile!.changeValueInFile(
         MapConfigKeys.dimension,
         jsonEncode(config.dimension),
       );
     }
     if (nameController.text.trim().isNotEmpty) {
       config = config.copyWith(name: nameController.text);
-      widget.configFile.changeValueInFile(
+      configFile!.changeValueInFile(
         MapConfigKeys.name,
         jsonEncode(config.name),
       );
@@ -73,6 +97,14 @@ class _MapConfigViewState extends State<MapConfigView> {
 
   @override
   Widget build(BuildContext context) {
+    final ConfigFile<MapConfigModel> openConfig = ref.watch(
+      openConfigProvider.select((value) {
+        if (value is ConfigFile<MapConfigModel>) return value;
+        return null;
+      }),
+    )!;
+    openConfigFile(openConfig);
+
     const padding = EdgeInsets.only(bottom: 8);
     return ListView(
       children: [
@@ -169,7 +201,7 @@ class _MapConfigViewState extends State<MapConfigView> {
           indent: 16,
           endIndent: 16,
         ),
-        DangerZone(widget.configFile.file),
+        DangerZone(configFile!),
         const SizedBox(height: 32),
       ],
     );
@@ -177,14 +209,12 @@ class _MapConfigViewState extends State<MapConfigView> {
 }
 
 class DangerZone extends ConsumerWidget {
-  final File configFile;
+  final ConfigFile configFile;
 
   const DangerZone(this.configFile, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final File? openConfig = ref.watch(openConfigProvider);
-
     return ListTile(
       title: Row(
         mainAxisAlignment: .spaceBetween,
@@ -235,26 +265,7 @@ class DangerZone extends ConsumerWidget {
                 ],
                 confirmAction: "Delete",
                 onConfirmed: () {
-                  // == If the editor is open on that file, close it ==
-                  if (openConfig != null && p.equals(openConfig.path, configFile.path)) {
-                    ref.read(openConfigProvider.notifier).close();
-                  }
-
-                  // == Delete the config file and the rendered map data ==
-                  final Directory? projectDirectory = ref.watch(openProjectProvider);
-                  //delete the file next frame, to ensure the editor is closed
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    unawaited(configFile.delete());
-
-                    if (projectDirectory == null) return;
-                    final String mapID = p.basenameWithoutExtension(configFile.path);
-                    final Directory mapDirectory = Directory(
-                      p.join(projectDirectory.path, "web", "maps", mapID),
-                    );
-                    if (mapDirectory.existsSync()) {
-                      unawaited(mapDirectory.delete(recursive: true));
-                    }
-                  });
+                  ref.read(projectProvider.notifier).deleteMap(configFile);
                 },
               );
             },

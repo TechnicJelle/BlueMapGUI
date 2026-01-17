@@ -5,7 +5,7 @@ import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:url_launcher/url_launcher.dart";
 
-import "../main_menu/projects/projects_screen.dart";
+import "../project_configs_provider.dart";
 
 class OpenInFileManagerButton extends ConsumerWidget {
   const OpenInFileManagerButton({super.key});
@@ -15,8 +15,7 @@ class OpenInFileManagerButton extends ConsumerWidget {
     return IconButton(
       tooltip: "Open in file manager",
       onPressed: () {
-        final Directory? projectDirectory = ref.read(openProjectProvider);
-        if (projectDirectory == null) return;
+        final Directory projectDirectory = ref.read(projectProvider)!.projectLocation;
         unawaited(launchUrl(projectDirectory.uri));
       },
       icon: const Icon(Icons.folder_open),

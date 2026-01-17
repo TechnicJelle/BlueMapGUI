@@ -9,8 +9,8 @@ import "package:path/path.dart" as p;
 import "package:rxdart/rxdart.dart";
 import "package:window_manager/window_manager.dart";
 
-import "../../main_menu/projects/projects_screen.dart";
 import "../../prefs.dart";
+import "../../project_configs_provider.dart";
 import "../../utils.dart";
 import "../../versions.dart";
 import "../configs/models/base.dart";
@@ -22,7 +22,7 @@ import "update_button.dart";
 final portExtractionRegex = RegExp(r"(?:port\s*|:)(\d{4,5})$");
 
 final processProvider = Provider<RunningProcess?>((ref) {
-  final Directory? projectDirectory = ref.watch(openProjectProvider);
+  final Directory? projectDirectory = ref.watch(projectProvider)?.projectLocation;
   if (projectDirectory == null) return null;
   final JavaPath? javaPath = ref.watch(javaPathProvider);
   if (javaPath == null) return null;

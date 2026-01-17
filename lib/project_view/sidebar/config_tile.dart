@@ -1,27 +1,32 @@
-import "dart:io";
-
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:path/path.dart" as p;
 
+import "../../project_configs_provider.dart";
 import "../../utils.dart";
-import "../project_view.dart";
+import "../configs/models/base.dart";
 
 class ConfigTile extends ConsumerWidget {
-  final File configFile;
+  final ConfigFile configFile;
+  final bool prettifyName;
 
-  const ConfigTile(this.configFile, {super.key});
+  const ConfigTile(
+    this.configFile, {
+    this.prettifyName = false,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final File? openConfig = ref.watch(openConfigProvider);
+    final ConfigFile? openConfig = ref.watch(projectProvider)!.openConfig;
 
+    final String configName = p.basenameWithoutExtension(configFile.path);
     return ListTile(
-      title: Text(p.basenameWithoutExtension(configFile.path).capitalize()),
+      title: Text(prettifyName ? configName.capitalize() : configName),
       onTap: () {
-        ref.read(openConfigProvider.notifier).open(configFile);
+        ref.read(projectProvider.notifier).openConfig(configFile);
       },
-      selected: openConfig == configFile,
+      selected: openConfig != null && p.equals(openConfig.path, configFile.path),
     );
   }
 }

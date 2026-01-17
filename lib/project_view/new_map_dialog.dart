@@ -4,9 +4,11 @@ import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:path/path.dart" as p;
 
-import "../main_menu/projects/projects_screen.dart";
+import "../prefs.dart";
+import "../project_configs_provider.dart";
 import "../utils.dart";
-import "project_view.dart";
+import "configs/models/base.dart";
+import "configs/models/map.dart";
 
 class NewMapDialog extends ConsumerStatefulWidget {
   const NewMapDialog({super.key});
@@ -30,9 +32,7 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
   @override
   void initState() {
     super.initState();
-    final Directory? projDir = ref.read(openProjectProvider);
-    if (projDir == null) return;
-    projectDirectory = projDir;
+    projectDirectory = ref.read(projectProvider)!.projectLocation;
 
     final mapTemplatesDirectory = getMapTemplatesDirectory(projectDirectory);
 
@@ -69,9 +69,13 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
 
       template.copySync(newConfig.path);
 
-      Navigator.of(context).pop();
+      final javaPath = ref.read(javaPathProvider)!;
+      final ConfigFile<MapConfigModel> newMapConfig =
+          ConfigFile.fromFile(newConfig, javaPath) as ConfigFile<MapConfigModel>;
 
-      ref.read(openConfigProvider.notifier).open(newConfig);
+      ref.read(projectProvider.notifier).addMap(newMapConfig);
+
+      Navigator.of(context).pop();
     }
   }
 

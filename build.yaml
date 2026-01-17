@@ -13,4 +13,5 @@ targets:
           - lib/project_view/configs/models/*.dart
       freezed:
         generate_for:
+          - lib/project_configs_provider.dart
           - lib/project_view/configs/models/*.dart
