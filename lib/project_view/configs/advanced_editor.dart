@@ -1,4 +1,5 @@
 import "dart:async";
+import "dart:io";
 
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
@@ -40,7 +41,11 @@ class _AdvancedEditorState extends ConsumerState<AdvancedEditor> {
     if (!hasChanged) return;
 
     hasChanged = false;
-    unawaited(file.file.writeAsString(codeController.text));
+    unawaited(
+      file.file.writeAsString(codeController.text).then((File file) {
+        unawaited(ref.read(projectProvider.notifier).refreshConfigFile(file));
+      }),
+    );
   }
 
   Future<void> readFile(ConfigFile file) async {
@@ -51,7 +56,10 @@ class _AdvancedEditorState extends ConsumerState<AdvancedEditor> {
 
   @override
   void dispose() {
-    writeFile(openConfig);
+    if (hasChanged) {
+      //when advanced editor is closed, we need to save sync, so that the data is ready to be parsed into a model in the next frame
+      openConfig.file.writeAsStringSync(codeController.text);
+    }
     autoSaveTimer.cancel();
     codeController.dispose();
     super.dispose();

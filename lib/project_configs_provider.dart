@@ -62,9 +62,8 @@ class ProjectConfigsNotifier extends Notifier<ProjectConfigs?> {
       }
     }
 
-    //sort main configs alphabetically
-    mainConfigs.sort((a, b) => a.path.compareTo(b.path));
-    //TODO: Sort map configs according to their `sorting` property
+    _sortMains(mainConfigs);
+    _sortMaps(mapConfigs);
 
     state = ProjectConfigs(
       projectLocation: projectDirectory,
@@ -72,6 +71,20 @@ class ProjectConfigsNotifier extends Notifier<ProjectConfigs?> {
       mapConfigs: mapConfigs,
       openConfig: null,
     );
+  }
+
+  ///sort main configs alphabetically
+  static List<ConfigFile> _sortMains(List<ConfigFile> list) {
+    list.sort((a, b) => a.path.compareTo(b.path));
+    return list;
+  }
+
+  ///sort map configs based on internal sorting value
+  static List<ConfigFile<MapConfigModel>> _sortMaps(
+    List<ConfigFile<MapConfigModel>> list,
+  ) {
+    list.sort((a, b) => a.model.sorting.compareTo(b.model.sorting));
+    return list;
   }
 
   void closeProject() {
@@ -102,12 +115,9 @@ class ProjectConfigsNotifier extends Notifier<ProjectConfigs?> {
       closeConfig();
     }
 
-    final List<ConfigFile<MapConfigModel>> newMapsList = state!.mapConfigs.where(
-      (ConfigFile<MapConfigModel> element) {
-        return !p.equals(element.path, mapConfigToDelete.path);
-      },
-    ).toList();
-    state = state!.copyWith(mapConfigs: newMapsList);
+    state = state!.copyWith(
+      mapConfigs: _copyListWithout(state!.mapConfigs, mapConfigToDelete.file),
+    );
 
     // == Delete the config file and the rendered map data ==
     //delete the file next frame, to ensure the editor is closed
@@ -124,12 +134,62 @@ class ProjectConfigsNotifier extends Notifier<ProjectConfigs?> {
     });
   }
 
+  static List<ConfigFile<T>> _copyListWithout<T extends BaseConfigModel>(
+    List<ConfigFile<T>> list,
+    File file,
+  ) => list.where((ConfigFile element) => !p.equals(element.path, file.path)).toList();
+
   void swapMaps(int oldIndex, int newIndex) {
     final List<ConfigFile<MapConfigModel>> maps = [...state!.mapConfigs];
     final int localNewIndex = oldIndex < newIndex ? newIndex - 1 : newIndex;
     final removed = maps.removeAt(oldIndex);
     maps.insert(localNewIndex, removed);
     state = state!.copyWith(mapConfigs: maps);
+  }
+
+  ///triggers the mechanism to reload the config file into a model and store it in the state
+  Future<void> refreshConfigFile(File file) async {
+    final JavaPath javaPath = ref.read(javaPathProvider)!;
+
+    //is this a main config to update?
+    final mainConfigToUpdate = await _refreshConfig(file, state!.mainConfigs, javaPath);
+    if (mainConfigToUpdate != null) {
+      state = state!.copyWith(
+        mainConfigs: _sortMains(
+          _copyListWithout(state!.mainConfigs, file)..add(mainConfigToUpdate),
+        ),
+      );
+    }
+
+    //or is this a map config to update?
+    final mapConfigToUpdate = await _refreshConfig(file, state!.mapConfigs, javaPath);
+    if (mapConfigToUpdate != null) {
+      state = state!.copyWith(
+        mapConfigs: _sortMaps(
+          _copyListWithout(state!.mapConfigs, file)..add(mapConfigToUpdate),
+        ),
+      );
+    }
+
+    //if this file was open, we need to update that too
+    if (p.equals(file.path, state!.openConfig?.path ?? "")) {
+      state = state!.copyWith(openConfig: mainConfigToUpdate ?? mapConfigToUpdate);
+    }
+  }
+
+  ///reusable function for both main and map configs
+  static Future<ConfigFile<T>?> _refreshConfig<T extends BaseConfigModel>(
+    File file,
+    List<ConfigFile<T>> list,
+    JavaPath javaPath,
+  ) async {
+    for (final ConfigFile config in list) {
+      if (p.equals(file.path, config.path)) {
+        final config = await ConfigFile.fromFile(file, javaPath);
+        return ConfigFile(file, config.model as T);
+      }
+    }
+    return null;
   }
 }
 

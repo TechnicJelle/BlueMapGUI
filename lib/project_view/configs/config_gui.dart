@@ -2,86 +2,67 @@ import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 
 import "../../project_configs_provider.dart";
+import "advanced_editor.dart";
 import "models/base.dart";
 import "views/base.dart";
 
-class AdvancedModeNotifier extends Notifier<bool> {
-  @override
-  bool build() {
-    return false;
-  }
-
-  void enable() {
-    state = true;
-  }
-
-  void disable() {
-    state = false;
-  }
-}
-
-// I don't want these for providers; too long
-// ignore: specify_nonobvious_property_types
-final advancedModeProvider = NotifierProvider(AdvancedModeNotifier.new);
-
-class ConfigGUI extends ConsumerWidget {
+class ConfigGUI extends ConsumerStatefulWidget {
   const ConfigGUI({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    //TODO: Reinstate the advanced mode
-    // ref.listen(advancedModeProvider, (_, next) {
-    //   if (!next) readFile(widget.openConfig);
-    // });
-    //
-    // final bool advancedMode = ref.watch(advancedModeProvider);
-    // if (advancedMode) {
-    //   return Stack(
-    //     children: [
-    //       AdvancedEditor(widget.openConfig),
-    //       const _AdvancedModeToggle(),
-    //     ],
-    //   );
-    // }
+  ConsumerState<ConfigGUI> createState() => _ConfigGUIState();
+}
 
+class _ConfigGUIState extends ConsumerState<ConfigGUI> {
+  bool advancedMode = false;
+
+  bool loading = false;
+
+  @override
+  Widget build(BuildContext context) {
     final ConfigFile openConfig = ref.watch(openConfigProvider)!;
+
+    if (loading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
     return Stack(
       children: [
-        BaseConfigView(openConfig),
-        const _AdvancedModeToggle(),
-      ],
-    );
-  }
-}
+        if (advancedMode) AdvancedEditor(openConfig) else BaseConfigView(openConfig),
+        Align(
+          alignment: .topRight,
+          child: Padding(
+            padding: const EdgeInsets.only(right: 12, top: 6),
+            child: Row(
+              mainAxisSize: .min,
+              children: [
+                const Text("Advanced Mode"),
+                Switch(
+                  value: advancedMode,
+                  onChanged: (bool justSwitchedToAdvancedMode) async {
+                    setState(() {
+                      advancedMode = justSwitchedToAdvancedMode;
+                      if (!justSwitchedToAdvancedMode) loading = true;
+                    });
 
-class _AdvancedModeToggle extends ConsumerWidget {
-  const _AdvancedModeToggle();
+                    // advanced mode was just disabled, so we need to re-read the file into the models again
+                    if (!justSwitchedToAdvancedMode) {
+                      //wait a frame for the file to be properly saved on dispose of the advanced editor
+                      WidgetsBinding.instance.addPostFrameCallback((_) async {
+                        await ref
+                            .read(projectProvider.notifier)
+                            .refreshConfigFile(openConfig.file);
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final bool advancedMode = ref.watch(advancedModeProvider);
-    return Align(
-      alignment: .topRight,
-      child: Padding(
-        padding: const EdgeInsets.only(right: 12, top: 6),
-        child: Row(
-          mainAxisSize: .min,
-          children: [
-            const Text("Advanced Mode"),
-            Switch(
-              value: advancedMode,
-              onChanged: (bool value) {
-                if (value) {
-                  ref.read(advancedModeProvider.notifier).enable();
-                } else {
-                  ref.read(advancedModeProvider.notifier).disable();
-                }
-              },
+                        setState(() => loading = false);
+                      });
+                    }
+                  },
+                ),
+              ],
             ),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }
