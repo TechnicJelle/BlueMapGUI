@@ -54,7 +54,7 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
     if (p.equals(newConfig.path, configFile?.path ?? "")) return;
 
     //save and close previously open config
-    if (configFile != null) {
+    if (configFile != null && configFile!.file.existsSync()) {
       validateAndSaveOptionsThatCannotBeBlank();
       worldController.dispose();
       dimensionController.dispose();

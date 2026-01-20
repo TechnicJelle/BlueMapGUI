@@ -96,21 +96,18 @@ class ProjectConfigsNotifier extends Notifier<ProjectConfigs?> {
 
   ///Does not show a popup to ask for confirmation, as that is the responsibility of the caller!
   void deleteMap(ConfigFile mapConfigToDelete) {
-    final ProjectConfigs project = state!;
-    final Directory projectDirectory = project.projectLocation;
-
     // == If the editor is open on this config file, close it ==
-    final ConfigFile? openConfig = project.openConfig;
+    final ConfigFile? openConfig = state!.openConfig;
     if (openConfig != null && p.equals(openConfig.path, mapConfigToDelete.path)) {
       closeConfig();
     }
 
-    final List<ConfigFile<MapConfigModel>> newMapsList = project.mapConfigs.where(
+    final List<ConfigFile<MapConfigModel>> newMapsList = state!.mapConfigs.where(
       (ConfigFile<MapConfigModel> element) {
         return !p.equals(element.path, mapConfigToDelete.path);
       },
     ).toList();
-    state = project.copyWith(mapConfigs: newMapsList);
+    state = state!.copyWith(mapConfigs: newMapsList);
 
     // == Delete the config file and the rendered map data ==
     //delete the file next frame, to ensure the editor is closed
@@ -119,7 +116,7 @@ class ProjectConfigsNotifier extends Notifier<ProjectConfigs?> {
 
       final String mapID = p.basenameWithoutExtension(mapConfigToDelete.path);
       final Directory mapDirectory = Directory(
-        p.join(projectDirectory.path, "web", "maps", mapID),
+        p.join(state!.projectLocation.path, "web", "maps", mapID),
       );
       if (mapDirectory.existsSync()) {
         unawaited(mapDirectory.delete(recursive: true));
