@@ -45,7 +45,6 @@ class ConfigGUI extends ConsumerWidget {
     // }
 
     final ConfigFile openConfig = ref.watch(openConfigProvider)!;
-    print(openConfig.path);
 
     return Stack(
       children: [

@@ -38,8 +38,6 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
   void initState() {
     super.initState();
     openConfigFile(widget.initialConfig);
-    print(configFile);
-    print(configFile!.model);
   }
 
   @override
