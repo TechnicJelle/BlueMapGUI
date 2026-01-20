@@ -362,7 +362,6 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
     await ref.read(projectProvider.notifier).openProject(projectDirectory);
 
     // == Close opening progress dialog ==
-    //TODO: Is there a better way to do this?
     if (mounted) {
       Navigator.of(context).pop();
     }
