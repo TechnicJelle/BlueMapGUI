@@ -34,31 +34,38 @@ class ProjectConfigsNotifier extends Notifier<ProjectConfigs?> {
     final String projectPath = projectDirectory.path;
     final Directory configDir = Directory(p.join(projectPath, "config"));
 
+    final List<File> configFiles = [];
     final JavaPath javaPath = ref.read(javaPathProvider)!;
     await for (final FileSystemEntity entity in configDir.list()) {
       if (entity is File && entity.path.endsWith(".conf")) {
-        final ConfigFile? configFile = await ConfigFile.fromFile(entity, javaPath);
-        if (configFile == null) continue;
-        mainConfigs.add(configFile);
+        configFiles.add(entity);
       }
 
       if (entity is Directory) {
         if (p.basename(entity.path) == "maps") {
           await for (final FileSystemEntity map in entity.list()) {
             if (map is File && map.path.endsWith(".conf")) {
-              final ConfigFile? configFile = await ConfigFile.fromFile(map, javaPath);
-              if (configFile == null) continue;
-              final MapConfigModel model = configFile.model as MapConfigModel;
-              mapConfigs.add(ConfigFile(map, model));
+              configFiles.add(map);
             }
           }
         }
       }
     }
 
+    final configs = await ConfigFile.fromFiles(configFiles, javaPath);
+    for (final ConfigFile config in configs) {
+      if (config.model is MapConfigModel) {
+        final MapConfigModel model = config.model as MapConfigModel;
+        mapConfigs.add(ConfigFile(config.file, model));
+      } else {
+        mainConfigs.add(config);
+      }
+    }
+
     //sort main configs alphabetically
     mainConfigs.sort((a, b) => a.path.compareTo(b.path));
     //TODO: Sort map configs according to their `sorting` property
+
     state = ProjectConfigs(
       projectLocation: projectDirectory,
       mainConfigs: mainConfigs,

@@ -13,6 +13,8 @@ import "webapp.dart";
 import "webserver.dart";
 
 class ConfigFile<T extends BaseConfigModel> {
+  static File? hoconFile;
+
   File file;
   T model;
 
@@ -20,18 +22,19 @@ class ConfigFile<T extends BaseConfigModel> {
 
   String get path => file.path;
 
-  static Future<ConfigFile?> fromFile(File file, JavaPath javaPath) async {
-    final Directory supportDir = await getApplicationSupportDirectory();
-    final File hoconReaderFile = File(p.join(supportDir.path, "HOCONReader.jar"));
-    if (!hoconReaderFile.existsSync()) {
+  static Future<ConfigFile> fromFile(File file, JavaPath javaPath) async =>
+      (await fromFiles([file], javaPath)).first;
+
+  static Future<List<ConfigFile>> fromFiles(List<File> files, JavaPath javaPath) async {
+    if (hoconFile == null) {
+      final Directory supportDir = await getApplicationSupportDirectory();
+      hoconFile = File(p.join(supportDir.path, "HOCONReader.jar"));
       final hoconReaderAsset = await rootBundle.load("assets/HOCONReader.jar");
-      await hoconReaderFile.writeAsBytes(hoconReaderAsset.buffer.asUint8List());
+      await hoconFile!.writeAsBytes(hoconReaderAsset.buffer.asUint8List());
     }
 
-    final ProcessResult result = await javaPath.runJar(
-      hoconReaderFile,
-      processArgs: [file.path],
-    );
+    final List<String> args = files.map((f) => f.path).toList();
+    final ProcessResult result = await javaPath.runJar(hoconFile!, processArgs: args);
 
     //TODO: Error handling!
     final int exitCode = result.exitCode;
@@ -39,21 +42,26 @@ class ConfigFile<T extends BaseConfigModel> {
     if (exitCode != 0 || stderr.isNotEmpty) {
       print("exitCode: $exitCode");
       print("stderr: $stderr");
-      return null;
+      throw Exception(); //TODO
     }
     final String stdout = result.stdout.toString();
+    final List<String> jsons = stdout.split(String.fromCharCode(0));
 
-    final configMap = jsonDecode(stdout) as Map<String, dynamic>;
-    if (p.basename(file.parent.path) == "maps") {
-      return ConfigFile(file, MapConfigModel.fromJson(configMap));
-    }
-    return switch (p.basename(file.path)) {
-      "core.conf" => ConfigFile(file, CoreConfigModel.fromJson(configMap)),
-      "startup.conf" => ConfigFile(file, StartupConfigModel.fromJson(configMap)),
-      "webapp.conf" => ConfigFile(file, WebappConfigModel.fromJson(configMap)),
-      "webserver.conf" => ConfigFile(file, WebserverConfigModel.fromJson(configMap)),
-      _ => null,
-    };
+    return List.generate(files.length, (int index) {
+      final File file = files[index];
+      final configMap = jsonDecode(jsons[index]) as Map<String, dynamic>;
+      if (p.basename(file.parent.path) == "maps") {
+        return ConfigFile(file, MapConfigModel.fromJson(configMap));
+      } else {
+        return switch (p.basename(file.path)) {
+          "core.conf" => ConfigFile(file, CoreConfigModel.fromJson(configMap)),
+          "startup.conf" => ConfigFile(file, StartupConfigModel.fromJson(configMap)),
+          "webapp.conf" => ConfigFile(file, WebappConfigModel.fromJson(configMap)),
+          "webserver.conf" => ConfigFile(file, WebserverConfigModel.fromJson(configMap)),
+          _ => throw Exception(), //TODO
+        };
+      }
+    });
   }
 
   void changeValueInFile(String optionName, String newValue) {
