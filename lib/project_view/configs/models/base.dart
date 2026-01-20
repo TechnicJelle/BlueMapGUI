@@ -13,7 +13,7 @@ import "webapp.dart";
 import "webserver.dart";
 
 class ConfigFile<T extends BaseConfigModel> {
-  static File? hoconFile;
+  static File? _hoconFile;
 
   File file;
   T model;
@@ -26,15 +26,15 @@ class ConfigFile<T extends BaseConfigModel> {
       (await fromFiles([file], javaPath)).first;
 
   static Future<List<ConfigFile>> fromFiles(List<File> files, JavaPath javaPath) async {
-    if (hoconFile == null) {
+    if (_hoconFile == null) {
       final Directory supportDir = await getApplicationSupportDirectory();
-      hoconFile = File(p.join(supportDir.path, "HOCONReader.jar"));
+      _hoconFile = File(p.join(supportDir.path, "HOCONReader.jar"));
       final hoconReaderAsset = await rootBundle.load("assets/HOCONReader.jar");
-      await hoconFile!.writeAsBytes(hoconReaderAsset.buffer.asUint8List());
+      await _hoconFile!.writeAsBytes(hoconReaderAsset.buffer.asUint8List());
     }
 
     final List<String> args = files.map((f) => f.path).toList();
-    final ProcessResult result = await javaPath.runJar(hoconFile!, processArgs: args);
+    final ProcessResult result = await javaPath.runJar(_hoconFile!, processArgs: args);
 
     //TODO: Error handling!
     final int exitCode = result.exitCode;
