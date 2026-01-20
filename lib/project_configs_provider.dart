@@ -122,9 +122,9 @@ class ProjectConfigsNotifier extends Notifier<ProjectConfigs?> {
 
   void swapMaps(int oldIndex, int newIndex) {
     final List<ConfigFile<MapConfigModel>> maps = [...state!.mapConfigs];
-    if (oldIndex < newIndex) newIndex -= 1; //TODO: Fix this warning
+    final int localNewIndex = oldIndex < newIndex ? newIndex - 1 : newIndex;
     final removed = maps.removeAt(oldIndex);
-    maps.insert(newIndex, removed);
+    maps.insert(localNewIndex, removed);
     state = state!.copyWith(mapConfigs: maps);
   }
 }
