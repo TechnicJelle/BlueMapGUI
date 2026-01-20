@@ -29,6 +29,9 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
   //Output stuff
   File? selectedTemplate;
 
+  //State stuff
+  bool validating = false;
+
   @override
   void initState() {
     super.initState();
@@ -57,9 +60,11 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
     super.dispose();
   }
 
-  void validateAndCreate() {
+  Future<void> validateAndCreate() async {
+    if (validating) return;
     final formState = formKey.currentState;
     if (formState != null && formState.validate()) {
+      setState(() => validating = true);
       final File template = selectedTemplate!;
       final String id = idController.text;
 
@@ -70,13 +75,20 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
       template.copySync(newConfig.path);
 
       final javaPath = ref.read(javaPathProvider)!;
-      final ConfigFile<MapConfigModel> newMapConfig =
-          ConfigFile.fromFile(newConfig, javaPath) as ConfigFile<MapConfigModel>;
+      final config = await ConfigFile.fromFile(newConfig, javaPath);
+      final ConfigFile<MapConfigModel> newMapConfig = ConfigFile(
+        config.file,
+        config.model as MapConfigModel,
+      );
 
       ref.read(projectProvider.notifier).addMap(newMapConfig);
 
-      Navigator.of(context).pop();
+      if (mounted) {
+        final nav = Navigator.of(context);
+        if (nav.canPop()) nav.pop();
+      }
     }
+    setState(() => validating = false);
   }
 
   @override
@@ -86,61 +98,63 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
       content: Form(
         key: formKey,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text("Map type:"),
-            const SizedBox(height: 8),
-            FormField(
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              validator: (field) {
-                if (selectedTemplate == null) {
-                  return "Can't be empty or invalid selection";
-                }
-                return null;
-              },
-              builder: (field) => DropdownMenu(
-                hintText: "Select a template",
-                errorText: field.errorText,
-                dropdownMenuEntries: options,
-                onSelected: (File? template) {
-                  setState(() {
-                    selectedTemplate = template;
-                    field.didChange(template);
-                  });
-                },
-                width: 200,
-              ),
-            ),
-            const SizedBox(height: 16),
-            const Text("Map ID:"),
-            TextFormField(
-              controller: idController,
-              decoration: InputDecoration(
-                hintText: selectedTemplate == null
-                    ? "my-cool-map"
-                    : "my-cool-${p.basenameWithoutExtension(selectedTemplate!.path)}-map",
-              ),
-              textInputAction: TextInputAction.done,
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              validator: (String? s) {
-                if (s == null || s.trim().isEmpty) {
-                  return "Can't be empty";
-                }
-                if (!regexSafeCharacters.hasMatch(s)) {
-                  return "Invalid character";
-                }
-                final File potentialNewConfig = File(
-                  p.join(projectDirectory.path, "config", "maps", "$s.conf"),
-                );
-                if (potentialNewConfig.existsSync()) {
-                  return "Can't have a duplicate ID";
-                }
-                return null;
-              },
-              onFieldSubmitted: (_) => validateAndCreate(),
-            ),
-          ],
+          crossAxisAlignment: validating ? .center : .start,
+          mainAxisSize: .min,
+          children: validating
+              ? [const CircularProgressIndicator()]
+              : [
+                  const Text("Map type:"),
+                  const SizedBox(height: 8),
+                  FormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (field) {
+                      if (selectedTemplate == null) {
+                        return "Can't be empty or invalid selection";
+                      }
+                      return null;
+                    },
+                    builder: (field) => DropdownMenu(
+                      hintText: "Select a template",
+                      errorText: field.errorText,
+                      dropdownMenuEntries: options,
+                      onSelected: (File? template) {
+                        setState(() {
+                          selectedTemplate = template;
+                          field.didChange(template);
+                        });
+                      },
+                      width: 300,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text("Map ID:"),
+                  TextFormField(
+                    controller: idController,
+                    decoration: InputDecoration(
+                      hintText: selectedTemplate == null
+                          ? "my-cool-map"
+                          : "my-cool-${p.basenameWithoutExtension(selectedTemplate!.path)}-map",
+                    ),
+                    textInputAction: TextInputAction.done,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (String? s) {
+                      if (s == null || s.trim().isEmpty) {
+                        return "Can't be empty";
+                      }
+                      if (!regexSafeCharacters.hasMatch(s)) {
+                        return "Invalid character";
+                      }
+                      final File potentialNewConfig = File(
+                        p.join(projectDirectory.path, "config", "maps", "$s.conf"),
+                      );
+                      if (potentialNewConfig.existsSync()) {
+                        return "Can't have a duplicate ID";
+                      }
+                      return null;
+                    },
+                    onFieldSubmitted: (_) => validateAndCreate(),
+                  ),
+                ],
         ),
       ),
       actions: [
