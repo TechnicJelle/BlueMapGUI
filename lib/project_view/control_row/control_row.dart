@@ -118,11 +118,10 @@ class RunningProcess with WindowListener {
     final File startupConfigFile = File(
       p.join(_projectDirectory.path, "config", "startup.conf"),
     );
-    final ConfigFile? configFile = await ConfigFile.fromFile(
+    final ConfigFile configFile = await ConfigFile.fromFile(
       startupConfigFile,
       _javaPath,
     );
-    if (configFile == null) return;
     final StartupConfigModel startupConfigModel = configFile.model as StartupConfigModel;
 
     //Option: Mods Path
