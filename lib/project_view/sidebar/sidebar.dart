@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 
 import "../../project_configs_provider.dart";
+import "../configs/config_gui.dart";
 import "../configs/models/base.dart";
 import "config_tile.dart";
 import "new_map_button.dart";
@@ -12,6 +13,7 @@ class Sidebar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final ProjectConfigs configs = ref.watch(projectProvider)!;
+    final bool advancedMode = ref.watch(advancedModeProvider);
 
     return ListView(
       children: [
@@ -25,17 +27,29 @@ class Sidebar extends ConsumerWidget {
           ),
         const SizedBox(height: 32),
         const Text(" Maps"),
-        ReorderableListView.builder(
-          shrinkWrap: true,
-          itemCount: configs.mapConfigs.length,
-          itemBuilder: (context, index) => ConfigTile(
-            configs.mapConfigs[index],
-            key: ValueKey(index),
+        //don't show the reorder handles when in advanced mode, because the text editor does not handle config options being changed from outside of itself
+        //and it makes sense enough to not show them, so i think that's a fine enough fix
+        if (advancedMode)
+          ListView.builder(
+            shrinkWrap: true,
+            itemCount: configs.mapConfigs.length,
+            itemBuilder: (context, index) => ConfigTile(
+              configs.mapConfigs[index],
+              key: ValueKey(index),
+            ),
+          )
+        else
+          ReorderableListView.builder(
+            shrinkWrap: true,
+            itemCount: configs.mapConfigs.length,
+            itemBuilder: (context, index) => ConfigTile(
+              configs.mapConfigs[index],
+              key: ValueKey(index),
+            ),
+            onReorder: (int oldIndex, int newIndex) {
+              ref.read(projectProvider.notifier).swapMaps(oldIndex, newIndex);
+            },
           ),
-          onReorder: (int oldIndex, int newIndex) {
-            ref.read(projectProvider.notifier).swapMaps(oldIndex, newIndex);
-          },
-        ),
         const NewMapButton(),
       ],
     );

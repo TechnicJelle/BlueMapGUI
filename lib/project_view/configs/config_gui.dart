@@ -6,6 +6,20 @@ import "advanced_editor.dart";
 import "models/base.dart";
 import "views/base.dart";
 
+class AdvancedModeNotifier extends Notifier<bool> {
+  @override
+  bool build() {
+    return false;
+  }
+
+  @override
+  set state(bool newState) => super.state = newState;
+}
+
+// I don't want these for providers; too long
+// ignore: specify_nonobvious_property_types
+final advancedModeProvider = NotifierProvider(AdvancedModeNotifier.new);
+
 class ConfigGUI extends ConsumerStatefulWidget {
   const ConfigGUI({super.key});
 
@@ -14,21 +28,21 @@ class ConfigGUI extends ConsumerStatefulWidget {
 }
 
 class _ConfigGUIState extends ConsumerState<ConfigGUI> {
-  bool advancedMode = false;
-
   bool loading = false;
 
   @override
   Widget build(BuildContext context) {
     final ConfigFile openConfig = ref.watch(openConfigProvider)!;
-
-    if (loading) {
-      return const Center(child: CircularProgressIndicator());
-    }
+    final bool advancedMode = ref.watch(advancedModeProvider);
 
     return Stack(
       children: [
-        if (advancedMode) AdvancedEditor(openConfig) else BaseConfigView(openConfig),
+        if (loading)
+          const Center(child: CircularProgressIndicator())
+        else if (advancedMode)
+          AdvancedEditor(openConfig)
+        else
+          BaseConfigView(openConfig),
         Align(
           alignment: .topRight,
           child: Padding(
@@ -39,24 +53,27 @@ class _ConfigGUIState extends ConsumerState<ConfigGUI> {
                 const Text("Advanced Mode"),
                 Switch(
                   value: advancedMode,
-                  onChanged: (bool justSwitchedToAdvancedMode) async {
-                    setState(() {
-                      advancedMode = justSwitchedToAdvancedMode;
-                      if (!justSwitchedToAdvancedMode) loading = true;
-                    });
+                  onChanged: loading
+                      ? null
+                      : (bool justSwitchedToAdvancedMode) async {
+                          ref.read(advancedModeProvider.notifier).state =
+                              justSwitchedToAdvancedMode;
+                          setState(() {
+                            if (!justSwitchedToAdvancedMode) loading = true;
+                          });
 
-                    // advanced mode was just disabled, so we need to re-read the file into the models again
-                    if (!justSwitchedToAdvancedMode) {
-                      //wait a frame for the file to be properly saved on dispose of the advanced editor
-                      WidgetsBinding.instance.addPostFrameCallback((_) async {
-                        await ref
-                            .read(projectProvider.notifier)
-                            .refreshConfigFile(openConfig.file);
+                          // advanced mode was just disabled, so we need to re-read the file into the models again
+                          if (!justSwitchedToAdvancedMode) {
+                            //wait a frame for the file to be properly saved on dispose of the advanced editor
+                            WidgetsBinding.instance.addPostFrameCallback((_) async {
+                              await ref
+                                  .read(projectProvider.notifier)
+                                  .refreshConfigFile(openConfig.file);
 
-                        setState(() => loading = false);
-                      });
-                    }
-                  },
+                              setState(() => loading = false);
+                            });
+                          }
+                        },
                 ),
               ],
             ),

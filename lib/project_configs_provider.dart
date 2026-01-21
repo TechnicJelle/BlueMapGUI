@@ -1,4 +1,5 @@
 import "dart:async";
+import "dart:convert";
 import "dart:io";
 
 import "package:flutter/material.dart";
@@ -140,11 +141,35 @@ class ProjectConfigsNotifier extends Notifier<ProjectConfigs?> {
   ) => list.where((ConfigFile element) => !p.equals(element.path, file.path)).toList();
 
   void swapMaps(int oldIndex, int newIndex) {
+    final File? openConfig = state!.openConfig?.file;
     final List<ConfigFile<MapConfigModel>> maps = [...state!.mapConfigs];
     final int localNewIndex = oldIndex < newIndex ? newIndex - 1 : newIndex;
     final removed = maps.removeAt(oldIndex);
     maps.insert(localNewIndex, removed);
+    for (int i = 0; i < maps.length; i++) {
+      final ConfigFile<MapConfigModel> mapConfig = maps[i];
+      maps[i] = ConfigFile(mapConfig.file, mapConfig.model.copyWith(sorting: i * 100));
+    }
+
     state = state!.copyWith(mapConfigs: maps);
+
+    //cannot happen at the same time, because  ↓  relies on the maps being set in the state
+    state = state!.copyWith(openConfig: findConfigToFile(openConfig));
+
+    for (final mapConfig in state!.mapConfigs) {
+      mapConfig.changeValueInFile(
+        MapConfigKeys.sorting,
+        jsonEncode(mapConfig.model.sorting),
+      );
+    }
+  }
+
+  ConfigFile? findConfigToFile(File? file) {
+    if (file == null) return null;
+    return <ConfigFile?>[...state!.mainConfigs, ...state!.mapConfigs].singleWhere(
+      (ConfigFile? config) => p.equals(config!.path, file.path),
+      orElse: () => null,
+    );
   }
 
   ///triggers the mechanism to reload the config file into a model and store it in the state
