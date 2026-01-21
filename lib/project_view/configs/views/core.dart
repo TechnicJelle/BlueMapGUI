@@ -23,12 +23,14 @@ class _CoreConfigViewState extends State<CoreConfigView> {
 
   @override
   Widget build(BuildContext context) {
+    final int cpus = Platform.numberOfProcessors;
+
     final Color? sliderColor;
-    if (config.renderThreadCount >= Platform.numberOfProcessors - 1) {
+    if (config.renderThreadCount >= cpus - 1 && config.renderThreadCount != 1) {
       sliderColor = Colors.red;
-    } else if (config.renderThreadCount > Platform.numberOfProcessors * 0.75) {
+    } else if (config.renderThreadCount > cpus * 0.75 && cpus > 2) {
       sliderColor = Colors.orange;
-    } else if (config.renderThreadCount > Platform.numberOfProcessors * 0.5) {
+    } else if (config.renderThreadCount > cpus * 0.5 && cpus > 2) {
       sliderColor = Colors.yellow;
     } else {
       sliderColor = null;
@@ -102,32 +104,31 @@ Be careful with setting this too high, as your whole computer may start to lag!"
               Row(
                 children: [
                   Text(
-                    config.renderThreadCount.toString().padLeft(
-                      Platform.numberOfProcessors.toString().length,
-                    ),
+                    config.renderThreadCount.toString().padLeft(cpus.toString().length),
                     style: pixelCode,
                   ),
                   Expanded(
-                    child: Slider(
-                      value: config.renderThreadCount.toDouble(),
-                      label: config.renderThreadCount.toString(),
-                      min: 1,
-                      max: max(
-                        config.renderThreadCount,
-                        Platform.numberOfProcessors,
-                      ).toDouble(),
-                      divisions: Platform.numberOfProcessors - 1,
-                      onChanged: config.renderThreadCount > Platform.numberOfProcessors
-                          ? null
-                          : (double value) => setState(() {
-                              config = config.copyWith(renderThreadCount: value.toInt());
-                            }),
-                      activeColor: sliderColor,
-                      onChangeEnd: (_) => widget.configFile.changeValueInFile(
-                        CoreConfigKeys.renderThreadCount,
-                        jsonEncode(config.renderThreadCount),
-                      ),
-                    ),
+                    child: cpus > 1
+                        ? Slider(
+                            value: config.renderThreadCount.toDouble(),
+                            label: config.renderThreadCount.toString(),
+                            min: 1,
+                            max: max(config.renderThreadCount, cpus).toDouble(),
+                            divisions: cpus - 1,
+                            onChanged: config.renderThreadCount > cpus
+                                ? null
+                                : (double value) => setState(() {
+                                    config = config.copyWith(
+                                      renderThreadCount: value.toInt(),
+                                    );
+                                  }),
+                            activeColor: sliderColor,
+                            onChangeEnd: (_) => widget.configFile.changeValueInFile(
+                              CoreConfigKeys.renderThreadCount,
+                              jsonEncode(config.renderThreadCount),
+                            ),
+                          )
+                        : const Slider(value: 1, onChanged: null),
                   ),
                 ],
               ),
