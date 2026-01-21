@@ -1,3 +1,5 @@
+import "dart:io";
+
 import "package:file_picker/file_picker.dart";
 import "package:flutter/material.dart";
 
@@ -63,9 +65,10 @@ class PathPickerButton extends StatelessWidget {
         icon: const Icon(Icons.drive_folder_upload_rounded),
         label: Text("Pick $purpose folder"),
         onPressed: () async {
+          final initialDir = Directory(initialDirectory);
           final String? picked = await FilePicker.platform.getDirectoryPath(
             dialogTitle: "Pick your $purpose folder",
-            initialDirectory: initialDirectory,
+            initialDirectory: initialDir.existsSync() ? initialDirectory : null,
           );
           onPicked(picked);
         },
