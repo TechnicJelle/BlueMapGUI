@@ -13,7 +13,7 @@ abstract class WebserverConfigModel extends BaseConfigModel with _$WebserverConf
 
   const WebserverConfigModel._();
 
-  factory WebserverConfigModel.fromJson(Map<String, dynamic> json) =>
+  factory WebserverConfigModel.fromJson(Map<String, Object?> json) =>
       _$WebserverConfigModelFromJson(json);
 }
 

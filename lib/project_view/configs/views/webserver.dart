@@ -2,22 +2,28 @@ import "dart:convert";
 
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
 
 import "../../../main_menu/settings/setting_heading.dart";
+import "../../../project_configs_provider.dart";
 import "../models/base.dart";
 import "../models/webserver.dart";
 
-class WebserverConfigView extends StatefulWidget {
-  final ConfigFile<WebserverConfigModel> configFile;
-
-  const WebserverConfigView(this.configFile, {super.key});
+class WebserverConfigView extends ConsumerStatefulWidget {
+  const WebserverConfigView({super.key});
 
   @override
-  State<WebserverConfigView> createState() => _WebserverConfigViewState();
+  ConsumerState<WebserverConfigView> createState() => _WebserverConfigViewState();
 }
 
-class _WebserverConfigViewState extends State<WebserverConfigView> {
-  late WebserverConfigModel model = widget.configFile.model;
+class _WebserverConfigViewState extends ConsumerState<WebserverConfigView> {
+  ///reference to the actual mapConfig in the _projectProvider,
+  ///so changing the model will properly apply
+  late ConfigFile configFile;
+
+  WebserverConfigModel get model => configFile.model as WebserverConfigModel;
+
+  set model(WebserverConfigModel newModel) => configFile.model = newModel;
 
   late final TextEditingController portController = TextEditingController(
     text: model.port.toString(),
@@ -34,7 +40,7 @@ class _WebserverConfigViewState extends State<WebserverConfigView> {
     final int? intValue = int.tryParse(portController.text);
     if (intValue == null) return;
     model = model.copyWith(port: intValue);
-    widget.configFile.changeValueInFile(
+    configFile.changeValueInFile(
       WebserverConfigKeys.port,
       jsonEncode(model.port),
     );
@@ -42,6 +48,8 @@ class _WebserverConfigViewState extends State<WebserverConfigView> {
 
   @override
   Widget build(BuildContext context) {
+    configFile = ref.watch(createTypedOpenConfigProvider<WebserverConfigModel>())!;
+
     const padding = EdgeInsets.only(bottom: 8);
     return ListView(
       children: [

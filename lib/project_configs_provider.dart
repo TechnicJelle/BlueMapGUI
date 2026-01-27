@@ -4,6 +4,7 @@ import "dart:io";
 
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:flutter_riverpod/misc.dart";
 import "package:freezed_annotation/freezed_annotation.dart";
 import "package:path/path.dart" as p;
 
@@ -234,6 +235,10 @@ final openProjectProvider = _projectProvider.select((proj) => proj?.projectLocat
 // I don't want these for providers; too long
 // ignore: specify_nonobvious_property_types
 final openConfigProvider = _projectProvider.select((proj) => proj?.openConfig);
+
+///do not use for map configs; only for main configs
+ProviderListenable<ConfigFile<BaseConfigModel>?> createTypedOpenConfigProvider<T>() =>
+    openConfigProvider.select((value) => value?.model is T ? value : null);
 
 // I don't want these for providers; too long
 // ignore: specify_nonobvious_property_types

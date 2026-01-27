@@ -13,9 +13,7 @@ import "../models/map.dart";
 import "base.dart";
 
 class MapConfigView extends ConsumerStatefulWidget {
-  final ConfigFile<MapConfigModel> initialConfig;
-
-  const MapConfigView(this.initialConfig, {super.key});
+  const MapConfigView({super.key});
 
   @override
   ConsumerState<MapConfigView> createState() => _MapConfigViewState();
@@ -33,12 +31,6 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
   late TextEditingController worldController;
   late TextEditingController dimensionController;
   late TextEditingController nameController;
-
-  @override
-  void initState() {
-    super.initState();
-    openConfigFile(widget.initialConfig);
-  }
 
   @override
   void dispose() {
@@ -95,10 +87,9 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
   @override
   Widget build(BuildContext context) {
     final ConfigFile<MapConfigModel> openConfig = ref.watch(
-      openConfigProvider.select((value) {
-        if (value is ConfigFile<MapConfigModel>) return value;
-        return null;
-      }),
+      openConfigProvider.select(
+        (config) => config is ConfigFile<MapConfigModel> ? config : null,
+      ),
     )!;
     openConfigFile(openConfig);
 

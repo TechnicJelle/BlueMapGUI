@@ -1,23 +1,29 @@
 import "dart:convert";
 
 import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
 
 import "../../../main_menu/settings/setting_heading.dart";
+import "../../../project_configs_provider.dart";
 import "../models/base.dart";
 import "../models/startup.dart";
 import "base.dart";
 
-class StartupConfigView extends StatefulWidget {
-  final ConfigFile<StartupConfigModel> configFile;
-
-  const StartupConfigView(this.configFile, {super.key});
+class StartupConfigView extends ConsumerStatefulWidget {
+  const StartupConfigView({super.key});
 
   @override
-  State<StartupConfigView> createState() => _StartupConfigViewState();
+  ConsumerState<StartupConfigView> createState() => _StartupConfigViewState();
 }
 
-class _StartupConfigViewState extends State<StartupConfigView> {
-  late StartupConfigModel model = widget.configFile.model;
+class _StartupConfigViewState extends ConsumerState<StartupConfigView> {
+  ///reference to the actual mapConfig in the _projectProvider,
+  ///so changing the model will properly apply
+  late ConfigFile configFile;
+
+  StartupConfigModel get model => configFile.model as StartupConfigModel;
+
+  set model(StartupConfigModel newModel) => configFile.model = newModel;
 
   late final TextEditingController modsPathController = TextEditingController(
     text: model.modsPath,
@@ -28,7 +34,7 @@ class _StartupConfigViewState extends State<StartupConfigView> {
 
   @override
   void dispose() {
-    widget.configFile.changeValueInFile(
+    configFile.changeValueInFile(
       StartupConfigKeys.modsPath,
       jsonEncode(model.modsPath),
     );
@@ -39,6 +45,8 @@ class _StartupConfigViewState extends State<StartupConfigView> {
 
   @override
   Widget build(BuildContext context) {
+    configFile = ref.watch(createTypedOpenConfigProvider<StartupConfigModel>())!;
+
     const padding = EdgeInsets.only(bottom: 8);
     return ListView(
       children: [
@@ -88,7 +96,7 @@ class _StartupConfigViewState extends State<StartupConfigView> {
             onChanged: (String value) {
               setState(() => model = model.copyWith(modsPath: value));
             },
-            onEditingComplete: () => widget.configFile.changeValueInFile(
+            onEditingComplete: () => configFile.changeValueInFile(
               StartupConfigKeys.modsPath,
               jsonEncode(model.modsPath),
             ),
@@ -116,7 +124,7 @@ class _StartupConfigViewState extends State<StartupConfigView> {
             onChanged: (String value) {
               setState(() => model = model.copyWith(minecraftVersion: value));
             },
-            onEditingComplete: () => widget.configFile.changeValueInFile(
+            onEditingComplete: () => configFile.changeValueInFile(
               StartupConfigKeys.minecraftVersion,
               jsonEncode(model.minecraftVersion),
             ),

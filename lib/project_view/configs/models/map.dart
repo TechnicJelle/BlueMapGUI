@@ -39,7 +39,7 @@ abstract class MapConfigModel extends BaseConfigModel with _$MapConfigModel {
 
   const MapConfigModel._();
 
-  factory MapConfigModel.fromJson(Map<String, dynamic> json) =>
+  factory MapConfigModel.fromJson(Map<String, Object?> json) =>
       _$MapConfigModelFromJson(json);
 }
 

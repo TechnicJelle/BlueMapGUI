@@ -13,7 +13,7 @@ abstract class WebappConfigModel extends BaseConfigModel with _$WebappConfigMode
 
   const WebappConfigModel._();
 
-  factory WebappConfigModel.fromJson(Map<String, dynamic> json) =>
+  factory WebappConfigModel.fromJson(Map<String, Object?> json) =>
       _$WebappConfigModelFromJson(json);
 }
 

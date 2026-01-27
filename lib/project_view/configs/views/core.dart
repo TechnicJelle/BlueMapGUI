@@ -3,26 +3,34 @@ import "dart:io";
 import "dart:math";
 
 import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
 
 import "../../../main_menu/settings/setting_heading.dart";
+import "../../../project_configs_provider.dart";
 import "../../../utils.dart";
 import "../models/base.dart";
 import "../models/core.dart";
 
-class CoreConfigView extends StatefulWidget {
-  final ConfigFile<CoreConfigModel> configFile;
-
-  const CoreConfigView(this.configFile, {super.key});
+class CoreConfigView extends ConsumerStatefulWidget {
+  const CoreConfigView({super.key});
 
   @override
-  State<CoreConfigView> createState() => _CoreConfigViewState();
+  ConsumerState<CoreConfigView> createState() => _CoreConfigViewState();
 }
 
-class _CoreConfigViewState extends State<CoreConfigView> {
-  late CoreConfigModel model = widget.configFile.model;
+class _CoreConfigViewState extends ConsumerState<CoreConfigView> {
+  ///reference to the actual mapConfig in the _projectProvider,
+  ///so changing the model will properly apply
+  late ConfigFile configFile;
+
+  CoreConfigModel get model => configFile.model as CoreConfigModel;
+
+  set model(CoreConfigModel newModel) => configFile.model = newModel;
 
   @override
   Widget build(BuildContext context) {
+    configFile = ref.watch(createTypedOpenConfigProvider<CoreConfigModel>())!;
+
     final int cpus = Platform.numberOfProcessors;
 
     final Color? sliderColor;
@@ -79,7 +87,7 @@ class _CoreConfigViewState extends State<CoreConfigView> {
             if (value == null) return;
             setState(() => model = model.copyWith(acceptDownload: value));
 
-            widget.configFile.changeValueInFile(
+            configFile.changeValueInFile(
               CoreConfigKeys.acceptDownload,
               jsonEncode(model.acceptDownload),
             );
@@ -121,7 +129,7 @@ Be careful with setting this too high, as your whole computer may start to lag!"
                                     model = model.copyWith(renderThreadCount: d.toInt());
                                   }),
                             activeColor: sliderColor,
-                            onChangeEnd: (_) => widget.configFile.changeValueInFile(
+                            onChangeEnd: (_) => configFile.changeValueInFile(
                               CoreConfigKeys.renderThreadCount,
                               jsonEncode(model.renderThreadCount),
                             ),

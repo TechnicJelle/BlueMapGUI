@@ -15,7 +15,7 @@ import "webserver.dart";
 class ConfigFile<T extends BaseConfigModel> {
   static File? _hoconFile;
 
-  File file;
+  final File file;
   T model;
 
   ConfigFile(this.file, this.model);
@@ -49,7 +49,7 @@ class ConfigFile<T extends BaseConfigModel> {
 
     return List.generate(files.length, (int index) {
       final File file = files[index];
-      final configMap = jsonDecode(jsons[index]) as Map<String, dynamic>;
+      final configMap = jsonDecode(jsons[index]) as Map<String, Object?>;
       if (p.basename(file.parent.path) == "maps") {
         return ConfigFile(file, MapConfigModel.fromJson(configMap));
       } else {
@@ -73,6 +73,11 @@ class ConfigFile<T extends BaseConfigModel> {
       (Match match) => "${match[1]}$newValue",
     );
     file.writeAsStringSync(newContents);
+  }
+
+  @override
+  String toString() {
+    return "ConfigFile<$T>(file: $file, model: $model)";
   }
 }
 

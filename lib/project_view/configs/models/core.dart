@@ -14,7 +14,7 @@ abstract class CoreConfigModel extends BaseConfigModel with _$CoreConfigModel {
 
   const CoreConfigModel._();
 
-  factory CoreConfigModel.fromJson(Map<String, dynamic> json) =>
+  factory CoreConfigModel.fromJson(Map<String, Object?> json) =>
       _$CoreConfigModelFromJson(json);
 }
 
