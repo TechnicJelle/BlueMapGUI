@@ -117,10 +117,8 @@ Be careful with setting this too high, as your whole computer may start to lag!"
                             divisions: cpus - 1,
                             onChanged: model.renderThreadCount > cpus
                                 ? null
-                                : (double value) => setState(() {
-                                    model = model.copyWith(
-                                      renderThreadCount: value.toInt(),
-                                    );
+                                : (double d) => setState(() {
+                                    model = model.copyWith(renderThreadCount: d.toInt());
                                   }),
                             activeColor: sliderColor,
                             onChangeEnd: (_) => widget.configFile.changeValueInFile(
