@@ -19,18 +19,18 @@ class CoreConfigView extends StatefulWidget {
 }
 
 class _CoreConfigViewState extends State<CoreConfigView> {
-  late CoreConfigModel config = widget.configFile.model;
+  late CoreConfigModel model = widget.configFile.model;
 
   @override
   Widget build(BuildContext context) {
     final int cpus = Platform.numberOfProcessors;
 
     final Color? sliderColor;
-    if (config.renderThreadCount >= cpus - 1 && config.renderThreadCount != 1) {
+    if (model.renderThreadCount >= cpus - 1 && model.renderThreadCount != 1) {
       sliderColor = Colors.red;
-    } else if (config.renderThreadCount > cpus * 0.75 && cpus > 2) {
+    } else if (model.renderThreadCount > cpus * 0.75 && cpus > 2) {
       sliderColor = Colors.orange;
-    } else if (config.renderThreadCount > cpus * 0.5 && cpus > 2) {
+    } else if (model.renderThreadCount > cpus * 0.5 && cpus > 2) {
       sliderColor = Colors.yellow;
     } else {
       sliderColor = null;
@@ -74,14 +74,14 @@ class _CoreConfigViewState extends State<CoreConfigView> {
               ),
             ],
           ),
-          value: config.acceptDownload,
+          value: model.acceptDownload,
           onChanged: (bool? value) {
             if (value == null) return;
-            setState(() => config = config.copyWith(acceptDownload: value));
+            setState(() => model = model.copyWith(acceptDownload: value));
 
             widget.configFile.changeValueInFile(
               CoreConfigKeys.acceptDownload,
-              jsonEncode(config.acceptDownload),
+              jsonEncode(model.acceptDownload),
             );
           },
         ),
@@ -104,28 +104,28 @@ Be careful with setting this too high, as your whole computer may start to lag!"
               Row(
                 children: [
                   Text(
-                    config.renderThreadCount.toString().padLeft(cpus.toString().length),
+                    model.renderThreadCount.toString().padLeft(cpus.toString().length),
                     style: pixelCode,
                   ),
                   Expanded(
                     child: cpus > 1
                         ? Slider(
-                            value: config.renderThreadCount.toDouble(),
-                            label: config.renderThreadCount.toString(),
+                            value: model.renderThreadCount.toDouble(),
+                            label: model.renderThreadCount.toString(),
                             min: 1,
-                            max: max(config.renderThreadCount, cpus).toDouble(),
+                            max: max(model.renderThreadCount, cpus).toDouble(),
                             divisions: cpus - 1,
-                            onChanged: config.renderThreadCount > cpus
+                            onChanged: model.renderThreadCount > cpus
                                 ? null
                                 : (double value) => setState(() {
-                                    config = config.copyWith(
+                                    model = model.copyWith(
                                       renderThreadCount: value.toInt(),
                                     );
                                   }),
                             activeColor: sliderColor,
                             onChangeEnd: (_) => widget.configFile.changeValueInFile(
                               CoreConfigKeys.renderThreadCount,
-                              jsonEncode(config.renderThreadCount),
+                              jsonEncode(model.renderThreadCount),
                             ),
                           )
                         : const Slider(value: 1, onChanged: null),

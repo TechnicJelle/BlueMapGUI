@@ -17,10 +17,10 @@ class WebserverConfigView extends StatefulWidget {
 }
 
 class _WebserverConfigViewState extends State<WebserverConfigView> {
-  late WebserverConfigModel config = widget.configFile.model;
+  late WebserverConfigModel model = widget.configFile.model;
 
   late final TextEditingController portController = TextEditingController(
-    text: config.port.toString(),
+    text: model.port.toString(),
   );
 
   @override
@@ -33,10 +33,10 @@ class _WebserverConfigViewState extends State<WebserverConfigView> {
   void validateAndSavePort() {
     final int? intValue = int.tryParse(portController.text);
     if (intValue == null) return;
-    config = config.copyWith(port: intValue);
+    model = model.copyWith(port: intValue);
     widget.configFile.changeValueInFile(
       WebserverConfigKeys.port,
-      jsonEncode(config.port),
+      jsonEncode(model.port),
     );
   }
 

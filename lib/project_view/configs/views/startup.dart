@@ -17,20 +17,20 @@ class StartupConfigView extends StatefulWidget {
 }
 
 class _StartupConfigViewState extends State<StartupConfigView> {
-  late StartupConfigModel config = widget.configFile.model;
+  late StartupConfigModel model = widget.configFile.model;
 
   late final TextEditingController modsPathController = TextEditingController(
-    text: config.modsPath,
+    text: model.modsPath,
   );
   late final TextEditingController mcVerController = TextEditingController(
-    text: config.minecraftVersion,
+    text: model.minecraftVersion,
   );
 
   @override
   void dispose() {
     widget.configFile.changeValueInFile(
       StartupConfigKeys.modsPath,
-      jsonEncode(config.modsPath),
+      jsonEncode(model.modsPath),
     );
     modsPathController.dispose();
     mcVerController.dispose();
@@ -77,20 +77,20 @@ class _StartupConfigViewState extends State<StartupConfigView> {
                 onPicked: (String? path) {
                   if (path == null) return;
                   setState(() {
-                    config = config.copyWith(
+                    model = model.copyWith(
                       modsPath: modsPathController.text = path,
                     );
                   });
                 },
-                initialDirectory: config.modsPath.isNotEmpty ? config.modsPath : "~",
+                initialDirectory: model.modsPath.isNotEmpty ? model.modsPath : "~",
               ),
             ),
             onChanged: (String value) {
-              setState(() => config = config.copyWith(modsPath: value));
+              setState(() => model = model.copyWith(modsPath: value));
             },
             onEditingComplete: () => widget.configFile.changeValueInFile(
               StartupConfigKeys.modsPath,
-              jsonEncode(config.modsPath),
+              jsonEncode(model.modsPath),
             ),
           ),
         ),
@@ -114,11 +114,11 @@ class _StartupConfigViewState extends State<StartupConfigView> {
                   "Using the latest Minecraft version that this BlueMap version supports.",
             ),
             onChanged: (String value) {
-              setState(() => config = config.copyWith(minecraftVersion: value));
+              setState(() => model = model.copyWith(minecraftVersion: value));
             },
             onEditingComplete: () => widget.configFile.changeValueInFile(
               StartupConfigKeys.minecraftVersion,
-              jsonEncode(config.minecraftVersion),
+              jsonEncode(model.minecraftVersion),
             ),
           ),
         ),

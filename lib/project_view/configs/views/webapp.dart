@@ -16,7 +16,7 @@ class WebappConfigView extends StatefulWidget {
 }
 
 class _WebappConfigViewState extends State<WebappConfigView> {
-  late WebappConfigModel config = widget.configFile.model;
+  late WebappConfigModel model = widget.configFile.model;
 
   @override
   Widget build(BuildContext context) {
@@ -43,14 +43,14 @@ class _WebappConfigViewState extends State<WebappConfigView> {
               ),
             ],
           ),
-          value: config.defaultToFlatView,
+          value: model.defaultToFlatView,
           onChanged: (bool? value) {
             if (value == null) return;
-            setState(() => config = config.copyWith(defaultToFlatView: value));
+            setState(() => model = model.copyWith(defaultToFlatView: value));
 
             widget.configFile.changeValueInFile(
               WebappConfigKeys.defaultToFlatView,
-              jsonEncode(config.defaultToFlatView),
+              jsonEncode(model.defaultToFlatView),
             );
           },
         ),

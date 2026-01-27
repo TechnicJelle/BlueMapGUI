@@ -24,9 +24,9 @@ class MapConfigView extends ConsumerStatefulWidget {
 class _MapConfigViewState extends ConsumerState<MapConfigView> {
   ConfigFile<MapConfigModel>? configFile;
 
-  MapConfigModel get config => configFile!.model;
+  MapConfigModel get model => configFile!.model;
 
-  set config(MapConfigModel newModel) => configFile!.model = newModel;
+  set model(MapConfigModel newModel) => configFile!.model = newModel;
 
   String get filename => p.basenameWithoutExtension(configFile!.path);
 
@@ -62,32 +62,32 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
 
     setState(() {
       configFile = newConfig;
-      worldController = TextEditingController(text: config.world);
-      dimensionController = TextEditingController(text: config.dimension);
-      nameController = TextEditingController(text: config.name);
+      worldController = TextEditingController(text: model.world);
+      dimensionController = TextEditingController(text: model.dimension);
+      nameController = TextEditingController(text: model.name);
     });
   }
 
   void validateAndSaveOptionsThatCannotBeBlank() {
     if (worldController.text.trim().isNotEmpty) {
-      config = config.copyWith(world: worldController.text);
+      model = model.copyWith(world: worldController.text);
       configFile!.changeValueInFile(
         MapConfigKeys.world,
-        jsonEncode(config.world),
+        jsonEncode(model.world),
       );
     }
     if (dimensionController.text.trim().isNotEmpty) {
-      config = config.copyWith(dimension: dimensionController.text);
+      model = model.copyWith(dimension: dimensionController.text);
       configFile!.changeValueInFile(
         MapConfigKeys.dimension,
-        jsonEncode(config.dimension),
+        jsonEncode(model.dimension),
       );
     }
     if (nameController.text.trim().isNotEmpty) {
-      config = config.copyWith(name: nameController.text);
+      model = model.copyWith(name: nameController.text);
       configFile!.changeValueInFile(
         MapConfigKeys.name,
-        jsonEncode(config.name),
+        jsonEncode(model.name),
       );
     }
   }
@@ -132,11 +132,11 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
               hintText: "Must not be empty!",
               suffixIcon: PathPickerButton(
                 purpose: "world",
-                initialDirectory: config.world.isNotEmpty ? config.world : "~",
+                initialDirectory: model.world.isNotEmpty ? model.world : "~",
                 onPicked: (String? path) {
                   if (path == null) return;
                   setState(() {
-                    config = config.copyWith(
+                    model = model.copyWith(
                       world: worldController.text = path,
                     );
                   });
