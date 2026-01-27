@@ -4,6 +4,7 @@ import "package:flutter_riverpod/flutter_riverpod.dart";
 import "../../project_configs_provider.dart";
 import "../configs/config_gui.dart";
 import "../configs/models/base.dart";
+import "../control_row/control_row.dart";
 import "config_tile.dart";
 import "new_map_button.dart";
 
@@ -63,13 +64,23 @@ class _ControlPanelTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final ConfigFile? openConfig = ref.watch(openConfigProvider);
+    final RunningProcessState? processState = ref.watch(processStateProvider).value;
 
-    return ListTile(
-      title: const Text("Control Panel"),
-      onTap: () {
-        ref.read(projectProviderNotifier).closeConfig();
-      },
-      selected: openConfig == null,
+    return Tooltip(
+      message: "Status: ${processState?.name}",
+      waitDuration: Durations.long4,
+      child: ListTile(
+        title: const Text("Control Panel"),
+        trailing: openConfig != null && processState != .stopped
+            ? processState == .running
+                  ? const Icon(Icons.play_arrow)
+                  : const Icon(Icons.hourglass_bottom)
+            : null,
+        onTap: () {
+          ref.read(projectProviderNotifier).closeConfig();
+        },
+        selected: openConfig == null,
+      ),
     );
   }
 }
