@@ -35,7 +35,7 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
   @override
   void initState() {
     super.initState();
-    projectDirectory = ref.read(projectProvider)!.projectLocation;
+    projectDirectory = ref.read(openProjectProvider)!;
 
     final mapTemplatesDirectory = getMapTemplatesDirectory(projectDirectory);
 
@@ -81,7 +81,7 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
         config.model as MapConfigModel,
       );
 
-      ref.read(projectProvider.notifier).addMap(newMapConfig);
+      ref.read(projectProviderNotifier).addMap(newMapConfig);
 
       if (mounted) {
         final nav = Navigator.of(context);

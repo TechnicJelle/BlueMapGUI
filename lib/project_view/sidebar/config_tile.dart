@@ -18,13 +18,13 @@ class ConfigTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final ConfigFile? openConfig = ref.watch(projectProvider)!.openConfig;
+    final ConfigFile? openConfig = ref.watch(openConfigProvider);
 
     final String configName = p.basenameWithoutExtension(configFile.path);
     return ListTile(
       title: Text(prettifyName ? configName.capitalize() : configName),
       onTap: () {
-        ref.read(projectProvider.notifier).openConfig(configFile);
+        ref.read(projectProviderNotifier).openConfig(configFile);
       },
       selected: openConfig != null && p.equals(openConfig.path, configFile.path),
     );

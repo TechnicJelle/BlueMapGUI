@@ -21,7 +21,7 @@ class CloseProjectButton extends ConsumerWidget {
           ],
           confirmAction: "Close",
           onConfirmed: () {
-            ref.read(projectProvider.notifier).closeProject();
+            ref.read(projectProviderNotifier).closeProject();
           },
         );
       },

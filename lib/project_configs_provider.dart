@@ -218,9 +218,27 @@ class ProjectConfigsNotifier extends Notifier<ProjectConfigs?> {
   }
 }
 
+///If I want to use a value from here, make a new provider that .select()s it.
 // I don't want these for providers; too long
 // ignore: specify_nonobvious_property_types
-final projectProvider = NotifierProvider(ProjectConfigsNotifier.new);
+final _projectProvider = NotifierProvider(ProjectConfigsNotifier.new);
+
+// I don't want these for notifiers; too long
+// ignore: specify_nonobvious_property_types
+final projectProviderNotifier = _projectProvider.notifier;
+
 // I don't want these for providers; too long
 // ignore: specify_nonobvious_property_types
-final openConfigProvider = projectProvider.select((project) => project?.openConfig);
+final openProjectProvider = _projectProvider.select((proj) => proj?.projectLocation);
+
+// I don't want these for providers; too long
+// ignore: specify_nonobvious_property_types
+final openConfigProvider = _projectProvider.select((proj) => proj?.openConfig);
+
+// I don't want these for providers; too long
+// ignore: specify_nonobvious_property_types
+final mainConfigsProvider = _projectProvider.select((proj) => proj?.mainConfigs);
+
+// I don't want these for providers; too long
+// ignore: specify_nonobvious_property_types
+final mapConfigsProvider = _projectProvider.select((proj) => proj?.mapConfigs);

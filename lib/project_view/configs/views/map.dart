@@ -262,7 +262,7 @@ class DangerZone extends ConsumerWidget {
                 ],
                 confirmAction: "Delete",
                 onConfirmed: () {
-                  ref.read(projectProvider.notifier).deleteMap(configFile);
+                  ref.read(projectProviderNotifier).deleteMap(configFile);
                 },
               );
             },

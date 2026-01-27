@@ -15,7 +15,7 @@ class OpenInFileManagerButton extends ConsumerWidget {
     return IconButton(
       tooltip: "Open in file manager",
       onPressed: () {
-        final Directory projectDirectory = ref.read(projectProvider)!.projectLocation;
+        final Directory projectDirectory = ref.read(openProjectProvider)!;
         unawaited(launchUrl(projectDirectory.uri));
       },
       icon: const Icon(Icons.folder_open),

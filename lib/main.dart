@@ -1,4 +1,5 @@
 import "dart:async";
+import "dart:io";
 
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
@@ -51,18 +52,15 @@ class MyHomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final ProjectConfigs? project = ref.watch(projectProvider);
+    final Directory? projectDirectory = ref.watch(openProjectProvider);
 
-    final String title = project == null
+    final String title = projectDirectory == null
         ? "BlueMap GUI"
-        : "Project: ${p.basename(project.projectLocation.path)}";
+        : "Project: ${p.basename(projectDirectory.path)}";
 
     return Scaffold(
       appBar: AppBar(
-        title: Tooltip(
-          message: project?.projectLocation.path ?? "Hi :)",
-          child: Text(title),
-        ),
+        title: Tooltip(message: projectDirectory?.path ?? "Hi :)", child: Text(title)),
         actions: [
           IconButton(
             tooltip: "Help",
@@ -73,7 +71,7 @@ class MyHomePage extends ConsumerWidget {
             },
             icon: const Icon(Icons.help),
           ),
-          if (project != null) ...[
+          if (projectDirectory != null) ...[
             const OpenInFileManagerButton(),
             const CloseProjectButton(),
           ],
@@ -81,7 +79,7 @@ class MyHomePage extends ConsumerWidget {
       ),
       body: Stack(
         children: [
-          if (project == null) const MainMenu() else const ProjectView(),
+          if (projectDirectory == null) const MainMenu() else const ProjectView(),
           const _VersionText(),
         ],
       ),

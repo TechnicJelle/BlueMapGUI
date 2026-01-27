@@ -359,7 +359,7 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
     // == Open project ==
     ref.read(_openingStateProvider.notifier).set(_OpeningStep.opening);
 
-    await ref.read(projectProvider.notifier).openProject(projectDirectory);
+    await ref.read(projectProviderNotifier).openProject(projectDirectory);
 
     // == Close opening progress dialog ==
     if (mounted) {

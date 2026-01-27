@@ -43,7 +43,7 @@ class _AdvancedEditorState extends ConsumerState<AdvancedEditor> {
     hasChanged = false;
     unawaited(
       file.file.writeAsString(codeController.text).then((File file) {
-        unawaited(ref.read(projectProvider.notifier).refreshConfigFile(file));
+        unawaited(ref.read(projectProviderNotifier).refreshConfigFile(file));
       }),
     );
   }
@@ -67,15 +67,10 @@ class _AdvancedEditorState extends ConsumerState<AdvancedEditor> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(
-      projectProvider.select(
-        (project) => project?.openConfig,
-      ),
-      (previous, next) {
-        if (previous != null && next != null) writeFile(previous);
-        if (next != null) unawaited(readFile(next));
-      },
-    );
+    ref.listen(openConfigProvider, (previous, next) {
+      if (previous != null && next != null) writeFile(previous);
+      if (next != null) unawaited(readFile(next));
+    });
     return ScrollbarTheme(
       data: Theme.of(context).scrollbarTheme.copyWith(
         thumbColor: WidgetStateProperty.resolveWith((states) {

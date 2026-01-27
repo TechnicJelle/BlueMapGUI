@@ -67,7 +67,7 @@ class _ConfigGUIState extends ConsumerState<ConfigGUI> {
                             //wait a frame for the file to be properly saved on dispose of the advanced editor
                             WidgetsBinding.instance.addPostFrameCallback((_) async {
                               await ref
-                                  .read(projectProvider.notifier)
+                                  .read(projectProviderNotifier)
                                   .refreshConfigFile(openConfig.file);
 
                               setState(() => loading = false);

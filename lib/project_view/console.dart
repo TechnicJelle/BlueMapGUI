@@ -21,7 +21,7 @@ class OutputNotifier extends Notifier<List<String>> {
   @override
   List<String> build() {
     //clear output when project directory changes
-    ref.listen(projectProvider, (_, _) => clear());
+    ref.listen(openProjectProvider, (_, _) => clear());
 
     final sub = ref.listen(processOutputProvider, (_, next) {
       state = [...state, _convert(next)];

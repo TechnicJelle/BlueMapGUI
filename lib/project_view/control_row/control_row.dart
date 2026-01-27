@@ -22,7 +22,7 @@ import "update_button.dart";
 final portExtractionRegex = RegExp(r"(?:port\s*|:)(\d{4,5})$");
 
 final processProvider = Provider<RunningProcess?>((ref) {
-  final Directory? projectDirectory = ref.watch(projectProvider)?.projectLocation;
+  final Directory? projectDirectory = ref.watch(openProjectProvider);
   if (projectDirectory == null) return null;
   final JavaPath? javaPath = ref.watch(javaPathProvider);
   if (javaPath == null) return null;
