@@ -14,8 +14,6 @@ class Sidebar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final mainConfigs = ref.watch(mainConfigsProvider)!;
-    final mapConfigs = ref.watch(mapConfigsProvider)!;
-    final bool advancedMode = ref.watch(advancedModeProvider);
 
     return ListView(
       children: [
@@ -29,29 +27,7 @@ class Sidebar extends ConsumerWidget {
           ),
         const SizedBox(height: 32),
         const Text(" Maps"),
-        //don't show the reorder handles when in advanced mode, because the text editor does not handle config options being changed from outside of itself
-        //and it makes enough sense to not show them then, so i think this is a fine fix
-        if (advancedMode)
-          ListView.builder(
-            shrinkWrap: true,
-            itemCount: mapConfigs.length,
-            itemBuilder: (context, index) => ConfigTile(
-              mapConfigs[index],
-              key: ValueKey(index),
-            ),
-          )
-        else
-          ReorderableListView.builder(
-            shrinkWrap: true,
-            itemCount: mapConfigs.length,
-            itemBuilder: (context, index) => ConfigTile(
-              mapConfigs[index],
-              key: ValueKey(index),
-            ),
-            onReorder: (int oldIndex, int newIndex) {
-              ref.read(projectProviderNotifier).swapMaps(oldIndex, newIndex);
-            },
-          ),
+        const _MapsTiles(),
         const NewMapButton(),
       ],
     );
@@ -82,5 +58,38 @@ class _ControlPanelTile extends ConsumerWidget {
         selected: openConfig == null,
       ),
     );
+  }
+}
+
+class _MapsTiles extends ConsumerWidget {
+  const _MapsTiles();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final mapConfigs = ref.watch(mapConfigsProvider)!;
+    final bool advancedMode = ref.watch(advancedModeProvider);
+
+    //don't show the reorder handles when in advanced mode, because the text editor does not handle config options being changed from outside of itself
+    //and it makes enough sense to not show them then, so i think this is a fine fix
+    return advancedMode
+        ? ListView.builder(
+            shrinkWrap: true,
+            itemCount: mapConfigs.length,
+            itemBuilder: (context, index) => ConfigTile(
+              mapConfigs[index],
+              key: ValueKey(index),
+            ),
+          )
+        : ReorderableListView.builder(
+            shrinkWrap: true,
+            itemCount: mapConfigs.length,
+            itemBuilder: (context, index) => ConfigTile(
+              mapConfigs[index],
+              key: ValueKey(index),
+            ),
+            onReorder: (int oldIndex, int newIndex) {
+              ref.read(projectProviderNotifier).swapMaps(oldIndex, newIndex);
+            },
+          );
   }
 }
