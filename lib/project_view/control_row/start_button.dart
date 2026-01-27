@@ -12,13 +12,13 @@ class StartButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final processState = ref.watch(processStateProvider).value;
+    final RunningProcessState? processState = ref.watch(processStateProvider).value;
 
     return SizedBox(
       width: 150,
       child: ElevatedButton.icon(
         onPressed: switch (processState) {
-          RunningProcessState.stopped => () async {
+          .stopped => () async {
             final bool clearConsoleBeforeStart =
                 ref.read(consoleClearProvider) ?? ConsoleClearProvider.defaultOption;
             if (clearConsoleBeforeStart) {
@@ -28,19 +28,19 @@ class StartButton extends ConsumerWidget {
             }
             unawaited(ref.read(processProvider)?.start());
           },
-          RunningProcessState.running => () => ref.read(processProvider)?.stop(),
+          .running => () => ref.read(processProvider)?.stop(),
           _ => null,
         },
         label: Text(switch (processState) {
-          RunningProcessState.stopped => "Start",
-          RunningProcessState.running => "Stop",
-          RunningProcessState.starting => "Starting...",
-          RunningProcessState.stopping => "Stopping...",
+          .stopped => "Start",
+          .running => "Stop",
+          .starting => "Starting...",
+          .stopping => "Stopping...",
           null => "Unknown",
         }),
         icon: Icon(switch (processState) {
-          RunningProcessState.stopped => Icons.play_arrow,
-          RunningProcessState.running => Icons.stop,
+          .stopped => Icons.play_arrow,
+          .running => Icons.stop,
           null => Icons.error,
           _ => Icons.hourglass_bottom,
         }),
