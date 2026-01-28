@@ -24,7 +24,7 @@ class AdvancedEditor extends ConsumerStatefulWidget {
 class _AdvancedEditorState extends ConsumerState<AdvancedEditor> {
   final codeController = CodeLineEditingController();
 
-  late ConfigFile openConfig;
+  ConfigFile? openConfig;
   late final Timer autoSaveTimer;
   bool hasChanged = false;
 
@@ -34,35 +34,38 @@ class _AdvancedEditorState extends ConsumerState<AdvancedEditor> {
     unawaited(readFile(widget.openConfig));
 
     autoSaveTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
-      writeFile(openConfig);
+      final oc = openConfig;
+      if (oc != null) writeFile(oc);
     });
   }
 
   void writeFile(ConfigFile file) {
     if (!hasChanged) return;
+    final project = ref.read(projectProviderNotifier);
 
     hasChanged = false;
     unawaited(
       file.file.writeAsString(codeController.text).then((File file) {
-        unawaited(ref.read(projectProviderNotifier).refreshConfigFile(file));
+        unawaited(project.refreshConfigFile(file));
       }),
     );
   }
 
   Future<void> readFile(ConfigFile file) async {
     //do not re-open files that are already open
-    if (p.equals(file.path, openConfig.path)) return;
+    if (p.equals(file.path, openConfig?.path ?? "")) return;
 
     codeController.text = await file.file.readAsString();
     codeController.clearHistory();
     openConfig = file;
+    hasChanged = false;
   }
 
   @override
   void dispose() {
     if (hasChanged) {
       //when advanced editor is closed, we need to save sync, so that the data is ready to be parsed into a model in the next frame
-      openConfig.file.writeAsStringSync(codeController.text);
+      openConfig!.file.writeAsStringSync(codeController.text);
     }
     autoSaveTimer.cancel();
     codeController.dispose();
@@ -72,7 +75,7 @@ class _AdvancedEditorState extends ConsumerState<AdvancedEditor> {
   @override
   Widget build(BuildContext context) {
     ref.listen(openConfigProvider, (previous, next) {
-      if (previous != null && next != null) writeFile(previous);
+      if (previous != null) writeFile(previous);
       if (next != null) unawaited(readFile(next));
     });
     return ScrollbarTheme(
