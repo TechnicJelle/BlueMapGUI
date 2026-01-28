@@ -92,13 +92,15 @@ class _VersionText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.bottomLeft,
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 4, left: 4),
-        child: Text(
-          "Version: $version\nBlueMap: $blueMapTag",
-          style: Theme.of(context).textTheme.bodySmall,
+    return IgnorePointer(
+      child: Align(
+        alignment: Alignment.bottomLeft,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 4, left: 4),
+          child: Text(
+            "Version: $version\nBlueMap: $blueMapTag",
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
         ),
       ),
     );
