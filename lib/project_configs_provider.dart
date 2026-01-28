@@ -85,7 +85,10 @@ class ProjectConfigsNotifier extends Notifier<ProjectConfigs?> {
   static List<ConfigFile<MapConfigModel>> _sortMaps(
     List<ConfigFile<MapConfigModel>> list,
   ) {
-    list.sort((a, b) => a.model.sorting.compareTo(b.model.sorting));
+    list.sort((a, b) {
+      final sorting = a.model.sorting.compareTo(b.model.sorting);
+      return sorting != 0 ? sorting : a.name.compareTo(b.name);
+    });
     return list;
   }
 
@@ -126,7 +129,7 @@ class ProjectConfigsNotifier extends Notifier<ProjectConfigs?> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       unawaited(mapConfigToDelete.file.delete());
 
-      final String mapID = p.basenameWithoutExtension(mapConfigToDelete.path);
+      final String mapID = mapConfigToDelete.name;
       final Directory mapDirectory = Directory(
         p.join(state!.projectLocation.path, "web", "maps", mapID),
       );

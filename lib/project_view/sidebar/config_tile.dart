@@ -20,7 +20,7 @@ class ConfigTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final ConfigFile? openConfig = ref.watch(openConfigProvider);
 
-    final String configName = p.basenameWithoutExtension(configFile.path);
+    final String configName = configFile.name;
     return ListTile(
       title: Text(prettifyName ? configName.capitalize() : configName),
       onTap: () {

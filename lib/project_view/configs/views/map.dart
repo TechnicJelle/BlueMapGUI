@@ -2,7 +2,6 @@ import "dart:convert";
 
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
-import "package:path/path.dart" as p;
 
 import "../../../confirmation_dialog.dart";
 import "../../../main_menu/settings/setting_heading.dart";
@@ -25,8 +24,6 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
   MapConfigModel get model => configFile!.model;
 
   set model(MapConfigModel newModel) => configFile!.model = newModel;
-
-  String get filename => p.basenameWithoutExtension(configFile!.path);
 
   late TextEditingController worldController;
   late TextEditingController dimensionController;
@@ -99,7 +96,7 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
         Padding(
           padding: const EdgeInsets.only(left: 16, top: 16, bottom: 12),
           child: Text(
-            "Map Config: $filename",
+            "Map Config: ${openConfig.name}",
             style: TextTheme.of(context).headlineMedium?.copyWith(
               color: TextTheme.of(context).titleSmall?.color,
             ),
@@ -232,10 +229,7 @@ class DangerZone extends ConsumerWidget {
                   Wrap(
                     children: [
                       const Text("Are you sure you want to delete the map \" "),
-                      Text(
-                        p.basenameWithoutExtension(configFile.path),
-                        style: pixelCode.copyWith(height: 1.4),
-                      ),
+                      Text(configFile.name, style: pixelCode.copyWith(height: 1.4)),
                       const SizedBox(width: 1),
                       const Text("\" ?"),
                     ],

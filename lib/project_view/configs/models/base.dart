@@ -20,7 +20,10 @@ class ConfigFile<T extends BaseConfigModel> {
 
   ConfigFile(this.file, this.model);
 
-  String get path => file.path;
+  late String path = file.path;
+
+  ///basenameWithoutExtension
+  late String name = p.basenameWithoutExtension(path);
 
   static Future<ConfigFile> fromFile(File file, JavaPath javaPath) async =>
       (await fromFiles([file], javaPath)).first;
