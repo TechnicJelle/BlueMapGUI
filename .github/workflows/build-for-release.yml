@@ -8,7 +8,7 @@ on:
         required: true
 
 env:
-  FLUTTER_VERSION: '3.38.7'
+  FLUTTER_VERSION: '3.38.8'
 
 jobs:
   check-version:
