@@ -3,6 +3,7 @@ import "dart:io";
 
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:path/path.dart" as p;
 import "package:re_editor/re_editor.dart";
 import "package:re_highlight/languages/yaml.dart" show langYaml;
 import "package:re_highlight/styles/ir-black.dart" show irBlackTheme;
@@ -49,6 +50,9 @@ class _AdvancedEditorState extends ConsumerState<AdvancedEditor> {
   }
 
   Future<void> readFile(ConfigFile file) async {
+    //do not re-open files that are already open
+    if (p.equals(file.path, openConfig.path)) return;
+
     codeController.text = await file.file.readAsString();
     codeController.clearHistory();
     openConfig = file;
