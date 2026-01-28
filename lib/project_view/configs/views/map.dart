@@ -92,6 +92,7 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
 
     const padding = EdgeInsets.only(bottom: 8);
     return ListView(
+      padding: const .only(right: 16), //to give the scrollbar some space
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 16, top: 16, bottom: 12),
@@ -180,78 +181,119 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
             onEditingComplete: () => setState(validateAndSaveOptionsThatCannotBeBlank),
           ),
         ),
-        const SizedBox(height: 32),
-        const Divider(
-          color: Colors.red,
-          indent: 16,
-          endIndent: 16,
-        ),
-        DangerZone(configFile!),
-        const SizedBox(height: 32),
+        _DangerZone(configFile!),
       ],
     );
   }
 }
 
-class DangerZone extends ConsumerWidget {
+class _DangerZone extends ConsumerWidget {
   final ConfigFile configFile;
 
-  const DangerZone(this.configFile, {super.key});
+  const _DangerZone(this.configFile);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    return Padding(
+      padding: const .symmetric(horizontal: 16, vertical: 32),
+      child: Column(
+        crossAxisAlignment: .start,
+        children: [
+          Text(
+            "Danger zone",
+            style: TextTheme.of(
+              context,
+            ).headlineSmall?.copyWith(fontWeight: .w500, fontSize: 25),
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const .only(top: 8, right: 8),
+            decoration: BoxDecoration(
+              border: .all(color: Colors.red),
+              borderRadius: .circular(12),
+            ),
+            child: Column(
+              children: [
+                _DangerButton(
+                  title: "Delete Map",
+                  text: const [
+                    SettingsBodyText(
+                      "If you delete this map, it will be gone forever.\n"
+                      "Your actual world files will not be affected!\n"
+                      "But you can always create a new map that uses those same world files again.\n",
+                    ),
+                  ],
+                  buttonLabel: "Delete Map",
+                  onPressed: () {
+                    showConfirmationDialog(
+                      context: context,
+                      title: "Delete map",
+                      content: [
+                        Wrap(
+                          children: [
+                            const Text("Are you sure you want to delete the map \" "),
+                            Text(
+                              configFile.name,
+                              style: pixelCode.copyWith(height: 1.4),
+                            ),
+                            const SizedBox(width: 1),
+                            const Text("\" ?"),
+                          ],
+                        ),
+                        const Text(
+                          "This action cannot be undone!",
+                          style: TextStyle(fontWeight: FontWeight.w500),
+                        ),
+                        const Text(
+                          "However, you can just add the map again, as no unrecoverable data will be deleted.",
+                        ),
+                        const Text(
+                          "Your Minecraft world data will not be affected by this action, only the BlueMap data.",
+                        ),
+                      ],
+                      confirmAction: "Delete",
+                      onConfirmed: () {
+                        ref.read(projectProviderNotifier).deleteMap(configFile);
+                      },
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DangerButton extends StatelessWidget {
+  final String title;
+  final List<SettingsBodyBase> text;
+  final String buttonLabel;
+  final VoidCallback? onPressed;
+
+  const _DangerButton({
+    required this.title,
+    required this.text,
+    required this.buttonLabel,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return ListTile(
       title: Row(
         mainAxisAlignment: .spaceBetween,
         children: [
-          SettingHeading(
-            context,
-            "Delete Map",
-            padding: EdgeInsets.zero,
-            const [
-              SettingsBodyText(
-                "If you delete this map, it will be gone forever.\n"
-                "Your actual world files will not be affected!\n"
-                "But you can always create a new map that uses those same world files again.\n",
-              ),
-            ],
-          ),
+          SettingHeading(context, title, padding: EdgeInsets.zero, text),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red.shade700,
               foregroundColor: Colors.white,
             ),
-            onPressed: () {
-              showConfirmationDialog(
-                context: context,
-                title: "Delete map",
-                content: [
-                  Wrap(
-                    children: [
-                      const Text("Are you sure you want to delete the map \" "),
-                      Text(configFile.name, style: pixelCode.copyWith(height: 1.4)),
-                      const SizedBox(width: 1),
-                      const Text("\" ?"),
-                    ],
-                  ),
-                  const Text(
-                    "This action cannot be undone!",
-                    style: TextStyle(fontWeight: FontWeight.w500),
-                  ),
-                  const Text(
-                    "However, you can just add the map again, as no unrecoverable data will be deleted.",
-                  ),
-                  const Text(
-                    "Your Minecraft world data will not be affected by this action, only the BlueMap data.",
-                  ),
-                ],
-                confirmAction: "Delete",
-                onConfirmed: () {
-                  ref.read(projectProviderNotifier).deleteMap(configFile);
-                },
-              );
-            },
-            child: const Text("Delete Map"),
+            onPressed: onPressed,
+            child: Text(buttonLabel),
           ),
         ],
       ),
