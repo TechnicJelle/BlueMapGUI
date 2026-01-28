@@ -1,7 +1,9 @@
 import "dart:convert";
+import "dart:io";
 
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:path/path.dart" as p;
 
 import "../../../confirmation_dialog.dart";
 import "../../../main_menu/settings/setting_heading.dart";
@@ -187,13 +189,25 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
   }
 }
 
-class _DangerZone extends ConsumerWidget {
+class _DangerZone extends ConsumerStatefulWidget {
   final ConfigFile configFile;
 
   const _DangerZone(this.configFile);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_DangerZone> createState() => _DangerZoneState();
+}
+
+class _DangerZoneState extends ConsumerState<_DangerZone> {
+  ConfigFile get configFile => widget.configFile;
+
+  @override
+  Widget build(BuildContext context) {
+    final Directory projectDirectory = ref.watch(openProjectProvider)!;
+    final Directory renderDataDirectory = Directory(
+      p.join(projectDirectory.path, "web", "maps", configFile.name),
+    );
+    final renderDataDirectoryExists = renderDataDirectory.existsSync();
     return Padding(
       padding: const .symmetric(horizontal: 16, vertical: 32),
       child: Column(
@@ -214,6 +228,27 @@ class _DangerZone extends ConsumerWidget {
             ),
             child: Column(
               children: [
+                _DangerButton(
+                  title: "Re-Render Map",
+                  buttonLabel: "Re-Render",
+                  text: const [
+                    SettingsBodyText(
+                      "Some options require a re-render of the map when you change them.\n"
+                      "With this button, you can do that. It deletes the current render of the map, so it can be regenerated.\n"
+                      "No unrecoverable data will be lost if you click this button. "
+                      "It will just take some time to render the whole map again.\n"
+                      "You will also have to restart the BlueMap process in the Control Panel.",
+                    ),
+                  ],
+                  onPressed: renderDataDirectoryExists
+                      ? () async {
+                          await renderDataDirectory.delete(recursive: true);
+                          setState(() {}); //rebuild the widget to deactivate the button
+                        }
+                      : null,
+                  buttonTooltip:
+                      "${renderDataDirectoryExists ? "Will delete" : "Folder does not exist"}: ${renderDataDirectory.path}",
+                ),
                 _DangerButton(
                   title: "Delete Map",
                   text: const [
@@ -272,29 +307,35 @@ class _DangerButton extends StatelessWidget {
   final List<SettingsBodyBase> text;
   final String buttonLabel;
   final VoidCallback? onPressed;
+  final String? buttonTooltip;
 
   const _DangerButton({
     required this.title,
     required this.text,
     required this.buttonLabel,
     required this.onPressed,
+    this.buttonTooltip,
   });
 
   @override
   Widget build(BuildContext context) {
+    final button = ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.red.shade700,
+        foregroundColor: Colors.white,
+      ),
+      onPressed: onPressed,
+      child: Text(buttonLabel),
+    );
     return ListTile(
       title: Row(
         mainAxisAlignment: .spaceBetween,
         children: [
           SettingHeading(context, title, padding: EdgeInsets.zero, text),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red.shade700,
-              foregroundColor: Colors.white,
-            ),
-            onPressed: onPressed,
-            child: Text(buttonLabel),
-          ),
+          if (buttonTooltip == null)
+            button
+          else
+            Tooltip(message: buttonTooltip, child: button),
         ],
       ),
     );
