@@ -203,7 +203,7 @@ class _DangerZoneState extends ConsumerState<_DangerZone> {
           ),
           const SizedBox(height: 16),
           Container(
-            padding: const .only(top: 8, right: 8),
+            padding: const .symmetric(vertical: 8),
             decoration: BoxDecoration(
               border: .all(color: Colors.red),
               borderRadius: .circular(12),
