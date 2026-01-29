@@ -4,6 +4,7 @@ import "dart:math" as math;
 import "package:file_picker/file_picker.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
+import "package:flutter_colorpicker/flutter_colorpicker.dart";
 
 import "../../../main_menu/settings/setting_heading.dart";
 import "../../../utils.dart";
@@ -107,11 +108,13 @@ class _Option extends StatelessWidget {
   final String title;
   final List<SettingsBodyBase> descriptionList;
   final Widget? subtitle;
+  final Widget? button;
 
   const _Option({
     required this.title,
     required this.descriptionList,
     this.subtitle,
+    this.button,
   });
 
   @override
@@ -124,6 +127,7 @@ class _Option extends StatelessWidget {
         descriptionList,
       ),
       subtitle: subtitle,
+      trailing: button,
     );
   }
 }
@@ -295,6 +299,109 @@ class ToggleOption extends StatelessWidget {
         if (value == null) return;
         onChanged(value);
       },
+    );
+  }
+}
+
+class ColourOption extends StatelessWidget {
+  final String title;
+  final List<SettingsBodyBase> descriptionList;
+  final Color colour;
+  final String label;
+  final void Function(Color colour, String hex) onPicked;
+
+  ColourOption({
+    required this.title,
+    required String description,
+    required this.colour,
+    required this.label,
+    required this.onPicked,
+    super.key,
+  }) : descriptionList = [SettingsBodyText(description)];
+
+  const ColourOption.customDescription({
+    required this.title,
+    required this.descriptionList,
+    required this.colour,
+    required this.label,
+    required this.onPicked,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final textColour = getTextColourForBackground(colour);
+    return _Option(
+      title: title,
+      descriptionList: descriptionList,
+      button: ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(backgroundColor: colour),
+        icon: Icon(Icons.color_lens, color: textColour),
+        label: Text(
+          label,
+          style: pixelCode.copyWith(color: textColour, fontWeight: .w400),
+        ),
+        onPressed: () async {
+          final pickedColour = await showDialog<Color>(
+            context: context,
+            builder: (BuildContext context) {
+              Color pickingColour = colour;
+              final controller = TextEditingController(
+                text: label.replaceFirst("#", ""),
+              );
+              return AlertDialog(
+                title: const Text("Pick a colour"),
+                scrollable: true,
+                content: Column(
+                  children: [
+                    ColorPicker(
+                      pickerColor: colour,
+                      onColorChanged: (Color value) => pickingColour = value,
+                      displayThumbColor: true,
+                      paletteType: PaletteType.hsv,
+                      labelTypes: const [],
+                      hexInputController: controller,
+                      enableAlpha: false,
+                      portraitOnly: true,
+                    ),
+                    TextFormField(
+                      controller: controller,
+                      decoration: const InputDecoration(
+                        labelText: "Colour (in hex)",
+                        prefixText: "#",
+                      ),
+                      autofocus: true,
+                      maxLength: 6,
+                      inputFormatters: [
+                        UpperCaseTextFormatter(),
+                        FilteringTextInputFormatter.allow(RegExp(kValidHexPattern)),
+                      ],
+                      onEditingComplete: () => Navigator.of(context).pop(pickingColour),
+                    ),
+                  ],
+                ),
+                actions: [
+                  TextButton(
+                    child: const Text("Cancel"),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  TextButton(
+                    child: const Text("Confirm"),
+                    onPressed: () => Navigator.of(context).pop(pickingColour),
+                  ),
+                ],
+              );
+            },
+          );
+          if (pickedColour == null) return; //Dialog was dismissed
+          final String hex = colorToHex(
+            pickedColour,
+            includeHashSign: true,
+            enableAlpha: false,
+          );
+          onPicked(pickedColour, hex);
+        },
+      ),
     );
   }
 }

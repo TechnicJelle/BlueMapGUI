@@ -35,7 +35,27 @@ const TextStyle pixelCode = TextStyle(
   fontFamily: "PixelCode",
   fontSize: 14,
   height: 1.2,
+  fontWeight: .w200,
 );
+
+Color getTextColourForBackground(Color backgroundColour) {
+  return ThemeData.estimateBrightnessForColor(backgroundColour) == Brightness.dark
+      ? Colors.white
+      : Colors.black;
+}
+
+Color colorFromHexColour(String hexString) {
+  final int ox = int.parse(hexString.replaceFirst("#", "0x")); //heehee
+
+  if (hexString.length == 1 + 6) {
+    final int b = ox & 255;
+    final int g = (ox >> 8) & 255;
+    final int r = (ox >> 16) & 255;
+    return Color.fromARGB(255, r, g, b);
+  }
+
+  throw Exception("Failed to parse colour code: $hexString");
+}
 
 /// Checks if the given file has the same SHA256 hash as the given hash.
 /// Returns true if the hashes match, false otherwise.

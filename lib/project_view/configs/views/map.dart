@@ -138,6 +138,32 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
           onChanged: null,
           onEditingComplete: () => setState(validateAndSaveOptionsThatCannotBeBlank),
         ),
+        ColourOption(
+          title: "Sky Colour",
+          description: "The colour of the sky.",
+          colour: colorFromHexColour(model.skyColor),
+          label: model.skyColor,
+          onPicked: (Color colour, String hex) => setState(() {
+            model = model.copyWith(skyColor: hex);
+            configFile!.changeValueInFile(
+              MapConfigKeys.skyColor,
+              jsonEncode(model.skyColor),
+            );
+          }),
+        ),
+        ColourOption(
+          title: "Void Colour",
+          description: "The colour of the void.",
+          colour: colorFromHexColour(model.voidColor),
+          label: model.voidColor,
+          onPicked: (Color colour, String hex) => setState(() {
+            model = model.copyWith(voidColor: hex);
+            configFile!.changeValueInFile(
+              MapConfigKeys.voidColor,
+              jsonEncode(model.voidColor),
+            );
+          }),
+        ),
         _DangerZone(configFile!),
       ],
     );
