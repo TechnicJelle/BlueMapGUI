@@ -205,6 +205,79 @@ class IntSliderOption extends StatelessWidget {
   }
 }
 
+class DoubleSliderOption extends StatelessWidget {
+  final String title;
+  final List<SettingsBodyBase> descriptionList;
+  final double value;
+  final double min;
+  final double max;
+  final ValueChanged<double> onChanged;
+  final ValueChanged<double> onChangeEnd;
+  final Color? sliderColor;
+  final Text? warning;
+
+  DoubleSliderOption({
+    required this.title,
+    required String description,
+    required this.value,
+    required this.min,
+    required this.max,
+    required this.onChanged,
+    required this.onChangeEnd,
+    this.sliderColor,
+    this.warning,
+    super.key,
+  }) : descriptionList = [SettingsBodyText(description)];
+
+  const DoubleSliderOption.customDescription({
+    required this.title,
+    required this.descriptionList,
+    required this.value,
+    required this.min,
+    required this.max,
+    required this.onChanged,
+    required this.onChangeEnd,
+    this.sliderColor,
+    this.warning,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SliderTheme(
+      data: const SliderThemeData(showValueIndicator: ShowValueIndicator.onDrag),
+      child: _Option(
+        title: title,
+        descriptionList: descriptionList,
+        subtitle: Column(
+          children: [
+            Row(
+              children: [
+                Text(
+                  value.toStringAsFixed(2),
+                  style: pixelCode,
+                ),
+                Expanded(
+                  child: Slider(
+                    value: value,
+                    label: value.toStringAsFixed(2),
+                    min: min,
+                    max: math.max(value, max),
+                    onChanged: value > max ? null : onChanged,
+                    onChangeEnd: onChangeEnd,
+                    activeColor: sliderColor,
+                  ),
+                ),
+              ],
+            ),
+            ?warning,
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class TextFieldOption extends StatelessWidget {
   final String title;
   final List<SettingsBodyBase> descriptionList;

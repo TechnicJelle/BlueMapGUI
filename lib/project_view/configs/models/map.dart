@@ -66,6 +66,16 @@ abstract class MapConfigModel extends BaseConfigModel with _$MapConfigModel {
 
   factory MapConfigModel.fromJson(Map<String, Object?> json) =>
       _$MapConfigModelFromJson(json);
+
+  String skyLightHocon() => _lightHocon(skyLight);
+
+  String ambientLightHocon() => _lightHocon(ambientLight);
+
+  static String _lightHocon(double? light) {
+    final double thisLight = light ?? 1;
+    if (thisLight == 0 || thisLight == 1) return jsonEncode(thisLight.toInt());
+    return jsonEncode(thisLight.toStringAsFixed(2)).replaceAll('"', "");
+  }
 }
 
 typedef MapConfigKeys = _$MapConfigModelJsonKeys;

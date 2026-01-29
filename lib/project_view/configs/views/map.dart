@@ -201,6 +201,38 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
             );
           }),
         ),
+        DoubleSliderOption(
+          title: "Sky Light",
+          description: """
+Defines the initial sky light strength the map will be set to when it is opened.
+0 is no sky light, 1 is fully lit up.""",
+          value: model.skyLight ?? 1,
+          min: 0,
+          max: 1,
+          onChanged: (double value) => setState(() {
+            model = model.copyWith(skyLight: value);
+          }),
+          onChangeEnd: (_) => configFile!.changeValueInFile(
+            MapConfigKeys.skyLight,
+            model.skyLightHocon(),
+          ),
+        ),
+        DoubleSliderOption(
+          title: "Ambient Light",
+          description: """
+Defines the ambient light strength that every block is receiving, regardless of the sunlight/blocklight.
+0 is no ambient light, 1 is fully lit up.""",
+          value: model.ambientLight,
+          min: 0,
+          max: 1,
+          onChanged: (double value) => setState(() {
+            model = model.copyWith(ambientLight: value);
+          }),
+          onChangeEnd: (_) => configFile!.changeValueInFile(
+            MapConfigKeys.ambientLight,
+            model.ambientLightHocon(),
+          ),
+        ),
         _DangerZone(configFile!),
       ],
     );
