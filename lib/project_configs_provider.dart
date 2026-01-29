@@ -107,7 +107,7 @@ class ProjectConfigsNotifier extends Notifier<ProjectConfigs?> {
   void addMap(ConfigFile<MapConfigModel> newMapConfig) {
     final ProjectConfigs project = state!;
     state = project.copyWith(
-      mapConfigs: [...project.mapConfigs, newMapConfig],
+      mapConfigs: _sortMaps([...project.mapConfigs, newMapConfig]),
       openConfig: newMapConfig,
     );
   }
