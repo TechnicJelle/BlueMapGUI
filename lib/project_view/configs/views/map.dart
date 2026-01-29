@@ -170,9 +170,10 @@ class _DangerZoneState extends ConsumerState<_DangerZone> {
         children: [
           Text(
             "Danger zone",
-            style: TextTheme.of(
-              context,
-            ).headlineSmall?.copyWith(fontWeight: .w500, fontSize: 25),
+            style: TextTheme.of(context).headlineSmall?.copyWith(
+              fontWeight: .w500,
+              fontSize: 25,
+            ),
           ),
           const SizedBox(height: 16),
           Container(

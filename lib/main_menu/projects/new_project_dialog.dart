@@ -177,9 +177,9 @@ class NewProjectDialogState extends ConsumerState<NewProjectDialog> {
               const SizedBox(height: 8),
               Text(
                 "Project will be created in: $_projectPath",
-                style: Theme.of(
-                  context,
-                ).textTheme.labelMedium?.copyWith(color: Colors.grey),
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: Colors.grey,
+                ),
               ),
               if (specialError != null)
                 Padding(
