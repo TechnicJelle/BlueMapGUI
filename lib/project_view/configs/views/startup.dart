@@ -39,6 +39,11 @@ class _StartupConfigViewState extends ConsumerState<StartupConfigView> {
       jsonEncode(model.modsPath),
     );
     modsPathController.dispose();
+
+    configFile.changeValueInFile(
+      StartupConfigKeys.minecraftVersion,
+      jsonEncode(model.minecraftVersion),
+    );
     mcVerController.dispose();
     super.dispose();
   }
