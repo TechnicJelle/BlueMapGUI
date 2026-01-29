@@ -41,7 +41,9 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
   }
 
   void openConfigFile(ConfigFile<MapConfigModel> newConfig) {
-    //allow reopening of configs that are already open, to handle the sorting value changes
+    //don't open something that is already open.
+    //if the sorting value were displayed anywhere in this MapConfigView, this would be a problem, but it is not :)
+    if (p.equals(newConfig.path, configFile?.path ?? "")) return;
 
     //save and close previously open config
     if (configFile != null && configFile!.file.existsSync()) {
