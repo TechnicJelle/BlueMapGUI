@@ -138,8 +138,8 @@ class IntSliderOption extends StatelessWidget {
   final int value;
   final int min;
   final int max;
-  final ValueChanged<double> onChanged;
-  final ValueChanged<double> onChangeEnd;
+  final ValueChanged<int> onChanged;
+  final ValueChanged<int> onChangeEnd;
   final Color? sliderColor;
   final Text? warning;
 
@@ -190,8 +190,8 @@ class IntSliderOption extends StatelessWidget {
                         min: min.toDouble(),
                         max: math.max(value, max).toDouble(),
                         divisions: max - 1,
-                        onChanged: value > max ? null : onChanged,
-                        onChangeEnd: onChangeEnd,
+                        onChanged: value > max ? null : (d) => onChanged(d.toInt()),
+                        onChangeEnd: (d) => onChangeEnd(d.toInt()),
                         activeColor: sliderColor,
                       )
                     : const Slider(value: 1, onChanged: null),

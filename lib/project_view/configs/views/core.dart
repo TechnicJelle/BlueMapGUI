@@ -87,8 +87,8 @@ Be careful with setting this too high, as your whole computer may start to lag!"
           value: model.renderThreadCount,
           min: 1,
           max: cpus,
-          onChanged: (double value) => setState(() {
-            model = model.copyWith(renderThreadCount: value.toInt());
+          onChanged: (int value) => setState(() {
+            model = model.copyWith(renderThreadCount: value);
           }),
           onChangeEnd: (_) => configFile.changeValueInFile(
             CoreConfigKeys.renderThreadCount,
