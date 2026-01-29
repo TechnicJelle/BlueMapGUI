@@ -2,12 +2,22 @@
 
 // ignore_for_file: type=lint, unused_field
 
-
 part of 'map.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
+
+_Vector2XZ _$Vector2XZFromJson(Map<String, dynamic> json) =>
+    _Vector2XZ(x: (json['x'] as num).toInt(), z: (json['z'] as num).toInt());
+
+abstract final class _$Vector2XZJsonKeys {
+  static const String x = 'x';
+  static const String z = 'z';
+}
+
+Map<String, dynamic> _$Vector2XZToJson(_Vector2XZ instance) =>
+    <String, dynamic>{'x': instance.x, 'z': instance.z};
 
 _MapConfigModel _$MapConfigModelFromJson(
   Map<String, dynamic> json,
@@ -16,6 +26,7 @@ _MapConfigModel _$MapConfigModelFromJson(
   dimension: json['dimension'] as String,
   name: json['name'] as String,
   sorting: (json['sorting'] as num).toInt(),
+  startPos: Vector2XZ.fromJson(json['start-pos'] as Map<String, dynamic>),
   skyColor: json['sky-color'] as String,
   voidColor: json['void-color'] as String,
   skyLight: (json['sky-light'] as num?)?.toDouble(),
@@ -37,6 +48,7 @@ abstract final class _$MapConfigModelJsonKeys {
   static const String dimension = 'dimension';
   static const String name = 'name';
   static const String sorting = 'sorting';
+  static const String startPos = 'start-pos';
   static const String skyColor = 'sky-color';
   static const String voidColor = 'void-color';
   static const String skyLight = 'sky-light';
@@ -60,6 +72,7 @@ Map<String, dynamic> _$MapConfigModelToJson(_MapConfigModel instance) =>
       'dimension': instance.dimension,
       'name': instance.name,
       'sorting': instance.sorting,
+      'start-pos': instance.startPos,
       'sky-color': instance.skyColor,
       'void-color': instance.voidColor,
       'sky-light': instance.skyLight,

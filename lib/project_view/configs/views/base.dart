@@ -263,6 +263,91 @@ class TextFieldOption extends StatelessWidget {
   }
 }
 
+class Vector2XZOption extends StatelessWidget {
+  final String title;
+  final List<SettingsBodyBase> descriptionList;
+  final TextEditingController controllerX;
+  final TextEditingController controllerZ;
+  final ValueChanged<String>? onChanged;
+  final VoidCallback onEditingComplete;
+
+  Vector2XZOption({
+    required this.title,
+    required String description,
+    required this.controllerX,
+    required this.controllerZ,
+    required this.onChanged,
+    required this.onEditingComplete,
+    super.key,
+  }) : descriptionList = [SettingsBodyText(description)];
+
+  const Vector2XZOption.customDescription({
+    required this.title,
+    required this.descriptionList,
+    required this.controllerX,
+    required this.controllerZ,
+    required this.onChanged,
+    required this.onEditingComplete,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    const TextInputType keyboardType = .numberWithOptions(
+      decimal: false,
+      signed: true,
+    );
+    final TextInputFormatter inputFormatter = .withFunction((
+      TextEditingValue oldValue,
+      TextEditingValue newValue,
+    ) {
+      if (newValue.text.isEmpty) return newValue;
+      if (newValue.text == "-") return newValue;
+      final int? intValue = int.tryParse(newValue.text);
+      if (intValue != null) {
+        return newValue;
+      }
+      return oldValue;
+    });
+
+    return _Option(
+      title: title,
+      descriptionList: descriptionList,
+      subtitle: Row(
+        children: [
+          Flexible(
+            child: TextField(
+              controller: controllerX,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: "x",
+              ),
+              onChanged: onChanged,
+              onEditingComplete: onEditingComplete,
+              keyboardType: keyboardType,
+              inputFormatters: [inputFormatter],
+            ),
+          ),
+          const SizedBox(width: 16),
+          Flexible(
+            child: TextField(
+              controller: controllerZ,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: "z",
+              ),
+              onChanged: onChanged,
+              onEditingComplete: onEditingComplete,
+              keyboardType: keyboardType,
+              inputFormatters: [inputFormatter],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class ToggleOption extends StatelessWidget {
   final String title;
   final List<SettingsBodyBase> descriptionList;

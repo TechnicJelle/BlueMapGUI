@@ -30,6 +30,8 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
   late TextEditingController worldController;
   late TextEditingController dimensionController;
   late TextEditingController nameController;
+  late TextEditingController startPosXController;
+  late TextEditingController startPosZController;
 
   @override
   void dispose() {
@@ -37,6 +39,8 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
     worldController.dispose();
     dimensionController.dispose();
     nameController.dispose();
+    startPosXController.dispose();
+    startPosZController.dispose();
     super.dispose();
   }
 
@@ -51,6 +55,8 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
       worldController.dispose();
       dimensionController.dispose();
       nameController.dispose();
+      startPosXController.dispose();
+      startPosZController.dispose();
     }
 
     setState(() {
@@ -58,6 +64,8 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
       worldController = TextEditingController(text: model.world);
       dimensionController = TextEditingController(text: model.dimension);
       nameController = TextEditingController(text: model.name);
+      startPosXController = TextEditingController(text: model.startPos.x.toString());
+      startPosZController = TextEditingController(text: model.startPos.z.toString());
     });
   }
 
@@ -81,6 +89,24 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
       configFile!.changeValueInFile(
         MapConfigKeys.name,
         jsonEncode(model.name),
+      );
+    }
+    if (startPosXController.text.trim().isNotEmpty) {
+      model = model.copyWith(
+        startPos: model.startPos.copyWith(x: int.parse(startPosXController.text)),
+      );
+      configFile!.changeValueInFile(
+        MapConfigKeys.startPos,
+        model.startPos.toHocon(),
+      );
+    }
+    if (startPosZController.text.trim().isNotEmpty) {
+      model = model.copyWith(
+        startPos: model.startPos.copyWith(z: int.parse(startPosZController.text)),
+      );
+      configFile!.changeValueInFile(
+        MapConfigKeys.startPos,
+        model.startPos.toHocon(),
       );
     }
   }
@@ -137,6 +163,15 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
               "The display name of this map (how this map will be named on the website).",
           controller: nameController,
           hintText: "Must not be empty!",
+          onChanged: null,
+          onEditingComplete: () => setState(validateAndSaveOptionsThatCannotBeBlank),
+        ),
+        Vector2XZOption(
+          title: "Start Position",
+          description:
+              "The position in the world where the map will be centered on when you open it.",
+          controllerX: startPosXController,
+          controllerZ: startPosZController,
           onChanged: null,
           onEditingComplete: () => setState(validateAndSaveOptionsThatCannotBeBlank),
         ),

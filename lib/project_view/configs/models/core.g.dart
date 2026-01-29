@@ -2,7 +2,6 @@
 
 // ignore_for_file: type=lint, unused_field
 
-
 part of 'core.dart';
 
 // **************************************************************************

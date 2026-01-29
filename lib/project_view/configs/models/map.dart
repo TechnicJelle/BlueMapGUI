@@ -1,9 +1,32 @@
+import "dart:convert";
+
 import "package:freezed_annotation/freezed_annotation.dart";
 
 import "base.dart";
 
 part "map.freezed.dart";
 part "map.g.dart";
+
+@freezed
+abstract class Vector2XZ with _$Vector2XZ {
+  const factory Vector2XZ({
+    required int x,
+    required int z,
+  }) = _Vector2XZ;
+
+  const Vector2XZ._();
+
+  factory Vector2XZ.fromJson(Map<String, Object?> json) => _$Vector2XZFromJson(json);
+
+  static final RegExp _jsonToHoconRegex = RegExp(r'{"x":(-?\d+),"z":(-?\d+)}');
+
+  String toHocon() => jsonEncode(this).replaceFirstMapped(
+    _jsonToHoconRegex,
+    (Match match) => "{ x: ${match[1]}, z: ${match[2]} }",
+  );
+}
+
+typedef Vector2XZKeys = _$Vector2XZJsonKeys;
 
 @freezed
 abstract class MapConfigModel extends BaseConfigModel with _$MapConfigModel {
@@ -14,6 +37,8 @@ abstract class MapConfigModel extends BaseConfigModel with _$MapConfigModel {
     required String name,
 
     required int sorting,
+
+    required Vector2XZ startPos,
 
     required String skyColor,
     required String voidColor,
