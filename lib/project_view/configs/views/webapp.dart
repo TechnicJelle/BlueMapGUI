@@ -3,10 +3,10 @@ import "dart:convert";
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 
-import "../../../main_menu/settings/setting_heading.dart";
 import "../../../project_configs_provider.dart";
 import "../models/base.dart";
 import "../models/webapp.dart";
+import "base.dart";
 
 class WebappConfigView extends ConsumerStatefulWidget {
   const WebappConfigView({super.key});
@@ -28,29 +28,13 @@ class _WebappConfigViewState extends ConsumerState<WebappConfigView> {
   Widget build(BuildContext context) {
     configFile = ref.watch(createTypedOpenConfigProvider<WebappConfigModel>())!;
 
-    const padding = EdgeInsets.only(bottom: 8);
     return ListView(
       children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 16, top: 16, bottom: 12),
-          child: Text(
-            "Webapp Config",
-            style: TextTheme.of(context).headlineMedium?.copyWith(
-              color: TextTheme.of(context).titleSmall?.color,
-            ),
-          ),
-        ),
-        CheckboxListTile(
-          title: SettingHeading(
-            context,
-            "Default to Flat View",
-            padding: padding,
-            const [
-              SettingsBodyText(
-                "Whether the webapp will default to flat-view instead of perspective-view.",
-              ),
-            ],
-          ),
+        const ConfigTitle(title: "Webapp Config"),
+        ToggleOption(
+          title: "Default to Flat View",
+          description:
+              "Whether the webapp will default to flat-view instead of perspective-view.",
           value: model.defaultToFlatView,
           onChanged: (bool? value) {
             if (value == null) return;

@@ -92,96 +92,51 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
     )!;
     openConfigFile(openConfig);
 
-    const padding = EdgeInsets.only(bottom: 8);
     return ListView(
       padding: const .only(right: 16), //to give the scrollbar some space
       children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 16, top: 16, bottom: 12),
-          child: Text(
-            "Map Config: ${openConfig.name}",
-            style: TextTheme.of(context).headlineMedium?.copyWith(
-              color: TextTheme.of(context).titleSmall?.color,
-            ),
+        ConfigTitle(title: "Map Config: ${openConfig.name}"),
+        TextFieldOption(
+          title: "World Path",
+          description: "The path to the save folder of the world to render.",
+          controller: worldController,
+          hintText: "Must not be empty!",
+          button: PathPickerButton(
+            purpose: "world",
+            initialDirectory: model.world.isNotEmpty ? model.world : "~",
+            onPicked: (String path) => setState(() {
+              model = model.copyWith(world: worldController.text = path);
+            }),
           ),
+          onChanged: null,
+          onEditingComplete: () => setState(validateAndSaveOptionsThatCannotBeBlank),
         ),
-        ListTile(
-          title: SettingHeading(
-            context,
-            "World Path",
-            padding: padding,
-            const [
-              SettingsBodyText(
-                "The path to the save folder of the world to render.",
-              ),
-            ],
-          ),
-          subtitle: TextField(
-            controller: worldController,
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              hintText: "Must not be empty!",
-              suffixIcon: PathPickerButton(
-                purpose: "world",
-                initialDirectory: model.world.isNotEmpty ? model.world : "~",
-                onPicked: (String? path) {
-                  if (path == null) return;
-                  setState(() {
-                    model = model.copyWith(
-                      world: worldController.text = path,
-                    );
-                  });
-                },
-              ),
+        TextFieldOption.customDescription(
+          title: "Dimension",
+          descriptionList: const [
+            SettingsBodyText("The dimension of the world.\nCan be"),
+            SettingsBodyCode(" minecraft:overworld"),
+            SettingsBodyText(","),
+            SettingsBodyCode(" minecraft:the_nether"),
+            SettingsBodyText(","),
+            SettingsBodyCode(" minecraft:the_end"),
+            SettingsBodyText(
+              ", or any dimension key introduced by a mod or datapack.",
             ),
-            onEditingComplete: () => setState(validateAndSaveOptionsThatCannotBeBlank),
-          ),
+          ],
+          controller: dimensionController,
+          hintText: "Must not be empty!",
+          onChanged: null,
+          onEditingComplete: () => setState(validateAndSaveOptionsThatCannotBeBlank),
         ),
-        ListTile(
-          title: SettingHeading(
-            context,
-            "Dimension",
-            padding: padding,
-            const [
-              SettingsBodyText("The dimension of the world.\nCan be"),
-              SettingsBodyCode(" minecraft:overworld"),
-              SettingsBodyText(","),
-              SettingsBodyCode(" minecraft:the_nether"),
-              SettingsBodyText(","),
-              SettingsBodyCode(" minecraft:the_end"),
-              SettingsBodyText(
-                ", or any dimension key introduced by a mod or datapack.",
-              ),
-            ],
-          ),
-          subtitle: TextField(
-            controller: dimensionController,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: "Must not be empty!",
-            ),
-            onEditingComplete: () => setState(validateAndSaveOptionsThatCannotBeBlank),
-          ),
-        ),
-        ListTile(
-          title: SettingHeading(
-            context,
-            "Map Name",
-            padding: padding,
-            const [
-              SettingsBodyText(
-                "The display name of this map (how this map will be named on the website).",
-              ),
-            ],
-          ),
-          subtitle: TextField(
-            controller: nameController,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: "Must not be empty!",
-            ),
-            onEditingComplete: () => setState(validateAndSaveOptionsThatCannotBeBlank),
-          ),
+        TextFieldOption(
+          title: "Map Name",
+          description:
+              "The display name of this map (how this map will be named on the website).",
+          controller: nameController,
+          hintText: "Must not be empty!",
+          onChanged: null,
+          onEditingComplete: () => setState(validateAndSaveOptionsThatCannotBeBlank),
         ),
         _DangerZone(configFile!),
       ],
@@ -231,15 +186,12 @@ class _DangerZoneState extends ConsumerState<_DangerZone> {
                 _DangerButton(
                   title: "Re-Render Map",
                   buttonLabel: "Re-Render",
-                  text: const [
-                    SettingsBodyText(
-                      "Some options require a re-render of the map when you change them.\n"
-                      "With this button, you can do that. It deletes the current render of the map, so it can be regenerated.\n"
-                      "No unrecoverable data will be lost if you click this button. "
-                      "It will just take some time to render the whole map again.\n"
-                      "You will also have to restart the BlueMap process in the Control Panel.",
-                    ),
-                  ],
+                  text: """
+Some options require a re-render of the map when you change them.
+With this button, you can do that. It deletes the current render of the map, so it can be regenerated.
+No unrecoverable data will be lost if you click this button. 
+It will just take some time to render the whole map again.
+You will also have to restart the BlueMap process in the Control Panel.""",
                   onPressed: renderDataDirectoryExists
                       ? () async {
                           await renderDataDirectory.delete(recursive: true);
@@ -251,13 +203,10 @@ class _DangerZoneState extends ConsumerState<_DangerZone> {
                 ),
                 _DangerButton(
                   title: "Delete Map",
-                  text: const [
-                    SettingsBodyText(
-                      "If you delete this map, it will be gone forever.\n"
-                      "Your actual world files will not be affected!\n"
-                      "But you can always create a new map that uses those same world files again.\n",
-                    ),
-                  ],
+                  text: """
+If you delete this map, it will be gone forever.
+Your actual world files will not be affected!
+"But you can always create a new map that uses those same world files again.""",
                   buttonLabel: "Delete Map",
                   onPressed: () {
                     showConfirmationDialog(
@@ -304,7 +253,7 @@ class _DangerZoneState extends ConsumerState<_DangerZone> {
 
 class _DangerButton extends StatelessWidget {
   final String title;
-  final List<SettingsBodyBase> text;
+  final String text;
   final String buttonLabel;
   final VoidCallback? onPressed;
   final String? buttonTooltip;
@@ -331,7 +280,12 @@ class _DangerButton extends StatelessWidget {
       title: Row(
         mainAxisAlignment: .spaceBetween,
         children: [
-          SettingHeading(context, title, padding: EdgeInsets.zero, text),
+          SettingHeading(
+            context,
+            title,
+            padding: EdgeInsets.zero,
+            [SettingsBodyText(text)],
+          ),
           if (buttonTooltip == null)
             button
           else
