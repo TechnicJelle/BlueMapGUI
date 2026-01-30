@@ -222,14 +222,14 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
     ref.read(javaPathProvider.notifier).setJavaPath(JavaPath(.system, "java"));
   }
 
-  File? findJavaExecutableInDirectory(Directory dir) {
+  Future<File?> findJavaExecutableInDirectory(Directory dir) async {
     final File javaExe = File(p.join(dir.path, "java.exe"));
     if (javaExe.existsSync()) return javaExe;
 
     final File java = File(p.join(dir.path, "java"));
     if (java.existsSync()) return java;
 
-    final FileSystemEntity fallback = dir.listSync().firstWhere(
+    final FileSystemEntity fallback = await dir.list().firstWhere(
       (file) => p.basename(file.path).startsWith("java"),
     );
 
@@ -256,7 +256,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
     // Delete old Java Bundle(s)
     if (javaBundleDirectory.existsSync()) {
       try {
-        javaBundleDirectory.deleteSync(recursive: true);
+        await javaBundleDirectory.delete(recursive: true);
       } on FileSystemException catch (e) {
         setState(() {
           bundledRadioState = .errored;
@@ -325,7 +325,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
 
     // Delete the archive; it is not needed anymore.
     try {
-      javaBundleArchive.deleteSync(recursive: true);
+      await javaBundleArchive.delete(recursive: true);
     } on FileSystemException catch (e) {
       setState(() {
         bundledRadioState = .errored;
@@ -336,10 +336,10 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
     }
 
     final Directory binDir = Directory(
-      p.join(javaBundleDirectory.listSync().first.path, "bin"),
+      p.join((await javaBundleDirectory.list().first).path, "bin"),
     );
 
-    final File? javaExecutable = findJavaExecutableInDirectory(binDir);
+    final File? javaExecutable = await findJavaExecutableInDirectory(binDir);
     if (javaExecutable == null) {
       setState(() {
         bundledRadioState = .errored;
