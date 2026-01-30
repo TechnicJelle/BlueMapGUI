@@ -37,11 +37,11 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
     return null;
   });
 
-  _SystemRadioState systemRadioState = _SystemRadioState.loading;
+  _SystemRadioState systemRadioState = .loading;
   int? systemJavaVersion;
   String? systemError;
 
-  _BundledRadioState bundledRadioState = _BundledRadioState.empty;
+  _BundledRadioState bundledRadioState = .empty;
 
   late final Uri? bundledDownloadLink;
   late final String? bundleHash;
@@ -67,7 +67,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
     }
   }
 
-  _CustomRadioState customRadioState = _CustomRadioState.empty;
+  _CustomRadioState customRadioState = .empty;
   int? customJavaVersion;
   String? customJavaPath;
   String? customError;
@@ -83,14 +83,14 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
       checkJavaVersion(JavaPath(.system, "java")).then(
         (javaVersion) {
           setState(() {
-            systemRadioState = _SystemRadioState.success;
+            systemRadioState = .success;
             systemJavaVersion = javaVersion;
             systemError = null;
           });
         },
         onError: (Object e) {
           setState(() {
-            systemRadioState = _SystemRadioState.errored;
+            systemRadioState = .errored;
             systemJavaVersion = null;
             systemError = e is JavaVersionCheckException ? e.message : e.toString();
           });
@@ -99,9 +99,9 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
     );
 
     // Custom
-    if (ref.read(_javaPickerModeProvider) == JavaPathMode.custom) {
+    if (ref.read(_javaPickerModeProvider) == .custom) {
       final JavaPath javaPath = ref.read(javaPathProvider)!;
-      customRadioState = _CustomRadioState.success;
+      customRadioState = .success;
       customJavaVersion = 0;
       customJavaPath = javaPath.path;
       customError = null;
@@ -115,7 +115,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
           },
           onError: (Object e) {
             setState(() {
-              customRadioState = _CustomRadioState.errored;
+              customRadioState = .errored;
               customJavaVersion = null;
               customError = e is JavaVersionCheckException ? e.message : e.toString();
             });
@@ -127,8 +127,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
 
   @override
   Widget build(BuildContext context) {
-    final JavaPathMode javaPickerMode =
-        ref.watch(_javaPickerModeProvider) ?? JavaPathMode.unset;
+    final JavaPathMode javaPickerMode = ref.watch(_javaPickerModeProvider) ?? .unset;
 
     const TextStyle red = TextStyle(color: Colors.red);
 
@@ -136,13 +135,13 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
       groupValue: javaPickerMode,
       onChanged: (JavaPathMode? newJavaPickerMode) {
         switch (newJavaPickerMode) {
-          case JavaPathMode.unset:
+          case .unset:
             onUnset();
-          case JavaPathMode.system:
+          case .system:
             onSystem();
-          case JavaPathMode.bundled:
+          case .bundled:
             unawaited(onBundled());
-          case JavaPathMode.custom:
+          case .custom:
             unawaited(onCustom());
           case null:
             break;
@@ -162,14 +161,12 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
             title: Text(JavaPathMode.system.name.capitalize()),
 
             subtitle: switch (systemRadioState) {
-              _SystemRadioState.loading => const Text("Checking System Java version..."),
-              _SystemRadioState.success => Text(
-                "Detected System Java version: $systemJavaVersion",
-              ),
-              _SystemRadioState.errored => Text("$systemError", style: red),
+              .loading => const Text("Checking System Java version..."),
+              .success => Text("Detected System Java version: $systemJavaVersion"),
+              .errored => Text("$systemError", style: red),
             },
 
-            enabled: systemRadioState == _SystemRadioState.success,
+            enabled: systemRadioState == .success,
           ),
           RadioListTile(
             value: JavaPathMode.bundled,
@@ -181,24 +178,24 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
                     style: red,
                   )
                 : Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: .start,
+                    mainAxisSize: .min,
                     children: [
                       switch (bundledRadioState) {
-                        _BundledRadioState.empty => const Text(
+                        .empty => const Text(
                           "Automatically download Java. Use this if you don't have a working System Installation, and you don't want to use a custom one either.",
                         ),
-                        _BundledRadioState.downloading => const Text("Downloading..."),
-                        _BundledRadioState.hashing => const Text("Verifying..."),
-                        _BundledRadioState.unpacking => const Text("Unpacking..."),
-                        _BundledRadioState.success => const Text(
+                        .downloading => const Text("Downloading..."),
+                        .hashing => const Text("Verifying..."),
+                        .unpacking => const Text("Unpacking..."),
+                        .success => const Text(
                           "Successfully downloaded! You are ready to go!",
                         ),
-                        _BundledRadioState.errored => Text("$bundledError", style: red),
+                        .errored => Text("$bundledError", style: red),
                       },
-                      if (bundledRadioState == _BundledRadioState.downloading ||
-                          bundledRadioState == _BundledRadioState.hashing ||
-                          bundledRadioState == _BundledRadioState.unpacking)
+                      if (bundledRadioState == .downloading ||
+                          bundledRadioState == .hashing ||
+                          bundledRadioState == .unpacking)
                         LinearProgressIndicator(value: bundleProgress),
                     ],
                   ),
@@ -210,16 +207,11 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
             title: Text(JavaPathMode.custom.name.capitalize()),
 
             subtitle: switch (customRadioState) {
-              _CustomRadioState.empty => const Text(
-                "Select a custom Java executable manually.",
-              ),
-              _CustomRadioState.success => Text(
+              .empty => const Text("Select a custom Java executable manually."),
+              .success => Text(
                 "Detected Java version: $customJavaVersion  ( $customJavaPath )",
               ),
-              _CustomRadioState.errored => Text(
-                "$customError  ( $customJavaPath )",
-                style: red,
-              ),
+              .errored => Text("$customError  ( $customJavaPath )", style: red),
             },
           ),
         ],
@@ -232,9 +224,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
   }
 
   void onSystem() {
-    ref
-        .read(javaPathProvider.notifier)
-        .setJavaPath(JavaPath(JavaPathMode.system, "java"));
+    ref.read(javaPathProvider.notifier).setJavaPath(JavaPath(.system, "java"));
   }
 
   File? findJavaExecutableInDirectory(Directory dir) {
@@ -261,7 +251,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
     if (downloadLink == null || hash == null) return;
 
     setState(() {
-      bundledRadioState = _BundledRadioState.downloading;
+      bundledRadioState = .downloading;
       bundleProgress = null;
     });
 
@@ -274,7 +264,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
         javaBundleDirectory.deleteSync(recursive: true);
       } on FileSystemException catch (e) {
         setState(() {
-          bundledRadioState = _BundledRadioState.errored;
+          bundledRadioState = .errored;
           bundledError = e.toString();
           bundleProgress = null;
         });
@@ -298,7 +288,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
       );
     } on IOException catch (e) {
       setState(() {
-        bundledRadioState = _BundledRadioState.errored;
+        bundledRadioState = .errored;
         bundledError = e.toString();
         bundleProgress = null;
       });
@@ -306,14 +296,14 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
     }
 
     setState(() {
-      bundledRadioState = _BundledRadioState.hashing;
+      bundledRadioState = .hashing;
       bundleProgress = null;
     });
 
     final File? hashedBundleArchive = await susBundleArchive.hashFile(hash);
     if (hashedBundleArchive == null) {
       setState(() {
-        bundledRadioState = _BundledRadioState.errored;
+        bundledRadioState = .errored;
         bundledError =
             "Could not verify the downloaded Java Bundle archive's integrity!\n"
             "The hash of the downloaded file does not match the expected hash.";
@@ -324,14 +314,14 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
     final File javaBundleArchive = hashedBundleArchive;
 
     setState(() {
-      bundledRadioState = _BundledRadioState.unpacking;
+      bundledRadioState = .unpacking;
     });
 
     try {
       await extractFileToDisk(javaBundleArchive.path, javaBundleDirectory.path);
     } on IOException catch (e) {
       setState(() {
-        bundledRadioState = _BundledRadioState.errored;
+        bundledRadioState = .errored;
         bundledError = e.toString();
         bundleProgress = null;
       });
@@ -343,7 +333,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
       javaBundleArchive.deleteSync(recursive: true);
     } on FileSystemException catch (e) {
       setState(() {
-        bundledRadioState = _BundledRadioState.errored;
+        bundledRadioState = .errored;
         bundledError = e.toString();
         bundleProgress = null;
       });
@@ -357,7 +347,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
     final File? javaExecutable = findJavaExecutableInDirectory(binDir);
     if (javaExecutable == null) {
       setState(() {
-        bundledRadioState = _BundledRadioState.errored;
+        bundledRadioState = .errored;
         bundledError = "Could not find Java Executable in the downloaded bundle.";
         bundleProgress = null;
       });
@@ -365,12 +355,12 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
     }
 
     setState(() {
-      bundledRadioState = _BundledRadioState.success;
+      bundledRadioState = .success;
       bundledError = null;
       bundleProgress = null;
       ref
           .read(javaPathProvider.notifier)
-          .setJavaPath(JavaPath(JavaPathMode.bundled, javaExecutable.path));
+          .setJavaPath(JavaPath(.bundled, javaExecutable.path));
     });
   }
 
@@ -389,7 +379,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
     final String? javaPath = browsed.files.single.path;
     if (javaPath == null) {
       setState(() {
-        customRadioState = _CustomRadioState.errored;
+        customRadioState = .errored;
         customJavaVersion = null;
         customJavaPath = null;
         customError = "Path is null";
@@ -399,17 +389,17 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
 
     customJavaPath = javaPath;
     try {
-      final JavaPath potentialJavaPath = JavaPath(JavaPathMode.custom, javaPath);
+      final JavaPath potentialJavaPath = JavaPath(.custom, javaPath);
       final int javaVersion = await checkJavaVersion(potentialJavaPath);
       setState(() {
-        customRadioState = _CustomRadioState.success;
+        customRadioState = .success;
         customJavaVersion = javaVersion;
         customError = null;
         ref.read(javaPathProvider.notifier).setJavaPath(potentialJavaPath);
       });
     } on JavaVersionCheckException catch (e) {
       setState(() {
-        customRadioState = _CustomRadioState.errored;
+        customRadioState = .errored;
         customJavaVersion = null;
         customError = e.message;
       });
