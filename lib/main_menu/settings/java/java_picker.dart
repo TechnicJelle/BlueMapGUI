@@ -32,6 +32,9 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
   // ignore: specify_nonobvious_property_types
   final _javaPickerModeProvider = javaPathProvider.select((javaPath) => javaPath?.type);
 
+  ///disables all RadioListTiles whenever something is in progress, so it cannot be interrupted
+  bool inProgress = false;
+
   _SystemRadioState systemRadioState = .loading;
   int? systemJavaVersion;
   String? systemError;
@@ -128,16 +131,20 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
 
     return RadioGroup(
       groupValue: javaPickerMode,
-      onChanged: (JavaPathMode? newJavaPickerMode) {
+      onChanged: (JavaPathMode? newJavaPickerMode) async {
         switch (newJavaPickerMode) {
           case .unset:
             onUnset();
           case .system:
             onSystem();
           case .bundled:
-            unawaited(onBundled());
+            setState(() => inProgress = true);
+            await onBundled();
+            setState(() => inProgress = false);
           case .custom:
-            unawaited(onCustom());
+            setState(() => inProgress = true);
+            await onCustom();
+            setState(() => inProgress = false);
           case null:
             break;
         }
@@ -150,6 +157,8 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
             title: Text(JavaPathMode.unset.name.capitalize()),
 
             subtitle: const Text("No Java selected."),
+
+            enabled: !inProgress,
           ),
           RadioListTile(
             value: JavaPathMode.system,
@@ -161,7 +170,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
               .errored => Text("$systemError", style: red),
             },
 
-            enabled: systemRadioState == .success,
+            enabled: systemRadioState == .success && !inProgress,
           ),
           RadioListTile(
             value: JavaPathMode.bundled,
@@ -195,7 +204,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
                     ],
                   ),
 
-            enabled: bundledDownloadLink != null,
+            enabled: bundledDownloadLink != null && !inProgress,
           ),
           RadioListTile(
             value: JavaPathMode.custom,
@@ -208,6 +217,8 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
               ),
               .errored => Text("$customError  ( $customJavaPath )", style: red),
             },
+
+            enabled: !inProgress,
           ),
         ],
       ),
