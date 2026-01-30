@@ -30,12 +30,7 @@ class JavaPicker extends ConsumerStatefulWidget {
 class _JavaPickerState extends ConsumerState<JavaPicker> {
   // I don't want these for providers; too long
   // ignore: specify_nonobvious_property_types
-  final _javaPickerModeProvider = javaPathProvider.select((javaPath) {
-    if (javaPath != null) {
-      return javaPath.type;
-    }
-    return null;
-  });
+  final _javaPickerModeProvider = javaPathProvider.select((javaPath) => javaPath?.type);
 
   _SystemRadioState systemRadioState = .loading;
   int? systemJavaVersion;
