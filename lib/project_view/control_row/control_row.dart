@@ -170,8 +170,17 @@ class RunningProcess with WindowListener {
 
     final List<String> jvmArgs = [];
     final List<String> bluemapArgs = ["--render", "--watch", "--webserver"];
-    await fillArgsFromStartupConfig(jvmArgs: jvmArgs, bluemapArgs: bluemapArgs);
+    try {
+      await fillArgsFromStartupConfig(jvmArgs: jvmArgs, bluemapArgs: bluemapArgs);
 
+      // In this case it *is* necessary to catch an error
+      // ignore: avoid_catching_errors
+    } on TypeError catch (e) {
+      _consoleOutputController.add(
+        "[ERROR] Invalid option in Startup Config: $e",
+      );
+      return;
+    }
     final process = await _javaPath.startJar(
       jvmArgs: jvmArgs,
       bluemapJar,
