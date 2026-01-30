@@ -89,6 +89,7 @@ class _AdvancedEditorState extends ConsumerState<AdvancedEditor> {
         trackBorderColor: WidgetStateProperty.all(Colors.white12),
       ),
       child: CodeEditor(
+        padding: const .only(right: 32),
         indicatorBuilder: (context, editingController, chunkController, notifier) {
           return Padding(
             padding: const EdgeInsets.only(left: 16),
