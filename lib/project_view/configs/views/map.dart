@@ -372,34 +372,24 @@ class _DangerButton extends StatelessWidget {
       onPressed: onPressed,
       child: Text(buttonLabel),
     );
-    final children = [
-      SettingHeading(
-        context,
-        title,
-        padding: EdgeInsets.zero,
-        [SettingsBodyText(text)],
-      ),
-      const SizedBox(height: 8),
-      if (buttonTooltip == null)
-        button
-      else
-        Tooltip(message: buttonTooltip, child: button),
-    ];
     return ListTile(
-      title: LayoutBuilder(
-        builder: (context, constraints) {
-          if (constraints.maxWidth < 650) {
-            return Column(
-              crossAxisAlignment: .start,
-              children: children,
-            );
-          } else {
-            return Row(
-              mainAxisAlignment: .spaceBetween,
-              children: children,
-            );
-          }
-        },
+      title: Row(
+        mainAxisAlignment: .spaceBetween,
+        children: [
+          Expanded(
+            child: SettingHeading(
+              context,
+              title,
+              padding: EdgeInsets.zero,
+              [SettingsBodyText(text)],
+            ),
+          ),
+          const SizedBox(width: 16),
+          if (buttonTooltip == null)
+            button
+          else
+            Tooltip(message: buttonTooltip, child: button),
+        ],
       ),
     );
   }
