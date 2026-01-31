@@ -233,6 +233,58 @@ Defines the ambient light strength that every block is receiving, regardless of 
             model.ambientLightHocon(),
           ),
         ),
+        BoolListOption(
+          title: "Views",
+          description:
+              "With these buttons, you can enable and disable the specific view modes of the map.",
+          buttonSize: const BoxConstraints(minHeight: 64, minWidth: 210),
+          breakpoint: 650,
+          horizontalPadding: 12,
+          options: [
+            (
+              icon: Icons.threed_rotation,
+              label: "Perspective",
+              description: "The default 3D view",
+              enabled: model.enablePerspectiveView ?? true,
+              onPressed: (bool value) {
+                setState(() => model = model.copyWith(enablePerspectiveView: value));
+
+                configFile!.changeValueInFile(
+                  MapConfigKeys.enablePerspectiveView,
+                  jsonEncode(model.enablePerspectiveView),
+                );
+              },
+            ),
+            (
+              icon: Icons.square_rounded,
+              label: "Flat",
+              description: "The top-down 2D view",
+              enabled: model.enableFlatView ?? true,
+              onPressed: (bool value) {
+                setState(() => model = model.copyWith(enableFlatView: value));
+
+                configFile!.changeValueInFile(
+                  MapConfigKeys.enableFlatView,
+                  jsonEncode(model.enableFlatView),
+                );
+              },
+            ),
+            (
+              icon: Icons.directions_run,
+              label: "Free-flight",
+              description: "Like spectator mode",
+              enabled: model.enableFreeFlightView ?? true,
+              onPressed: (bool value) {
+                setState(() => model = model.copyWith(enableFreeFlightView: value));
+
+                configFile!.changeValueInFile(
+                  MapConfigKeys.enableFreeFlightView,
+                  jsonEncode(model.enableFreeFlightView),
+                );
+              },
+            ),
+          ],
+        ),
         _DangerZone(configFile!),
       ],
     );

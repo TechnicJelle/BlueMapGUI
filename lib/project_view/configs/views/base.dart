@@ -563,3 +563,106 @@ class ColourOption extends StatelessWidget {
     );
   }
 }
+
+typedef BoolListOptionType = ({
+  IconData icon,
+  String label,
+  String description,
+  bool enabled,
+  ValueChanged<bool> onPressed,
+});
+
+class BoolListOption extends StatelessWidget {
+  final String title;
+  final List<SettingsBodyBase> descriptionList;
+  final List<BoolListOptionType> options;
+  final double breakpoint;
+  final BoxConstraints? buttonSize;
+  final double? horizontalPadding;
+
+  BoolListOption({
+    required this.title,
+    required String description,
+    required this.breakpoint,
+    required this.options,
+    this.buttonSize,
+    this.horizontalPadding,
+    super.key,
+  }) : descriptionList = [SettingsBodyText(description)];
+
+  const BoolListOption.customDescription({
+    required this.title,
+    required this.descriptionList,
+    required this.breakpoint,
+    required this.options,
+    this.buttonSize,
+    this.horizontalPadding,
+    super.key,
+  });
+
+  Widget _generateButton(BoolListOptionType option) {
+    return Row(
+      children: [
+        SizedBox(width: horizontalPadding),
+        Checkbox(
+          value: option.enabled,
+          mouseCursor: .defer,
+          onChanged: null,
+        ),
+        const SizedBox(width: 8),
+        Column(
+          mainAxisSize: .min,
+          crossAxisAlignment: .start,
+          children: [
+            Row(
+              children: [
+                Text(
+                  option.label,
+                  style: const TextStyle(fontSize: 16, fontWeight: .w500),
+                ),
+                const SizedBox(width: 10),
+                Icon(option.icon),
+              ],
+            ),
+            const SizedBox(height: 6),
+            Text(option.description),
+          ],
+        ),
+        const SizedBox(width: 8), //To make up for the Checkbox's 8px of built-in padding
+        SizedBox(width: horizontalPadding),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _Option(
+      title: title,
+      descriptionList: descriptionList,
+      subtitle: LayoutBuilder(
+        builder: (context, constraints) {
+          return ToggleButtons(
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
+            direction: constraints.maxWidth < breakpoint ? .vertical : .horizontal,
+            onPressed: (index) {
+              final option = options[index];
+              option.onPressed(!option.enabled);
+            },
+            isSelected: options.map((option) => option.enabled).toList(growable: false),
+            children: options
+                .map((option) {
+                  final button = _generateButton(option);
+                  final thisButtonSize = buttonSize;
+                  if (thisButtonSize == null) return button;
+                  return ConstrainedBox(
+                    constraints: thisButtonSize,
+                    child: button,
+                  );
+                })
+                .toList(growable: false),
+          );
+        },
+      ),
+    );
+  }
+}
