@@ -416,32 +416,49 @@ class _DangerButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final button = ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.red.shade700,
-        foregroundColor: Colors.white,
-      ),
-      onPressed: onPressed,
-      child: Text(buttonLabel),
-    );
     return ListTile(
-      title: Row(
-        mainAxisAlignment: .spaceBetween,
-        children: [
-          Expanded(
-            child: SettingHeading(
-              context,
-              title,
-              padding: EdgeInsets.zero,
-              [SettingsBodyText(text)],
+      title: LayoutBuilder(
+        builder: (context, constraints) {
+          final settingHeading = SettingHeading(
+            context,
+            title,
+            padding: EdgeInsets.zero,
+            [SettingsBodyText(text)],
+          );
+
+          final button = ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red.shade700,
+              foregroundColor: Colors.white,
             ),
-          ),
-          const SizedBox(width: 16),
-          if (buttonTooltip == null)
-            button
-          else
-            Tooltip(message: buttonTooltip, child: button),
-        ],
+            onPressed: onPressed,
+            child: Text(buttonLabel),
+          );
+
+          final child = buttonTooltip == null
+              ? button
+              : Tooltip(message: buttonTooltip, child: button);
+
+          if (constraints.maxWidth < 400) {
+            return Column(
+              crossAxisAlignment: .start,
+              children: [
+                settingHeading,
+                const SizedBox(height: 8),
+                child,
+              ],
+            );
+          } else {
+            return Row(
+              mainAxisAlignment: .spaceBetween,
+              children: [
+                Expanded(child: settingHeading),
+                const SizedBox(width: 16),
+                child,
+              ],
+            );
+          }
+        },
       ),
     );
   }
