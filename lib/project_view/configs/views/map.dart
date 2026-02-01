@@ -233,6 +233,23 @@ Defines the ambient light strength that every block is receiving, regardless of 
             model.ambientLightHocon(),
           ),
         ),
+        ToggleOption(
+          title: "Render only visited chunks",
+          description: """
+By default, BlueMap renders all chunks that have been generated.
+In normal single-player Minecraft generates chunks around where you explore, so BlueMap will render those.
+But if you have pre-generated your world, or chunks have been generated through other means, you may want to hide those on the map, until you have explored them yourself.
+So with this option, you can make it so that BlueMap will only render chunks that have had a player in them.""",
+          value: model.minInhabitedTime > 0,
+          onChanged: (bool value) {
+            setState(() => model = model.copyWith(minInhabitedTime: value ? 1 : 0));
+
+            configFile!.changeValueInFile(
+              MapConfigKeys.minInhabitedTime,
+              jsonEncode(model.minInhabitedTime),
+            );
+          },
+        ),
         BoolListOption(
           title: "Views",
           description:
