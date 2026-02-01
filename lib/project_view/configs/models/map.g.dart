@@ -41,6 +41,7 @@ _MapConfigModel _$MapConfigModelFromJson(
   enableFlatView: json['enable-flat-view'] as bool?,
   enableFreeFlightView: json['enable-free-flight-view'] as bool?,
   enableHires: json['enable-hires'] as bool?,
+  ignoreMissingLightData: json['ignore-missing-light-data'] as bool,
 );
 
 abstract final class _$MapConfigModelJsonKeys {
@@ -64,6 +65,7 @@ abstract final class _$MapConfigModelJsonKeys {
   static const String enableFlatView = 'enable-flat-view';
   static const String enableFreeFlightView = 'enable-free-flight-view';
   static const String enableHires = 'enable-hires';
+  static const String ignoreMissingLightData = 'ignore-missing-light-data';
 }
 
 Map<String, dynamic> _$MapConfigModelToJson(_MapConfigModel instance) =>
@@ -87,4 +89,5 @@ Map<String, dynamic> _$MapConfigModelToJson(_MapConfigModel instance) =>
       'enable-flat-view': instance.enableFlatView,
       'enable-free-flight-view': instance.enableFreeFlightView,
       'enable-hires': instance.enableHires,
+      'ignore-missing-light-data': instance.ignoreMissingLightData,
     };

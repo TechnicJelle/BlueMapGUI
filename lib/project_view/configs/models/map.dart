@@ -60,6 +60,7 @@ abstract class MapConfigModel extends BaseConfigModel with _$MapConfigModel {
     required bool? enableFreeFlightView,
 
     required bool? enableHires,
+    required bool ignoreMissingLightData,
   }) = _MapConfigModel;
 
   const MapConfigModel._();

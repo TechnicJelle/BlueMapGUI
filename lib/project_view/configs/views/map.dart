@@ -285,6 +285,53 @@ Defines the ambient light strength that every block is receiving, regardless of 
             ),
           ],
         ),
+        ToggleOption(
+          title: "High Resolution",
+          description: """
+Whether the high-resolution layer is enabled.
+When disabled, rendering will go faster and the map will take up much less storage space, but you will not be able to see the full 3D models if you zoom in on the map.
+Disabling this will not remove any existing tiles, but existing tiles just won't get updated anymore.
+Enabling this will require a re-render of the map.""",
+          value: model.enableHires,
+          onChanged: (bool value) {
+            setState(() => model = model.copyWith(enableHires: value));
+
+            configFile!.changeValueInFile(
+              MapConfigKeys.enableHires,
+              jsonEncode(model.enableHires),
+            );
+          },
+        ),
+        ToggleOption.customDescription(
+          title: "Ignore Missing Light Data",
+          descriptionList: const [
+            SettingsBodyText(
+              """
+Normally, BlueMap only renders chunks that have valid and complete light data.
+If you have chunks that have incomplete, corrupted, or otherwise broken light data, please consider fixing the light data itself, so BlueMap can render them properly.""",
+            ),
+            SettingsBodyLink(
+              "Here is a guide on how to fix world lighting issues.",
+              "https://bluemap.bluecolored.de/community/FixLighting.html",
+            ),
+            SettingsBodyText("""
+\n\nIf, for some reason, you cannot fix the light data, you can enable this option to make BlueMap render the chunks, despite the broken light data.
+However, this option has a few drawbacks:
+- Cave rendering will always be enabled (BlueMap uses the sky light data to detect "caves").
+- Everything will be rendered fully lit (sky light value of 15, looks similar to having night vision).
+- Night mode might not work correctly."""),
+          ],
+          value: model.ignoreMissingLightData,
+          onChanged: (bool value) {
+            setState(() => model = model.copyWith(ignoreMissingLightData: value));
+
+            configFile!.changeValueInFile(
+              MapConfigKeys.ignoreMissingLightData,
+              jsonEncode(model.ignoreMissingLightData),
+            );
+          },
+        ),
+        //TODO: Ignore missing light data
         _DangerZone(configFile!),
       ],
     );
