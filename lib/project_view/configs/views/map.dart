@@ -234,12 +234,13 @@ Defines the ambient light strength that every block is receiving, regardless of 
           ),
         ),
         ToggleOption(
-          title: "Render only visited chunks",
+          title: "Render Only Visited Chunks",
           description: """
 By default, BlueMap renders all chunks that have been generated.
 In normal single-player Minecraft generates chunks around where you explore, so BlueMap will render those.
 But if you have pre-generated your world, or chunks have been generated through other means, you may want to hide those on the map, until you have explored them yourself.
-So with this option, you can make it so that BlueMap will only render chunks that have had a player in them.""",
+So with this option, you can make it so that BlueMap will only render chunks that have had a player in them.
+Changing this requires a re-render of the map.""",
           value: model.minInhabitedTime > 0,
           onChanged: (bool value) {
             setState(() => model = model.copyWith(minInhabitedTime: value ? 1 : 0));
@@ -252,8 +253,9 @@ So with this option, you can make it so that BlueMap will only render chunks tha
         ),
         BoolListOption(
           title: "Views",
-          description:
-              "With these buttons, you can enable and disable the specific view modes of the map.",
+          description: """
+With these buttons, you can enable and disable the specific view modes of the map.
+Changing this may require a re-render of the map.""",
           buttonSize: const BoxConstraints(minHeight: 64, minWidth: 210),
           breakpoint: 650,
           horizontalPadding: 12,
@@ -336,7 +338,9 @@ If you have chunks that have incomplete, corrupted, or otherwise broken light da
 However, this option has a few drawbacks:
 - Cave rendering will always be enabled (BlueMap uses the sky light data to detect "caves").
 - Everything will be rendered fully lit (sky light value of 15, looks similar to having night vision).
-- Night mode might not work correctly."""),
+- Night mode might not work correctly.
+
+Changing this requires a re-render of the map."""),
           ],
           value: model.ignoreMissingLightData,
           onChanged: (bool value) {
@@ -348,7 +352,6 @@ However, this option has a few drawbacks:
             );
           },
         ),
-        //TODO: Ignore missing light data
         _DangerZone(configFile!),
       ],
     );
