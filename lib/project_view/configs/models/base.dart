@@ -12,6 +12,12 @@ import "startup.dart";
 import "webapp.dart";
 import "webserver.dart";
 
+class ConfigFileLoadException implements Exception {
+  final String message;
+
+  ConfigFileLoadException(this.message);
+}
+
 class ConfigFile<T extends BaseConfigModel> {
   static File? _hoconFile;
 
@@ -43,9 +49,7 @@ class ConfigFile<T extends BaseConfigModel> {
     final int exitCode = result.exitCode;
     final String stderr = result.stderr.toString();
     if (exitCode != 0 || stderr.isNotEmpty) {
-      print("exitCode: $exitCode");
-      print("stderr: $stderr");
-      throw Exception(); //TODO
+      throw ConfigFileLoadException("exitCode: $exitCode\nstderr: $stderr"); //TODO
     }
     final String stdout = result.stdout.toString();
     final List<String> jsons = stdout.split(String.fromCharCode(0));
@@ -61,7 +65,9 @@ class ConfigFile<T extends BaseConfigModel> {
           "startup.conf" => ConfigFile(file, StartupConfigModel.fromJson(configMap)),
           "webapp.conf" => ConfigFile(file, WebappConfigModel.fromJson(configMap)),
           "webserver.conf" => ConfigFile(file, WebserverConfigModel.fromJson(configMap)),
-          _ => throw Exception(), //TODO
+          _ => throw ConfigFileLoadException(
+            "Could not conclude what type of config this is:\n ${file.path}",
+          ),
         };
       }
     });
