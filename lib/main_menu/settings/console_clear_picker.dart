@@ -8,19 +8,19 @@ class ConsoleClearPicker extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final bool? option = ref.watch(consoleClearProvider);
+    final bool option = ref.watch(consoleClearProvider);
 
     return CheckboxListTile(
       value: option,
       onChanged: (bool? newOption) {
-        ref
-            .read(consoleClearProvider.notifier)
-            .set(newOption ?? ConsoleClearProvider.defaultOption);
+        ref.read(consoleClearProvider.notifier).set(newOption);
       },
-      title: const Text("Enabled"),
-      subtitle: option ?? ConsoleClearProvider.defaultOption
+      title: option ? const Text("Enabled") : const Text("Disabled"),
+      subtitle: option
           ? const Text("The console will be cleared every time you start BlueMap.")
-          : const Text("The logs from previous runs will remain visible in the console."),
+          : const Text(
+              "The logs from previous runs will remain visible in the console.",
+            ),
       controlAffinity: ListTileControlAffinity.leading,
     );
   }

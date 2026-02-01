@@ -26,7 +26,9 @@ class SettingsScreen extends StatelessWidget {
 
         SettingHeading(context, "Clear Console Before Start", const [
           SettingsBodyText(
-            "Whether to clear the console every time BlueMap starts up.\nIf disabled, errors from previous sessions may still be on screen, which could cause confusion.",
+            """
+Whether to clear the console every time BlueMap starts up.
+If disabled, errors from previous sessions may still be on screen, which could cause confusion.""",
           ),
         ]),
         const ConsoleClearPicker(),

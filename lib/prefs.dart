@@ -198,21 +198,21 @@ final themeModeProvider = NotifierProvider(ThemeModeProvider.new);
 class ConsoleClearProvider extends Notifier<bool> {
   static const String _consoleClearKey = "console_clear";
 
-  static const bool defaultOption = true;
+  static const bool _defaultOption = true;
 
   @override
   bool build() {
     final bool? option = _prefs.getBool(_consoleClearKey);
-    if (option == null) return defaultOption;
+    if (option == null) return _defaultOption;
 
     return option;
   }
 
   // The function name and lack of other parameters makes it clear enough
   // ignore: avoid_positional_boolean_parameters
-  void set(bool newOption) {
-    state = newOption;
-    unawaited(_prefs.setBool(_consoleClearKey, newOption));
+  void set(bool? newOption) {
+    state = newOption ?? _defaultOption;
+    unawaited(_prefs.setBool(_consoleClearKey, state));
   }
 }
 
