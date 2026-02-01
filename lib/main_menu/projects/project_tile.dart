@@ -1,4 +1,5 @@
 import "dart:async";
+import "dart:convert";
 import "dart:io";
 
 import "package:flutter/material.dart";
@@ -11,6 +12,8 @@ import "../../confirmation_dialog.dart";
 import "../../hover.dart";
 import "../../prefs.dart";
 import "../../project_configs_provider.dart";
+import "../../project_view/configs/models/base.dart";
+import "../../project_view/configs/models/map.dart";
 import "../../utils.dart";
 import "../../versions.dart";
 import "../settings/java/check_java_version.dart";
@@ -326,6 +329,8 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
         mapsDir
           ..renameSync(mapTemplatesDirectory.path) //rename maps dir to templates dir
           ..createSync(); //recreate maps dir (now empty)
+
+        await _enableCavesInMapTemplates(mapTemplatesDirectory);
       }
     } else {
       //We are currently upgrading an outdated project
@@ -333,6 +338,8 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
       mapsDir.renameSync(mapTemplatesDirectory.path);
       //And now we rename the users' mapsDir back
       tempMapsDir.renameSync(mapsDir.path);
+
+      await _enableCavesInMapTemplates(mapTemplatesDirectory);
     }
 
     // == Copy BlueMap GUI Configs ==
@@ -364,6 +371,37 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
     // == Close opening progress dialog ==
     if (mounted) {
       Navigator.of(context).pop();
+    }
+  }
+
+  Future<void> _enableCavesInMapTemplates(Directory mapTemplatesDir) async {
+    final bool shouldPatch = ref.read(renderCavesDefaultProvider);
+    if (!shouldPatch) return;
+
+    final List<File> mapTemplates = mapTemplatesDir
+        .listSync()
+        .whereType<File>()
+        .where((file) => p.extension(file.path) == ".conf")
+        .toList(growable: false);
+
+    final List<ConfigFile> configFiles;
+    try {
+      final JavaPath javaPath = ref.read(javaPathProvider)!;
+      configFiles = await ConfigFile.fromFiles(
+        mapTemplates,
+        javaPath,
+        interpretAsMapConfig: true,
+      );
+    } on ConfigFileLoadException catch (_) {
+      //If this fails, it's not really a problem. We just don't patch the map templates.
+      return;
+    }
+
+    for (final configFile in configFiles) {
+      configFile.changeValueInFile(
+        MapConfigKeys.removeCavesBelowY,
+        jsonEncode(MapConfigModel.cavesEnabledY),
+      );
     }
   }
 }

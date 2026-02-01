@@ -30,6 +30,8 @@ typedef Vector2XZKeys = _$Vector2XZJsonKeys;
 
 @freezed
 abstract class MapConfigModel extends BaseConfigModel with _$MapConfigModel {
+  static const int cavesEnabledY = -10000;
+
   const factory MapConfigModel({
     required String world,
     required String dimension,

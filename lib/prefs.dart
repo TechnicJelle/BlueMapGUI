@@ -16,6 +16,7 @@ Future<void> initPrefs() async {
         KnownProjectsNotifier._knownProjectsKey,
         ThemeModeProvider._themeModeKey,
         ConsoleClearProvider._consoleClearKey,
+        RenderCavesDefaultProvider._renderCavesDefaultKey,
       },
     ),
   );
@@ -219,3 +220,28 @@ class ConsoleClearProvider extends Notifier<bool> {
 // I don't want these for providers; too long
 // ignore: specify_nonobvious_property_types
 final consoleClearProvider = NotifierProvider(ConsoleClearProvider.new);
+
+class RenderCavesDefaultProvider extends Notifier<bool> {
+  static const String _renderCavesDefaultKey = "render_all_caves_by_default";
+
+  static const bool _defaultOption = true;
+
+  @override
+  bool build() {
+    final bool? option = _prefs.getBool(_renderCavesDefaultKey);
+    if (option == null) return _defaultOption;
+
+    return option;
+  }
+
+  // The function name and lack of other parameters makes it clear enough
+  // ignore: avoid_positional_boolean_parameters
+  void set(bool? newOption) {
+    state = newOption ?? _defaultOption;
+    unawaited(_prefs.setBool(_renderCavesDefaultKey, state));
+  }
+}
+
+// I don't want these for providers; too long
+// ignore: specify_nonobvious_property_types
+final renderCavesDefaultProvider = NotifierProvider(RenderCavesDefaultProvider.new);

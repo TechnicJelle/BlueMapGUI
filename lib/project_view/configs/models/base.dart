@@ -34,7 +34,11 @@ class ConfigFile<T extends BaseConfigModel> {
   static Future<ConfigFile> fromFile(File file, JavaPath javaPath) async =>
       (await fromFiles([file], javaPath)).first;
 
-  static Future<List<ConfigFile>> fromFiles(List<File> files, JavaPath javaPath) async {
+  static Future<List<ConfigFile>> fromFiles(
+    List<File> files,
+    JavaPath javaPath, {
+    bool interpretAsMapConfig = false,
+  }) async {
     if (_hoconFile == null) {
       final Directory supportDir = await getApplicationSupportDirectory();
       _hoconFile = File(p.join(supportDir.path, "HOCONReader.jar"));
@@ -57,7 +61,7 @@ class ConfigFile<T extends BaseConfigModel> {
     return List.generate(files.length, (int index) {
       final File file = files[index];
       final configMap = jsonDecode(jsons[index]) as Map<String, Object?>;
-      if (p.basename(file.parent.path) == "maps") {
+      if (p.basename(file.parent.path) == "maps" || interpretAsMapConfig) {
         return ConfigFile(file, MapConfigModel.fromJson(configMap));
       } else {
         return switch (p.basename(file.path)) {

@@ -234,6 +234,27 @@ Defines the ambient light strength that every block is receiving, regardless of 
           ),
         ),
         ToggleOption(
+          title: "Render All Caves",
+          description: """
+By default, maps in BlueMap GUI will render all caves (unlike BlueMap itself, where caves have to be enabled manually).
+If you don't want to render caves, you can disable this option.
+This will save some storage space, and possibly some FPS on the webmap.
+Changing this requires a re-render of the map.""",
+          value: model.removeCavesBelowY == MapConfigModel.cavesEnabledY,
+          onChanged: (bool value) {
+            setState(() {
+              model = model.copyWith(
+                removeCavesBelowY: value ? MapConfigModel.cavesEnabledY : 55,
+              );
+            });
+
+            configFile!.changeValueInFile(
+              MapConfigKeys.removeCavesBelowY,
+              jsonEncode(model.removeCavesBelowY),
+            );
+          },
+        ),
+        ToggleOption(
           title: "Render Only Visited Chunks",
           description: """
 By default, BlueMap renders all chunks that have been generated.
