@@ -206,7 +206,7 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
           description: """
 Defines the initial sky light strength the map will be set to when it is opened.
 0 is no sky light, 1 is fully lit up.""",
-          value: model.skyLight ?? 1,
+          value: model.getSkyLight,
           min: 0,
           max: 1,
           onChanged: (double value) => setState(() {
@@ -285,13 +285,13 @@ Changing this may require a re-render of the map.""",
               icon: Icons.threed_rotation,
               label: "Perspective",
               description: "The default 3D view",
-              enabled: model.enablePerspectiveView ?? true,
+              enabled: model.getPerspectiveView,
               onPressed: (bool value) {
                 setState(() => model = model.copyWith(enablePerspectiveView: value));
 
                 configFile!.changeValueInFile(
                   MapConfigKeys.enablePerspectiveView,
-                  jsonEncode(model.enablePerspectiveView),
+                  jsonEncode(model.getPerspectiveView),
                 );
               },
             ),
@@ -299,13 +299,13 @@ Changing this may require a re-render of the map.""",
               icon: Icons.square_rounded,
               label: "Flat",
               description: "The top-down 2D view",
-              enabled: model.enableFlatView ?? true,
+              enabled: model.getFlatView,
               onPressed: (bool value) {
                 setState(() => model = model.copyWith(enableFlatView: value));
 
                 configFile!.changeValueInFile(
                   MapConfigKeys.enableFlatView,
-                  jsonEncode(model.enableFlatView),
+                  jsonEncode(model.getFlatView),
                 );
               },
             ),
@@ -313,13 +313,13 @@ Changing this may require a re-render of the map.""",
               icon: Icons.directions_run,
               label: "Free-flight",
               description: "Like spectator mode",
-              enabled: model.enableFreeFlightView ?? true,
+              enabled: model.getFreeFlightView,
               onPressed: (bool value) {
                 setState(() => model = model.copyWith(enableFreeFlightView: value));
 
                 configFile!.changeValueInFile(
                   MapConfigKeys.enableFreeFlightView,
-                  jsonEncode(model.enableFreeFlightView),
+                  jsonEncode(model.getFreeFlightView),
                 );
               },
             ),
@@ -332,13 +332,13 @@ Whether the high-resolution layer is enabled.
 When disabled, rendering will go faster and the map will take up much less storage space, but you will not be able to see the full 3D models if you zoom in on the map.
 Disabling this will not remove any existing tiles, but existing tiles just won't get updated anymore.
 Enabling this will require a re-render of the map.""",
-          value: model.enableHires,
+          value: model.getHiRes,
           onChanged: (bool value) {
             setState(() => model = model.copyWith(enableHires: value));
 
             configFile!.changeValueInFile(
               MapConfigKeys.enableHires,
-              jsonEncode(model.enableHires),
+              jsonEncode(model.getHiRes),
             );
           },
         ),
