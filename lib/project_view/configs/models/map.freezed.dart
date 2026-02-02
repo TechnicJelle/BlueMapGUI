@@ -281,7 +281,7 @@ as int,
 /// @nodoc
 mixin _$MapConfigModel {
 
- String get world; String get dimension; String get name; int get sorting; Vector2XZ get startPos; String get skyColor; String get voidColor; double? get skyLight; double get ambientLight; int get removeCavesBelowY; int get caveDetectionOceanFloor; bool get caveDetectionUsesBlockLight; int get minInhabitedTime; bool? get enablePerspectiveView; bool? get enableFlatView; bool? get enableFreeFlightView; bool? get enableHires; bool get ignoreMissingLightData;
+ String get world; String get dimension; String get name; int get sorting; Vector2XZ? get startPos; String get skyColor; String get voidColor; double? get skyLight; double get ambientLight; int get removeCavesBelowY; int get caveDetectionOceanFloor; bool get caveDetectionUsesBlockLight; int get minInhabitedTime; bool? get enablePerspectiveView; bool? get enableFlatView; bool? get enableFreeFlightView; bool? get enableHires; bool get ignoreMissingLightData;
 /// Create a copy of MapConfigModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -314,11 +314,11 @@ abstract mixin class $MapConfigModelCopyWith<$Res>  {
   factory $MapConfigModelCopyWith(MapConfigModel value, $Res Function(MapConfigModel) _then) = _$MapConfigModelCopyWithImpl;
 @useResult
 $Res call({
- String world, String dimension, String name, int sorting, Vector2XZ startPos, String skyColor, String voidColor, double? skyLight, double ambientLight, int removeCavesBelowY, int caveDetectionOceanFloor, bool caveDetectionUsesBlockLight, int minInhabitedTime, bool? enablePerspectiveView, bool? enableFlatView, bool? enableFreeFlightView, bool? enableHires, bool ignoreMissingLightData
+ String world, String dimension, String name, int sorting, Vector2XZ? startPos, String skyColor, String voidColor, double? skyLight, double ambientLight, int removeCavesBelowY, int caveDetectionOceanFloor, bool caveDetectionUsesBlockLight, int minInhabitedTime, bool? enablePerspectiveView, bool? enableFlatView, bool? enableFreeFlightView, bool? enableHires, bool ignoreMissingLightData
 });
 
 
-$Vector2XZCopyWith<$Res> get startPos;
+$Vector2XZCopyWith<$Res>? get startPos;
 
 }
 /// @nodoc
@@ -331,14 +331,14 @@ class _$MapConfigModelCopyWithImpl<$Res>
 
 /// Create a copy of MapConfigModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? world = null,Object? dimension = null,Object? name = null,Object? sorting = null,Object? startPos = null,Object? skyColor = null,Object? voidColor = null,Object? skyLight = freezed,Object? ambientLight = null,Object? removeCavesBelowY = null,Object? caveDetectionOceanFloor = null,Object? caveDetectionUsesBlockLight = null,Object? minInhabitedTime = null,Object? enablePerspectiveView = freezed,Object? enableFlatView = freezed,Object? enableFreeFlightView = freezed,Object? enableHires = freezed,Object? ignoreMissingLightData = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? world = null,Object? dimension = null,Object? name = null,Object? sorting = null,Object? startPos = freezed,Object? skyColor = null,Object? voidColor = null,Object? skyLight = freezed,Object? ambientLight = null,Object? removeCavesBelowY = null,Object? caveDetectionOceanFloor = null,Object? caveDetectionUsesBlockLight = null,Object? minInhabitedTime = null,Object? enablePerspectiveView = freezed,Object? enableFlatView = freezed,Object? enableFreeFlightView = freezed,Object? enableHires = freezed,Object? ignoreMissingLightData = null,}) {
   return _then(_self.copyWith(
 world: null == world ? _self.world : world // ignore: cast_nullable_to_non_nullable
 as String,dimension: null == dimension ? _self.dimension : dimension // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,sorting: null == sorting ? _self.sorting : sorting // ignore: cast_nullable_to_non_nullable
-as int,startPos: null == startPos ? _self.startPos : startPos // ignore: cast_nullable_to_non_nullable
-as Vector2XZ,skyColor: null == skyColor ? _self.skyColor : skyColor // ignore: cast_nullable_to_non_nullable
+as int,startPos: freezed == startPos ? _self.startPos : startPos // ignore: cast_nullable_to_non_nullable
+as Vector2XZ?,skyColor: null == skyColor ? _self.skyColor : skyColor // ignore: cast_nullable_to_non_nullable
 as String,voidColor: null == voidColor ? _self.voidColor : voidColor // ignore: cast_nullable_to_non_nullable
 as String,skyLight: freezed == skyLight ? _self.skyLight : skyLight // ignore: cast_nullable_to_non_nullable
 as double?,ambientLight: null == ambientLight ? _self.ambientLight : ambientLight // ignore: cast_nullable_to_non_nullable
@@ -358,9 +358,12 @@ as bool,
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$Vector2XZCopyWith<$Res> get startPos {
-  
-  return $Vector2XZCopyWith<$Res>(_self.startPos, (value) {
+$Vector2XZCopyWith<$Res>? get startPos {
+    if (_self.startPos == null) {
+    return null;
+  }
+
+  return $Vector2XZCopyWith<$Res>(_self.startPos!, (value) {
     return _then(_self.copyWith(startPos: value));
   });
 }
@@ -445,7 +448,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String world,  String dimension,  String name,  int sorting,  Vector2XZ startPos,  String skyColor,  String voidColor,  double? skyLight,  double ambientLight,  int removeCavesBelowY,  int caveDetectionOceanFloor,  bool caveDetectionUsesBlockLight,  int minInhabitedTime,  bool? enablePerspectiveView,  bool? enableFlatView,  bool? enableFreeFlightView,  bool? enableHires,  bool ignoreMissingLightData)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String world,  String dimension,  String name,  int sorting,  Vector2XZ? startPos,  String skyColor,  String voidColor,  double? skyLight,  double ambientLight,  int removeCavesBelowY,  int caveDetectionOceanFloor,  bool caveDetectionUsesBlockLight,  int minInhabitedTime,  bool? enablePerspectiveView,  bool? enableFlatView,  bool? enableFreeFlightView,  bool? enableHires,  bool ignoreMissingLightData)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _MapConfigModel() when $default != null:
 return $default(_that.world,_that.dimension,_that.name,_that.sorting,_that.startPos,_that.skyColor,_that.voidColor,_that.skyLight,_that.ambientLight,_that.removeCavesBelowY,_that.caveDetectionOceanFloor,_that.caveDetectionUsesBlockLight,_that.minInhabitedTime,_that.enablePerspectiveView,_that.enableFlatView,_that.enableFreeFlightView,_that.enableHires,_that.ignoreMissingLightData);case _:
@@ -466,7 +469,7 @@ return $default(_that.world,_that.dimension,_that.name,_that.sorting,_that.start
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String world,  String dimension,  String name,  int sorting,  Vector2XZ startPos,  String skyColor,  String voidColor,  double? skyLight,  double ambientLight,  int removeCavesBelowY,  int caveDetectionOceanFloor,  bool caveDetectionUsesBlockLight,  int minInhabitedTime,  bool? enablePerspectiveView,  bool? enableFlatView,  bool? enableFreeFlightView,  bool? enableHires,  bool ignoreMissingLightData)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String world,  String dimension,  String name,  int sorting,  Vector2XZ? startPos,  String skyColor,  String voidColor,  double? skyLight,  double ambientLight,  int removeCavesBelowY,  int caveDetectionOceanFloor,  bool caveDetectionUsesBlockLight,  int minInhabitedTime,  bool? enablePerspectiveView,  bool? enableFlatView,  bool? enableFreeFlightView,  bool? enableHires,  bool ignoreMissingLightData)  $default,) {final _that = this;
 switch (_that) {
 case _MapConfigModel():
 return $default(_that.world,_that.dimension,_that.name,_that.sorting,_that.startPos,_that.skyColor,_that.voidColor,_that.skyLight,_that.ambientLight,_that.removeCavesBelowY,_that.caveDetectionOceanFloor,_that.caveDetectionUsesBlockLight,_that.minInhabitedTime,_that.enablePerspectiveView,_that.enableFlatView,_that.enableFreeFlightView,_that.enableHires,_that.ignoreMissingLightData);case _:
@@ -486,7 +489,7 @@ return $default(_that.world,_that.dimension,_that.name,_that.sorting,_that.start
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String world,  String dimension,  String name,  int sorting,  Vector2XZ startPos,  String skyColor,  String voidColor,  double? skyLight,  double ambientLight,  int removeCavesBelowY,  int caveDetectionOceanFloor,  bool caveDetectionUsesBlockLight,  int minInhabitedTime,  bool? enablePerspectiveView,  bool? enableFlatView,  bool? enableFreeFlightView,  bool? enableHires,  bool ignoreMissingLightData)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String world,  String dimension,  String name,  int sorting,  Vector2XZ? startPos,  String skyColor,  String voidColor,  double? skyLight,  double ambientLight,  int removeCavesBelowY,  int caveDetectionOceanFloor,  bool caveDetectionUsesBlockLight,  int minInhabitedTime,  bool? enablePerspectiveView,  bool? enableFlatView,  bool? enableFreeFlightView,  bool? enableHires,  bool ignoreMissingLightData)?  $default,) {final _that = this;
 switch (_that) {
 case _MapConfigModel() when $default != null:
 return $default(_that.world,_that.dimension,_that.name,_that.sorting,_that.startPos,_that.skyColor,_that.voidColor,_that.skyLight,_that.ambientLight,_that.removeCavesBelowY,_that.caveDetectionOceanFloor,_that.caveDetectionUsesBlockLight,_that.minInhabitedTime,_that.enablePerspectiveView,_that.enableFlatView,_that.enableFreeFlightView,_that.enableHires,_that.ignoreMissingLightData);case _:
@@ -508,7 +511,7 @@ class _MapConfigModel extends MapConfigModel {
 @override final  String dimension;
 @override final  String name;
 @override final  int sorting;
-@override final  Vector2XZ startPos;
+@override final  Vector2XZ? startPos;
 @override final  String skyColor;
 @override final  String voidColor;
 @override final  double? skyLight;
@@ -556,11 +559,11 @@ abstract mixin class _$MapConfigModelCopyWith<$Res> implements $MapConfigModelCo
   factory _$MapConfigModelCopyWith(_MapConfigModel value, $Res Function(_MapConfigModel) _then) = __$MapConfigModelCopyWithImpl;
 @override @useResult
 $Res call({
- String world, String dimension, String name, int sorting, Vector2XZ startPos, String skyColor, String voidColor, double? skyLight, double ambientLight, int removeCavesBelowY, int caveDetectionOceanFloor, bool caveDetectionUsesBlockLight, int minInhabitedTime, bool? enablePerspectiveView, bool? enableFlatView, bool? enableFreeFlightView, bool? enableHires, bool ignoreMissingLightData
+ String world, String dimension, String name, int sorting, Vector2XZ? startPos, String skyColor, String voidColor, double? skyLight, double ambientLight, int removeCavesBelowY, int caveDetectionOceanFloor, bool caveDetectionUsesBlockLight, int minInhabitedTime, bool? enablePerspectiveView, bool? enableFlatView, bool? enableFreeFlightView, bool? enableHires, bool ignoreMissingLightData
 });
 
 
-@override $Vector2XZCopyWith<$Res> get startPos;
+@override $Vector2XZCopyWith<$Res>? get startPos;
 
 }
 /// @nodoc
@@ -573,14 +576,14 @@ class __$MapConfigModelCopyWithImpl<$Res>
 
 /// Create a copy of MapConfigModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? world = null,Object? dimension = null,Object? name = null,Object? sorting = null,Object? startPos = null,Object? skyColor = null,Object? voidColor = null,Object? skyLight = freezed,Object? ambientLight = null,Object? removeCavesBelowY = null,Object? caveDetectionOceanFloor = null,Object? caveDetectionUsesBlockLight = null,Object? minInhabitedTime = null,Object? enablePerspectiveView = freezed,Object? enableFlatView = freezed,Object? enableFreeFlightView = freezed,Object? enableHires = freezed,Object? ignoreMissingLightData = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? world = null,Object? dimension = null,Object? name = null,Object? sorting = null,Object? startPos = freezed,Object? skyColor = null,Object? voidColor = null,Object? skyLight = freezed,Object? ambientLight = null,Object? removeCavesBelowY = null,Object? caveDetectionOceanFloor = null,Object? caveDetectionUsesBlockLight = null,Object? minInhabitedTime = null,Object? enablePerspectiveView = freezed,Object? enableFlatView = freezed,Object? enableFreeFlightView = freezed,Object? enableHires = freezed,Object? ignoreMissingLightData = null,}) {
   return _then(_MapConfigModel(
 world: null == world ? _self.world : world // ignore: cast_nullable_to_non_nullable
 as String,dimension: null == dimension ? _self.dimension : dimension // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,sorting: null == sorting ? _self.sorting : sorting // ignore: cast_nullable_to_non_nullable
-as int,startPos: null == startPos ? _self.startPos : startPos // ignore: cast_nullable_to_non_nullable
-as Vector2XZ,skyColor: null == skyColor ? _self.skyColor : skyColor // ignore: cast_nullable_to_non_nullable
+as int,startPos: freezed == startPos ? _self.startPos : startPos // ignore: cast_nullable_to_non_nullable
+as Vector2XZ?,skyColor: null == skyColor ? _self.skyColor : skyColor // ignore: cast_nullable_to_non_nullable
 as String,voidColor: null == voidColor ? _self.voidColor : voidColor // ignore: cast_nullable_to_non_nullable
 as String,skyLight: freezed == skyLight ? _self.skyLight : skyLight // ignore: cast_nullable_to_non_nullable
 as double?,ambientLight: null == ambientLight ? _self.ambientLight : ambientLight // ignore: cast_nullable_to_non_nullable
@@ -601,9 +604,12 @@ as bool,
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$Vector2XZCopyWith<$Res> get startPos {
-  
-  return $Vector2XZCopyWith<$Res>(_self.startPos, (value) {
+$Vector2XZCopyWith<$Res>? get startPos {
+    if (_self.startPos == null) {
+    return null;
+  }
+
+  return $Vector2XZCopyWith<$Res>(_self.startPos!, (value) {
     return _then(_self.copyWith(startPos: value));
   });
 }

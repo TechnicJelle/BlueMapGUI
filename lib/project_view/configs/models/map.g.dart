@@ -26,7 +26,9 @@ _MapConfigModel _$MapConfigModelFromJson(
   dimension: json['dimension'] as String,
   name: json['name'] as String,
   sorting: (json['sorting'] as num).toInt(),
-  startPos: Vector2XZ.fromJson(json['start-pos'] as Map<String, dynamic>),
+  startPos: json['start-pos'] == null
+      ? null
+      : Vector2XZ.fromJson(json['start-pos'] as Map<String, dynamic>),
   skyColor: json['sky-color'] as String,
   voidColor: json['void-color'] as String,
   skyLight: (json['sky-light'] as num?)?.toDouble(),

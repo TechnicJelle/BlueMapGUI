@@ -40,7 +40,7 @@ abstract class MapConfigModel extends BaseConfigModel with _$MapConfigModel {
 
     required int sorting,
 
-    required Vector2XZ startPos,
+    required Vector2XZ? startPos,
 
     required String skyColor,
     required String voidColor,
@@ -77,6 +77,8 @@ abstract class MapConfigModel extends BaseConfigModel with _$MapConfigModel {
   }
 
   //non-null defaults
+  Vector2XZ get getStartPos => startPos ?? const Vector2XZ(x: 0, z: 0);
+
   double get getSkyLight => skyLight ?? 1;
 
   bool get getPerspectiveView => enablePerspectiveView ?? true;

@@ -64,8 +64,8 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
       worldController = TextEditingController(text: model.world);
       dimensionController = TextEditingController(text: model.dimension);
       nameController = TextEditingController(text: model.name);
-      startPosXController = TextEditingController(text: model.startPos.x.toString());
-      startPosZController = TextEditingController(text: model.startPos.z.toString());
+      startPosXController = TextEditingController(text: model.getStartPos.x.toString());
+      startPosZController = TextEditingController(text: model.getStartPos.z.toString());
     });
   }
 
@@ -93,20 +93,20 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
     }
     if (startPosXController.text.trim().isNotEmpty) {
       model = model.copyWith(
-        startPos: model.startPos.copyWith(x: int.parse(startPosXController.text)),
+        startPos: model.getStartPos.copyWith(x: int.parse(startPosXController.text)),
       );
       configFile!.changeValueInFile(
         MapConfigKeys.startPos,
-        model.startPos.toHocon(),
+        model.getStartPos.toHocon(),
       );
     }
     if (startPosZController.text.trim().isNotEmpty) {
       model = model.copyWith(
-        startPos: model.startPos.copyWith(z: int.parse(startPosZController.text)),
+        startPos: model.getStartPos.copyWith(z: int.parse(startPosZController.text)),
       );
       configFile!.changeValueInFile(
         MapConfigKeys.startPos,
-        model.startPos.toHocon(),
+        model.getStartPos.toHocon(),
       );
     }
   }
