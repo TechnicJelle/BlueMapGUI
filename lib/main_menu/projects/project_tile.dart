@@ -58,8 +58,18 @@ class _OpeningStateNotifier extends Notifier<_OpeningStep?> {
     return _openError;
   }
 
-  String? getErrorDetails() {
-    return _openErrorDetails;
+  Widget? getErrorDetails(BuildContext context) {
+    return Flexible(
+      child: SingleChildScrollView(
+        child: Text(
+          _openErrorDetails ?? "<no error details>",
+          //sub text
+          style: Theme.of(
+            context,
+          ).textTheme.bodySmall?.copyWith(fontFamily: "monospace"),
+        ),
+      ),
+    );
   }
 }
 
@@ -454,11 +464,7 @@ class _OpenProjectDialog extends ConsumerWidget {
                     "Check your internet connection and try again.",
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    "${ref.read(_openingStateProvider.notifier).getErrorDetails()}",
-                    //sub text
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
+                  ?ref.read(_openingStateProvider.notifier).getErrorDetails(context),
                 ],
                 _OpenError.wrongHash => [
                   const Text(
@@ -474,20 +480,12 @@ class _OpenProjectDialog extends ConsumerWidget {
                     "Please check your Java settings and try again.",
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    "${ref.read(_openingStateProvider.notifier).getErrorDetails()}",
-                    //sub text
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
+                  ?ref.read(_openingStateProvider.notifier).getErrorDetails(context),
                 ],
                 _OpenError.copyFail => [
                   const Text("Failed to copy BlueMap GUI config into the project!"),
                   const SizedBox(height: 8),
-                  Text(
-                    "${ref.read(_openingStateProvider.notifier).getErrorDetails()}",
-                    //sub text
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
+                  ?ref.read(_openingStateProvider.notifier).getErrorDetails(context),
                 ],
               },
             )
