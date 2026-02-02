@@ -54,9 +54,6 @@ abstract class MapConfigModel extends BaseConfigModel with _$MapConfigModel {
 
     required int minInhabitedTime,
 
-    required bool renderEdges,
-    required int? edgeLightStrength,
-
     required bool? enablePerspectiveView,
     required bool? enableFlatView,
     required bool? enableFreeFlightView,

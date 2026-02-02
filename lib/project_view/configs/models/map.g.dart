@@ -35,8 +35,6 @@ _MapConfigModel _$MapConfigModelFromJson(
   caveDetectionOceanFloor: (json['cave-detection-ocean-floor'] as num).toInt(),
   caveDetectionUsesBlockLight: json['cave-detection-uses-block-light'] as bool,
   minInhabitedTime: (json['min-inhabited-time'] as num).toInt(),
-  renderEdges: json['render-edges'] as bool,
-  edgeLightStrength: (json['edge-light-strength'] as num?)?.toInt(),
   enablePerspectiveView: json['enable-perspective-view'] as bool?,
   enableFlatView: json['enable-flat-view'] as bool?,
   enableFreeFlightView: json['enable-free-flight-view'] as bool?,
@@ -59,8 +57,6 @@ abstract final class _$MapConfigModelJsonKeys {
   static const String caveDetectionUsesBlockLight =
       'cave-detection-uses-block-light';
   static const String minInhabitedTime = 'min-inhabited-time';
-  static const String renderEdges = 'render-edges';
-  static const String edgeLightStrength = 'edge-light-strength';
   static const String enablePerspectiveView = 'enable-perspective-view';
   static const String enableFlatView = 'enable-flat-view';
   static const String enableFreeFlightView = 'enable-free-flight-view';
@@ -83,8 +79,6 @@ Map<String, dynamic> _$MapConfigModelToJson(_MapConfigModel instance) =>
       'cave-detection-ocean-floor': instance.caveDetectionOceanFloor,
       'cave-detection-uses-block-light': instance.caveDetectionUsesBlockLight,
       'min-inhabited-time': instance.minInhabitedTime,
-      'render-edges': instance.renderEdges,
-      'edge-light-strength': instance.edgeLightStrength,
       'enable-perspective-view': instance.enablePerspectiveView,
       'enable-flat-view': instance.enableFlatView,
       'enable-free-flight-view': instance.enableFreeFlightView,
