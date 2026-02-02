@@ -102,32 +102,54 @@ class ConfigTitle extends StatelessWidget {
   }
 }
 
-class _Option extends StatelessWidget {
+class _Option extends StatefulWidget {
   static const EdgeInsets _settingHeadingPadding = .only(bottom: 8);
 
   final String title;
   final List<SettingsBodyBase> descriptionList;
   final Widget? subtitle;
   final Widget? button;
+  final bool shouldPadBottom;
 
   const _Option({
     required this.title,
     required this.descriptionList,
     this.subtitle,
     this.button,
+    this.shouldPadBottom = false,
   });
 
   @override
+  State<_Option> createState() => _OptionState();
+}
+
+class _OptionState extends State<_Option> {
+  Color? hoverColour;
+
+  bool hovered = false;
+
+  @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: SettingHeading(
-        context,
-        title,
-        padding: _settingHeadingPadding,
-        descriptionList,
+    hoverColour ??= Theme.of(context).hoverColor;
+    return MouseRegion(
+      onEnter: (_) => setState(() => hovered = true),
+      onExit: (_) => setState(() => hovered = false),
+      child: ListTile(
+        title: SettingHeading(
+          context,
+          widget.title,
+          padding: _Option._settingHeadingPadding,
+          widget.descriptionList,
+        ),
+        subtitle: widget.shouldPadBottom
+            ? Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: widget.subtitle,
+              )
+            : widget.subtitle,
+        trailing: widget.button,
+        tileColor: hovered ? hoverColour : null,
       ),
-      subtitle: subtitle,
-      trailing: button,
     );
   }
 }
@@ -332,6 +354,7 @@ class TextFieldOption extends StatelessWidget {
         keyboardType: keyboardType,
         inputFormatters: inputFormatter != null ? [inputFormatter!] : null,
       ),
+      shouldPadBottom: true,
     );
   }
 }
@@ -417,6 +440,7 @@ class Vector2XZOption extends StatelessWidget {
           ),
         ],
       ),
+      shouldPadBottom: true,
     );
   }
 }
@@ -663,6 +687,7 @@ class BoolListOption extends StatelessWidget {
           );
         },
       ),
+      shouldPadBottom: true,
     );
   }
 }
