@@ -124,7 +124,7 @@ class _ConsoleState extends ConsumerState<Console> {
                 } else if (message.contains("INFO")) {
                   colour = Colors.white;
                 }
-                return Text(message, style: TextStyle(color: colour));
+                return SelectableText(message, style: TextStyle(color: colour));
               },
               itemCount: output.length,
             ),
