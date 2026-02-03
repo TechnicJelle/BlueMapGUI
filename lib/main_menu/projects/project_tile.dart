@@ -194,9 +194,10 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
       title: "Remove Project",
       content: [
         Text(
-          "Are you sure you want to remove $projectName from the projects list?\n"
-          "This will not delete the project directory from your disk.\n"
-          "It will only be removed from the list.",
+          """
+Are you sure you want to remove $projectName from the projects list?
+This will not delete the project directory from your disk.
+It will only be removed from the list.""",
         ),
       ],
       confirmAction: "Yes",
@@ -460,24 +461,28 @@ class _OpenProjectDialog extends ConsumerWidget {
                 ],
                 _OpenError.downloadFailed => [
                   const Text(
-                    "Failed to download BlueMap CLI JAR.\n"
-                    "Check your internet connection and try again.",
+                    """
+Failed to download BlueMap CLI JAR.
+Check your internet connection and try again.
+                    """,
                   ),
                   const SizedBox(height: 8),
                   ?ref.read(_openingStateProvider.notifier).getErrorDetails(context),
                 ],
                 _OpenError.wrongHash => [
                   const Text(
-                    "Could not verify the downloaded BlueMap CLI JAR's integrity!\n"
-                    "The hash of the downloaded file does not match the expected hash.",
+                    """
+Could not verify the downloaded BlueMap CLI JAR's integrity!
+The hash of the downloaded file does not match the expected hash.""",
                   ),
                   const SizedBox(height: 8),
                   const Text("Please try again later or download the file manually."),
                 ],
                 _OpenError.runFail => [
                   const Text(
-                    "Failed to run the CLI to generate default BlueMap configs!\n"
-                    "Please check your Java settings and try again.",
+                    """
+Failed to run the CLI to generate default BlueMap configs!
+Please check your Java settings and try again.""",
                   ),
                   const SizedBox(height: 8),
                   ?ref.read(_openingStateProvider.notifier).getErrorDetails(context),
