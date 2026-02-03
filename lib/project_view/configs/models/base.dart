@@ -77,6 +77,7 @@ class ConfigFile<T extends BaseConfigModel> {
     });
   }
 
+  ///if [optionName] is not found, it just doesn't do anything
   void changeValueInFile(String optionName, String newValue) {
     final RegExp optionRegex = RegExp("(^\\s*$optionName:\\s*).*\$", multiLine: true);
 

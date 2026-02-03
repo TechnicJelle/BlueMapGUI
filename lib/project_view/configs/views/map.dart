@@ -30,8 +30,8 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
   late TextEditingController worldController;
   late TextEditingController dimensionController;
   late TextEditingController nameController;
-  late TextEditingController startPosXController;
-  late TextEditingController startPosZController;
+  TextEditingController? startPosXController;
+  TextEditingController? startPosZController;
 
   @override
   void dispose() {
@@ -39,8 +39,8 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
     worldController.dispose();
     dimensionController.dispose();
     nameController.dispose();
-    startPosXController.dispose();
-    startPosZController.dispose();
+    startPosXController?.dispose();
+    startPosZController?.dispose();
     super.dispose();
   }
 
@@ -55,8 +55,8 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
       worldController.dispose();
       dimensionController.dispose();
       nameController.dispose();
-      startPosXController.dispose();
-      startPosZController.dispose();
+      startPosXController?.dispose();
+      startPosZController?.dispose();
     }
 
     setState(() {
@@ -64,8 +64,10 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
       worldController = TextEditingController(text: model.world);
       dimensionController = TextEditingController(text: model.dimension);
       nameController = TextEditingController(text: model.name);
-      startPosXController = TextEditingController(text: model.getStartPos.x.toString());
-      startPosZController = TextEditingController(text: model.getStartPos.z.toString());
+      if (model.startPos != null) {
+        startPosXController = TextEditingController(text: model.startPos!.x.toString());
+        startPosZController = TextEditingController(text: model.startPos!.z.toString());
+      }
     });
   }
 
@@ -91,22 +93,22 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
         jsonEncode(model.name),
       );
     }
-    if (startPosXController.text.trim().isNotEmpty) {
+    if (startPosXController?.text.trim().isNotEmpty ?? false) {
       model = model.copyWith(
-        startPos: model.getStartPos.copyWith(x: int.parse(startPosXController.text)),
+        startPos: model.startPos!.copyWith(x: int.parse(startPosXController!.text)),
       );
       configFile!.changeValueInFile(
         MapConfigKeys.startPos,
-        model.getStartPos.toHocon(),
+        model.startPos!.toHocon(),
       );
     }
-    if (startPosZController.text.trim().isNotEmpty) {
+    if (startPosZController?.text.trim().isNotEmpty ?? false) {
       model = model.copyWith(
-        startPos: model.getStartPos.copyWith(z: int.parse(startPosZController.text)),
+        startPos: model.startPos!.copyWith(z: int.parse(startPosZController!.text)),
       );
       configFile!.changeValueInFile(
         MapConfigKeys.startPos,
-        model.getStartPos.toHocon(),
+        model.startPos!.toHocon(),
       );
     }
   }
@@ -206,7 +208,7 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
           description: """
 Defines the initial sky light strength the map will be set to when it is opened.
 0 is no sky light, 1 is fully lit up.""",
-          value: model.getSkyLight,
+          value: model.skyLight,
           min: 0,
           max: 1,
           onChanged: (double value) => setState(() {
@@ -285,13 +287,13 @@ Changing this may require a re-render of the map.""",
               icon: Icons.threed_rotation,
               label: "Perspective",
               description: "The default 3D view",
-              enabled: model.getPerspectiveView,
+              enabled: model.enablePerspectiveView,
               onPressed: (bool value) {
                 setState(() => model = model.copyWith(enablePerspectiveView: value));
 
                 configFile!.changeValueInFile(
                   MapConfigKeys.enablePerspectiveView,
-                  jsonEncode(model.getPerspectiveView),
+                  jsonEncode(model.enablePerspectiveView),
                 );
               },
             ),
@@ -299,13 +301,13 @@ Changing this may require a re-render of the map.""",
               icon: Icons.square_rounded,
               label: "Flat",
               description: "The top-down 2D view",
-              enabled: model.getFlatView,
+              enabled: model.enableFlatView,
               onPressed: (bool value) {
                 setState(() => model = model.copyWith(enableFlatView: value));
 
                 configFile!.changeValueInFile(
                   MapConfigKeys.enableFlatView,
-                  jsonEncode(model.getFlatView),
+                  jsonEncode(model.enableFlatView),
                 );
               },
             ),
@@ -313,13 +315,13 @@ Changing this may require a re-render of the map.""",
               icon: Icons.directions_run,
               label: "Free-flight",
               description: "Like spectator mode",
-              enabled: model.getFreeFlightView,
+              enabled: model.enableFreeFlightView,
               onPressed: (bool value) {
                 setState(() => model = model.copyWith(enableFreeFlightView: value));
 
                 configFile!.changeValueInFile(
                   MapConfigKeys.enableFreeFlightView,
-                  jsonEncode(model.getFreeFlightView),
+                  jsonEncode(model.enableFreeFlightView),
                 );
               },
             ),
@@ -332,13 +334,13 @@ Whether the high-resolution layer is enabled.
 When disabled, rendering will go faster and the map will take up much less storage space, but you will not be able to see the full 3D models if you zoom in on the map.
 Disabling this will not remove any existing tiles, but existing tiles just won't get updated anymore.
 Enabling this will require a re-render of the map.""",
-          value: model.getHiRes,
+          value: model.enableHires,
           onChanged: (bool value) {
             setState(() => model = model.copyWith(enableHires: value));
 
             configFile!.changeValueInFile(
               MapConfigKeys.enableHires,
-              jsonEncode(model.getHiRes),
+              jsonEncode(model.enableHires),
             );
           },
         ),

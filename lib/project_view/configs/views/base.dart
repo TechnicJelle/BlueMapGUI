@@ -230,7 +230,7 @@ class IntSliderOption extends StatelessWidget {
 class DoubleSliderOption extends StatelessWidget {
   final String title;
   final List<SettingsBodyBase> descriptionList;
-  final double value;
+  final double? value;
   final double min;
   final double max;
   final ValueChanged<double> onChanged;
@@ -266,7 +266,7 @@ class DoubleSliderOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliderTheme(
+    final child = SliderTheme(
       data: const SliderThemeData(showValueIndicator: ShowValueIndicator.onDrag),
       child: _Option(
         title: title,
@@ -275,17 +275,18 @@ class DoubleSliderOption extends StatelessWidget {
           children: [
             Row(
               children: [
-                Text(
-                  value.toStringAsFixed(2),
-                  style: pixelCode,
-                ),
+                if (value != null)
+                  Text(
+                    value!.toStringAsFixed(2),
+                    style: pixelCode,
+                  ),
                 Expanded(
                   child: Slider(
-                    value: value,
-                    label: value.toStringAsFixed(2),
+                    value: value ?? max,
+                    label: value?.toStringAsFixed(2) ?? "",
                     min: min,
-                    max: math.max(value, max),
-                    onChanged: value > max ? null : onChanged,
+                    max: math.max(value ?? max, max),
+                    onChanged: value == null || value! > max ? null : onChanged,
                     onChangeEnd: onChangeEnd,
                     activeColor: sliderColor,
                   ),
@@ -297,6 +298,14 @@ class DoubleSliderOption extends StatelessWidget {
         ),
       ),
     );
+    return value == null
+        ? Tooltip(
+            message: """
+Config file does not contain this option! It is probably too old.
+Button will be disabled until the config file contains the option.""",
+            child: child,
+          )
+        : child;
   }
 }
 
@@ -362,8 +371,8 @@ class TextFieldOption extends StatelessWidget {
 class Vector2XZOption extends StatelessWidget {
   final String title;
   final List<SettingsBodyBase> descriptionList;
-  final TextEditingController controllerX;
-  final TextEditingController controllerZ;
+  final TextEditingController? controllerX;
+  final TextEditingController? controllerZ;
   final ValueChanged<String>? onChanged;
   final VoidCallback onEditingComplete;
 
@@ -406,13 +415,14 @@ class Vector2XZOption extends StatelessWidget {
       return oldValue;
     });
 
-    return _Option(
+    final child = _Option(
       title: title,
       descriptionList: descriptionList,
       subtitle: Row(
         children: [
           Flexible(
             child: TextField(
+              enabled: controllerX != null,
               controller: controllerX,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
@@ -427,6 +437,7 @@ class Vector2XZOption extends StatelessWidget {
           const SizedBox(width: 16),
           Flexible(
             child: TextField(
+              enabled: controllerZ != null,
               controller: controllerZ,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
@@ -442,6 +453,15 @@ class Vector2XZOption extends StatelessWidget {
       ),
       shouldPadBottom: true,
     );
+
+    return controllerX != null && controllerZ != null
+        ? child
+        : Tooltip(
+            message: """
+Config file does not contain (some of) these options! It is probably too old.
+Buttons will be disabled until the config file contains all the options.""",
+            child: child,
+          );
   }
 }
 
@@ -469,7 +489,7 @@ class ToggleOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CheckboxListTile(
+    final child = CheckboxListTile(
       title: SettingHeading(
         context,
         title,
@@ -481,7 +501,18 @@ class ToggleOption extends StatelessWidget {
         if (value == null) return;
         onChanged(value);
       },
+      tristate: value == null,
+      enabled: value != null,
+      fillColor: value == null ? .all(Colors.grey) : null,
     );
+    return value == null
+        ? Tooltip(
+            message: """
+Config file does not contain this option! It is probably too old.
+Button will be disabled until the config file contains the option.""",
+            child: child,
+          )
+        : child;
   }
 }
 
@@ -592,7 +623,7 @@ typedef BoolListOptionType = ({
   IconData icon,
   String label,
   String description,
-  bool enabled,
+  bool? enabled,
   ValueChanged<bool> onPressed,
 });
 
@@ -632,6 +663,8 @@ class BoolListOption extends StatelessWidget {
           value: option.enabled,
           mouseCursor: .defer,
           onChanged: null,
+          tristate: option.enabled == null,
+          fillColor: option.enabled == null ? .all(Colors.grey) : null,
         ),
         const SizedBox(width: 8),
         Column(
@@ -665,14 +698,19 @@ class BoolListOption extends StatelessWidget {
       descriptionList: descriptionList,
       subtitle: LayoutBuilder(
         builder: (context, constraints) {
-          return ToggleButtons(
+          final bool enabled = !options.any((option) => option.enabled == null);
+          final child = ToggleButtons(
             borderRadius: const BorderRadius.all(Radius.circular(8)),
             direction: constraints.maxWidth < breakpoint ? .vertical : .horizontal,
-            onPressed: (index) {
-              final option = options[index];
-              option.onPressed(!option.enabled);
-            },
-            isSelected: options.map((option) => option.enabled).toList(growable: false),
+            onPressed: enabled
+                ? (int index) {
+                    final option = options[index];
+                    option.onPressed(!option.enabled!);
+                  }
+                : null,
+            isSelected: options
+                .map((option) => option.enabled ?? false)
+                .toList(growable: false),
             children: options
                 .map((option) {
                   final button = _generateButton(option);
@@ -685,6 +723,15 @@ class BoolListOption extends StatelessWidget {
                 })
                 .toList(growable: false),
           );
+
+          return enabled
+              ? child
+              : Tooltip(
+                  message: """
+Config file does not contain (some of) these options! It is probably too old.
+Buttons will be disabled until the config file contains all the options.""",
+                  child: child,
+                );
         },
       ),
       shouldPadBottom: true,
