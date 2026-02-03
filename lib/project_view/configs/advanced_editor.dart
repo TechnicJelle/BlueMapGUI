@@ -27,6 +27,7 @@ class _AdvancedEditorState extends ConsumerState<AdvancedEditor> {
   ConfigFile? openConfig;
   late final Timer autoSaveTimer;
   bool hasChanged = false;
+  int? errorOnLine;
 
   @override
   void initState() {
@@ -41,14 +42,35 @@ class _AdvancedEditorState extends ConsumerState<AdvancedEditor> {
 
   void writeFile(ConfigFile file) {
     if (!hasChanged) return;
-    final project = ref.read(projectProviderNotifier);
 
     hasChanged = false;
-    unawaited(
-      file.file.writeAsString(codeController.text).then((File file) {
-        unawaited(project.refreshConfigFile(file));
-      }),
-    );
+    unawaited(_write(file.file));
+  }
+
+  Future<void> _write(File file) async {
+    await file.writeAsString(codeController.text);
+    final project = ref.read(projectProviderNotifier);
+
+    try {
+      await project.refreshConfigFile(file);
+      errorOnLine = null;
+    } on ConfigFileCastException catch (e) {
+      //TODO: Figure out a way to display this error to the user too
+      debugPrint(e.message);
+    } on ConfigFileLoadException catch (e) {
+      final RegExp lineFinder = RegExp(r"line\s*(\d+)");
+      final match = lineFinder.firstMatch(e.stderr);
+      if (match != null) {
+        final String? lineNumber = match[1];
+        if (lineNumber != null) {
+          setState(() {
+            errorOnLine = int.tryParse(lineNumber);
+            // We add 5 to make up for the header that each config has
+            if (errorOnLine != null) errorOnLine = errorOnLine! + 5;
+          });
+        }
+      }
+    }
   }
 
   Future<void> readFile(ConfigFile file) async {
@@ -59,6 +81,7 @@ class _AdvancedEditorState extends ConsumerState<AdvancedEditor> {
     codeController.clearHistory();
     openConfig = file;
     hasChanged = false;
+    errorOnLine = null;
   }
 
   @override
@@ -91,11 +114,21 @@ class _AdvancedEditorState extends ConsumerState<AdvancedEditor> {
       child: CodeEditor(
         padding: const .only(right: 32),
         indicatorBuilder: (context, editingController, chunkController, notifier) {
+          const String errorIndicator = "Error";
           return Padding(
             padding: const EdgeInsets.only(left: 16),
             child: DefaultCodeLineNumber(
               notifier: notifier,
               controller: editingController,
+              customLineIndex2Text: (lineIndex) {
+                final int lineNumber = lineIndex + 1;
+                if (lineNumber == errorOnLine) {
+                  return errorIndicator;
+                } else {
+                  return lineNumber.toString();
+                }
+              },
+              minNumberCount: errorOnLine == null ? null : errorIndicator.length,
             ),
           );
         },

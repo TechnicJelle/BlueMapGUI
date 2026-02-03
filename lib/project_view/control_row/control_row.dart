@@ -173,11 +173,9 @@ class RunningProcess with WindowListener {
     try {
       await fillArgsFromStartupConfig(jvmArgs: jvmArgs, bluemapArgs: bluemapArgs);
 
-      // In this case it *is* necessary to catch an error
-      // ignore: avoid_catching_errors
-    } on TypeError catch (e) {
+    } on ConfigFileCastException catch (e) {
       _consoleOutputController.add(
-        "[ERROR] Invalid option in Startup Config: $e",
+        "[ERROR] Invalid option in Startup Config: ${e.message}",
       );
       return;
     }

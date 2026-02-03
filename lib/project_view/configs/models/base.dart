@@ -13,9 +13,21 @@ import "webapp.dart";
 import "webserver.dart";
 
 class ConfigFileLoadException implements Exception {
+  final int exitCode;
+  final String stderr;
+
+  ConfigFileLoadException({
+    required this.exitCode,
+    required this.stderr,
+  });
+}
+
+class ConfigFileCastException implements Exception {
   final String message;
 
-  ConfigFileLoadException(this.message);
+  ConfigFileCastException({
+    required this.message,
+  });
 }
 
 class ConfigFile<T extends BaseConfigModel> {
@@ -49,32 +61,42 @@ class ConfigFile<T extends BaseConfigModel> {
     final List<String> args = files.map((f) => f.path).toList();
     final ProcessResult result = await javaPath.runJar(_hoconFile!, processArgs: args);
 
-    //TODO: Error handling!
     final int exitCode = result.exitCode;
     final String stderr = result.stderr.toString();
     if (exitCode != 0 || stderr.isNotEmpty) {
-      throw ConfigFileLoadException("exitCode: $exitCode\nstderr: $stderr"); //TODO
+      throw ConfigFileLoadException(exitCode: exitCode, stderr: stderr);
     }
     final String stdout = result.stdout.toString();
     final List<String> jsons = stdout.split(String.fromCharCode(0));
 
-    return List.generate(files.length, (int index) {
-      final File file = files[index];
-      final configMap = jsonDecode(jsons[index]) as Map<String, Object?>;
-      if (p.basename(file.parent.path) == "maps" || interpretAsMapConfig) {
-        return ConfigFile(file, MapConfigModel.fromJson(configMap));
-      } else {
-        return switch (p.basename(file.path)) {
-          "core.conf" => ConfigFile(file, CoreConfigModel.fromJson(configMap)),
-          "startup.conf" => ConfigFile(file, StartupConfigModel.fromJson(configMap)),
-          "webapp.conf" => ConfigFile(file, WebappConfigModel.fromJson(configMap)),
-          "webserver.conf" => ConfigFile(file, WebserverConfigModel.fromJson(configMap)),
-          _ => throw ConfigFileLoadException(
-            "Could not conclude what type of config this is:\n ${file.path}",
-          ),
-        };
-      }
-    });
+    try {
+      return List.generate(files.length, (int index) {
+        final File file = files[index];
+        final configMap = jsonDecode(jsons[index]) as Map<String, Object?>;
+        if (p.basename(file.parent.path) == "maps" || interpretAsMapConfig) {
+          return ConfigFile(file, MapConfigModel.fromJson(configMap));
+        } else {
+          return switch (p.basename(file.path)) {
+            "core.conf" => ConfigFile(file, CoreConfigModel.fromJson(configMap)),
+            "startup.conf" => ConfigFile(file, StartupConfigModel.fromJson(configMap)),
+            "webapp.conf" => ConfigFile(file, WebappConfigModel.fromJson(configMap)),
+            "webserver.conf" => ConfigFile(
+              file,
+              WebserverConfigModel.fromJson(configMap),
+            ),
+            _ => throw ConfigFileLoadException(
+              exitCode: 137,
+              stderr: "Could not conclude what type of config this is:\n ${file.path}",
+            ),
+          };
+        }
+      });
+      // Rethrow the Error as a more safe Exception
+      // In this case it *is* necessary to catch an Error
+      // ignore: avoid_catching_errors
+    } on TypeError catch (e) {
+      throw ConfigFileCastException(message: e.toString());
+    }
   }
 
   ///if [optionName] is not found, it just doesn't do anything

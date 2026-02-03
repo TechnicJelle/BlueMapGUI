@@ -29,7 +29,15 @@ enum _OpeningStep {
   opening,
 }
 
-enum _OpenError { directoryNotFound, downloadFailed, wrongHash, runFail, copyFail }
+enum _OpenError {
+  directoryNotFound,
+  downloadFailed,
+  wrongHash,
+  runFail,
+  copyFail,
+  openFailMissing,
+  openFailSyntax,
+}
 
 class _OpeningStateNotifier extends Notifier<_OpeningStep?> {
   _OpenError? _openError;
@@ -377,7 +385,19 @@ It will only be removed from the list.""",
     // == Open project ==
     ref.read(_openingStateProvider.notifier).set(_OpeningStep.opening);
 
-    await ref.read(projectProviderNotifier).openProject(projectDirectory);
+    try {
+      await ref.read(projectProviderNotifier).openProject(projectDirectory);
+    } on ConfigFileCastException catch (e) {
+      ref
+          .read(_openingStateProvider.notifier)
+          .error(error: _OpenError.openFailMissing, details: e.message);
+      return;
+    } on ConfigFileLoadException catch (e) {
+      ref
+          .read(_openingStateProvider.notifier)
+          .error(error: _OpenError.openFailSyntax, details: e.stderr);
+      return;
+    }
 
     // == Close opening progress dialog ==
     if (mounted) {
@@ -489,6 +509,25 @@ Please check your Java settings and try again.""",
                 ],
                 _OpenError.copyFail => [
                   const Text("Failed to copy BlueMap GUI config into the project!"),
+                  const SizedBox(height: 8),
+                  ?ref.read(_openingStateProvider.notifier).getErrorDetails(context),
+                ],
+                _OpenError.openFailMissing => [
+                  const Text(
+                    """
+Failed to open project!
+There is likely a critical option missing or commented.
+You need to add it (back) or uncomment it first (in an external program), before you can go open the project again.""",
+                  ),
+                  const SizedBox(height: 8),
+                  ?ref.read(_openingStateProvider.notifier).getErrorDetails(context),
+                ],
+                _OpenError.openFailSyntax => [
+                  const Text("""
+Failed to open project!
+There is likely a syntax error in one of your configs.
+You need to fix that first (in an external program), before you can go open the project again.
+See below for more details:"""),
                   const SizedBox(height: 8),
                   ?ref.read(_openingStateProvider.notifier).getErrorDetails(context),
                 ],
