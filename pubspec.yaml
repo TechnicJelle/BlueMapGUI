@@ -56,7 +56,7 @@ dev_dependencies:
   freezed_lint: ^0.0.12
   json_serializable: ^6.11.2
   riverpod_lint: ^3.1.0
-  very_good_analysis: ^10.0.0
+  very_good_analysis: ^10.1.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
