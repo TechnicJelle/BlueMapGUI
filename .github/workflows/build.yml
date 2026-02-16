@@ -6,7 +6,7 @@ on:
       - '**.md'
 
 env:
-  FLUTTER_VERSION: '3.38.8'
+  FLUTTER_VERSION: '3.41.1'
 
 jobs:
   linux:
