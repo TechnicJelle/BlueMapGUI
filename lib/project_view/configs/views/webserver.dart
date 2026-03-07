@@ -58,7 +58,7 @@ class _WebserverConfigViewState extends ConsumerState<WebserverConfigView> {
           description: "The port that the webserver listens on.",
           controller: portController,
           hintText: "Must not be empty!",
-          keyboardType: const .numberWithOptions(decimal: false, signed: false),
+          keyboardType: TextInputType.number,
           inputFormatter: TextInputFormatter.withFunction((
             TextEditingValue oldValue,
             TextEditingValue newValue,
