@@ -62,7 +62,7 @@ abstract class SettingsBodyBase {
       getTextTheme(context).labelMedium?.copyWith(color: Colors.grey);
 
   TextStyle? getCodeStyle(BuildContext context) =>
-      getLabelStyle(context)?.copyWith(fontFamily: pixelCode.fontFamily);
+      getLabelStyle(context)?.copyWith(fontFamily: pixelCode200.fontFamily);
 
   TextStyle? getLinkStyle(BuildContext context) {
     final TextStyle? labelStyle = getLabelStyle(context);

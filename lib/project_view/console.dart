@@ -112,7 +112,7 @@ class _ConsoleState extends ConsumerState<Console> {
       child: Stack(
         children: [
           DefaultTextStyle(
-            style: pixelCode,
+            style: pixelCode200,
             child: ListView.builder(
               controller: _scrollController,
               itemBuilder: (context, index) {

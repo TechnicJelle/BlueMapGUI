@@ -31,12 +31,14 @@ Directory getMapTemplatesDirectory(Directory projectDirectory) {
   );
 }
 
-const TextStyle pixelCode = TextStyle(
+const TextStyle pixelCode200 = TextStyle(
   fontFamily: "PixelCode",
   fontSize: 14,
   height: 1.2,
   fontWeight: .w200,
 );
+final TextStyle pixelCode300 = pixelCode200.copyWith(fontWeight: .w300);
+final TextStyle pixelCode400 = pixelCode200.copyWith(fontWeight: .w400);
 
 Color getTextColourForBackground(Color backgroundColour) {
   return ThemeData.estimateBrightnessForColor(backgroundColour) == Brightness.dark

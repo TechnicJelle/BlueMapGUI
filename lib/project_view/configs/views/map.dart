@@ -456,7 +456,7 @@ Your actual world files will not be affected!
                             const Text("Are you sure you want to delete the map \" "),
                             Text(
                               configFile.name,
-                              style: pixelCode.copyWith(height: 1.4),
+                              style: pixelCode200.copyWith(height: 1.4),
                             ),
                             const SizedBox(width: 1),
                             const Text("\" ?"),

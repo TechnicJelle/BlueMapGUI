@@ -135,9 +135,9 @@ class _AdvancedEditorState extends ConsumerState<AdvancedEditor> {
         style: CodeEditorStyle(
           textColor: Colors.white,
           backgroundColor: Colors.grey.shade900,
-          fontFamily: pixelCode.fontFamily,
-          fontSize: pixelCode.fontSize,
-          fontHeight: pixelCode.height,
+          fontFamily: pixelCode200.fontFamily,
+          fontSize: pixelCode200.fontSize,
+          fontHeight: pixelCode200.height,
           codeTheme: CodeHighlightTheme(
             theme: irBlackTheme,
             languages: {"yaml": CodeHighlightThemeMode(mode: langYaml)},

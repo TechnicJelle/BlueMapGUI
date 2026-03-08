@@ -93,6 +93,8 @@ flutter:
       fonts:
         - asset: assets/fonts/PixelCode-ExtraLight.otf
           weight: 200
+        - asset: assets/fonts/PixelCode-Light.otf
+          weight: 300
         - asset: assets/fonts/PixelCode-Regular.otf
           weight: 400
 

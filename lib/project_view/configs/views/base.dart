@@ -202,7 +202,7 @@ class IntSliderOption extends StatelessWidget {
             children: [
               Text(
                 value.toString().padLeft(max.toString().length),
-                style: pixelCode,
+                style: pixelCode200,
               ),
               Expanded(
                 child: max > 1
@@ -278,7 +278,7 @@ class DoubleSliderOption extends StatelessWidget {
                 if (value != null)
                   Text(
                     value!.toStringAsFixed(2),
-                    style: pixelCode,
+                    style: pixelCode200,
                   ),
                 Expanded(
                   child: Slider(
@@ -552,7 +552,7 @@ class ColourOption extends StatelessWidget {
         icon: Icon(Icons.color_lens, color: textColour),
         label: Text(
           label,
-          style: pixelCode.copyWith(color: textColour, fontWeight: .w400),
+          style: pixelCode400.copyWith(color: textColour),
         ),
         onPressed: () async {
           final pickedColour = await showDialog<Color>(
