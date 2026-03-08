@@ -31,6 +31,7 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
 
   //State stuff
   bool validating = false;
+  String? errorMessage;
 
   @override
   void initState() {
@@ -72,14 +73,31 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
         p.join(projectDirectory.path, "config", "maps", "$id.conf"),
       );
 
-      template.copySync(newConfig.path);
+      try {
+        template.copySync(newConfig.path);
+      } on FileSystemException catch (e) {
+        // This can happen if, for example, the provided map-id is just WAY too long
+        setState(() {
+          errorMessage = e.message;
+          validating = false;
+        });
+        return;
+      }
 
       final javaPath = ref.read(javaPathProvider)!;
-      final config = await ConfigFile.fromFile(newConfig, javaPath);
-      config as ConfigFile<MapConfigModel>;
+      try {
+        final config = await ConfigFile.fromFile(newConfig, javaPath);
+        config as ConfigFile<MapConfigModel>;
 
-      ref.read(projectProviderNotifier).addMap(config);
-
+        ref.read(projectProviderNotifier).addMap(config);
+      } on FatalConfigFileLoadException catch (e) {
+        setState(() {
+          errorMessage = e.getDetails();
+          validating = false;
+        });
+        await newConfig.delete();
+        return;
+      }
       if (mounted) {
         final nav = Navigator.of(context);
         if (nav.canPop()) nav.pop();
@@ -90,6 +108,7 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final String? thisErrorMessage = errorMessage;
     return AlertDialog(
       title: const Text("New map"),
       content: Form(
@@ -97,7 +116,17 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
         child: Column(
           crossAxisAlignment: validating ? .center : .start,
           mainAxisSize: .min,
-          children: validating
+          children: thisErrorMessage != null
+              ? [
+                  Text(
+                    "Error:",
+                    style: TextTheme.of(context).titleLarge?.copyWith(
+                      color: Colors.redAccent,
+                    ),
+                  ),
+                  Text(thisErrorMessage, style: pixelCode200),
+                ]
+              : validating
               ? [const CircularProgressIndicator()]
               : [
                   const Text("Map type:"),
@@ -161,7 +190,8 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
           },
           child: const Text("Cancel"),
         ),
-        ElevatedButton(onPressed: validateAndCreate, child: const Text("Create")),
+        if (!validating && errorMessage == null)
+          ElevatedButton(onPressed: validateAndCreate, child: const Text("Create")),
       ],
     );
   }
