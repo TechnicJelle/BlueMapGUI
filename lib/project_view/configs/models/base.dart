@@ -115,8 +115,11 @@ class ConfigFile<T extends BaseConfigModel> {
 
   late String path = file.path;
 
-  ///basenameWithoutExtension
+  /// basenameWithoutExtension
   late String name = p.basenameWithoutExtension(path);
+
+  /// This replaceAll replicates BlueMap's own behaviour: https://github.com/BlueMap-Minecraft/BlueMap/blob/c232a79c51b711b22c2771d24c1fb5024d46f7ae/common/src/main/java/de/bluecolored/bluemap/common/config/BlueMapConfigManager.java#L382-L384
+  late String sanitisedMapId = name.replaceAll(RegExp(r"\W"), "_");
 
   static Future<ConfigFile> fromFile(File file, JavaPath javaPath) async =>
       (await fromFiles([file], javaPath)).first;
