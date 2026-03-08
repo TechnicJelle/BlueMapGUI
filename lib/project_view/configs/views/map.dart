@@ -350,7 +350,8 @@ Enabling this will require a re-render of the map.""",
             SettingsBodyText(
               """
 Normally, BlueMap only renders chunks that have valid and complete light data.
-If you have chunks that have incomplete, corrupted, or otherwise broken light data, please consider fixing the light data itself, so BlueMap can render them properly.""",
+If you have chunks that have incomplete, corrupted, or otherwise broken light data, please consider fixing the light data itself, so BlueMap can render them properly.
+""",
             ),
             SettingsBodyLink(
               "Here is a guide on how to fix world lighting issues.",
