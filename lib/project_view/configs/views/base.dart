@@ -29,29 +29,31 @@ class BaseConfigView<T extends BaseConfigModel> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return config.modelOrProblem.match(
-      (FileConfigFileLoadProblem e) {
-        return const _OpenErrorDisplay(
-          "Simple View currently not available for this config, due to errors.\n"
-          "You can use Advanced Mode to fix them.",
-        );
-      },
-      (T model) {
-        return ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1500),
-          child: switch (model) {
-            CoreConfigModel() => const CoreConfigView(),
-            StartupConfigModel() => const StartupConfigView(),
-            WebappConfigModel() => const WebappConfigView(),
-            WebserverConfigModel() => const WebserverConfigView(),
-            MapConfigModel() => const MapConfigView(),
-            _ => const _OpenErrorDisplay(
-              "Simple View currently not available for this config.\n"
-              "Please use Advanced Mode for this config.",
-            ),
-          },
-        );
-      },
+    return Center(
+      child: config.modelOrProblem.match(
+        (FileConfigFileLoadProblem e) {
+          return const _OpenErrorDisplay(
+            "Simple View currently not available for this config, due to errors.\n"
+            "You can use Advanced Mode to fix them.",
+          );
+        },
+        (T model) {
+          return ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 1500),
+            child: switch (model) {
+              CoreConfigModel() => const CoreConfigView(),
+              StartupConfigModel() => const StartupConfigView(),
+              WebappConfigModel() => const WebappConfigView(),
+              WebserverConfigModel() => const WebserverConfigView(),
+              MapConfigModel() => const MapConfigView(),
+              _ => const _OpenErrorDisplay(
+                "Simple View currently not available for this config.\n"
+                "Please use Advanced Mode for this config.",
+              ),
+            },
+          );
+        },
+      ),
     );
   }
 }
@@ -63,30 +65,28 @@ class _OpenErrorDisplay extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            color: Colors.red,
-          ),
-          child: Column(
-            mainAxisSize: .min,
-            children: [
-              Text(errorString, textAlign: .center),
-              const SizedBox(height: 12),
-              ElevatedButton(
-                onPressed: () => ref.read(advancedModeProvider.notifier).set(true),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade100),
-                child: const Text(
-                  "Switch to Advanced Mode",
-                  style: TextStyle(color: Colors.black87),
-                ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          color: Colors.red,
+        ),
+        child: Column(
+          mainAxisSize: .min,
+          children: [
+            Text(errorString, textAlign: .center),
+            const SizedBox(height: 12),
+            ElevatedButton(
+              onPressed: () => ref.read(advancedModeProvider.notifier).set(true),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade100),
+              child: const Text(
+                "Switch to Advanced Mode",
+                style: TextStyle(color: Colors.black87),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
