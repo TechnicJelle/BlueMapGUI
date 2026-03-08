@@ -23,9 +23,9 @@ class MapConfigView extends ConsumerStatefulWidget {
 class _MapConfigViewState extends ConsumerState<MapConfigView> {
   ConfigFile<MapConfigModel>? configFile;
 
-  MapConfigModel get model => configFile!.model;
+  MapConfigModel get model => configFile!.modelOrProblem.toNullable()!;
 
-  set model(MapConfigModel newModel) => configFile!.model = newModel;
+  set model(MapConfigModel newModel) => configFile!.modelOrProblem = .of(newModel);
 
   late TextEditingController worldController;
   late TextEditingController dimensionController;

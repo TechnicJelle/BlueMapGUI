@@ -61,17 +61,35 @@ class _ControlPanelTile extends ConsumerWidget {
   }
 }
 
+class AllowMapReorderingNotifier extends Notifier<bool> {
+  @override
+  bool build() {
+    final bool advancedMode = ref.watch(advancedModeProvider);
+    final mapConfigs = ref.watch(mapConfigsProvider);
+    if (mapConfigs == null) return advancedMode;
+    final bool aMapConfigHasAProblem = mapConfigs
+        .map((config) => config.modelOrProblem.toNullable())
+        .any((element) => element == null);
+
+    return advancedMode || aMapConfigHasAProblem;
+  }
+}
+
+// I don't want these for providers; too long
+// ignore: specify_nonobvious_property_types
+final allowMapReorderingProvider = NotifierProvider(AllowMapReorderingNotifier.new);
+
 class _MapsTiles extends ConsumerWidget {
   const _MapsTiles();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final mapConfigs = ref.watch(mapConfigsProvider)!;
-    final bool advancedMode = ref.watch(advancedModeProvider);
+    final bool allowMapReordering = ref.watch(allowMapReorderingProvider);
 
     //don't show the reorder handles when in advanced mode, because the text editor does not handle config options being changed from outside of itself
     //and it makes enough sense to not show them then, so i think this is a fine fix
-    return advancedMode
+    return allowMapReordering
         ? ListView.builder(
             shrinkWrap: true,
             itemCount: mapConfigs.length,

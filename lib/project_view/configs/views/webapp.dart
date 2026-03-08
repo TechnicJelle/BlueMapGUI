@@ -18,15 +18,17 @@ class WebappConfigView extends ConsumerStatefulWidget {
 class _WebappConfigViewState extends ConsumerState<WebappConfigView> {
   ///reference to the actual mapConfig in the _projectProvider,
   ///so changing the model will properly apply
-  late ConfigFile configFile;
+  late ConfigFile<WebappConfigModel> configFile;
 
-  WebappConfigModel get model => configFile.model as WebappConfigModel;
+  WebappConfigModel get model => configFile.modelOrProblem.toNullable()!;
 
-  set model(WebappConfigModel newModel) => configFile.model = newModel;
+  set model(WebappConfigModel newModel) => configFile.modelOrProblem = .of(newModel);
 
   @override
   Widget build(BuildContext context) {
-    configFile = ref.watch(createTypedOpenConfigProvider<WebappConfigModel>())!;
+    configFile = configFile = ref.watch(
+      openConfigProvider.select((c) => c is ConfigFile<WebappConfigModel> ? c : null),
+    )!;
 
     return ListView(
       children: [

@@ -2,8 +2,10 @@ import "dart:convert";
 import "dart:io";
 
 import "package:flutter/services.dart";
+import "package:fpdart/fpdart.dart";
 import "package:path/path.dart" as p;
 import "package:path_provider/path_provider.dart";
+import "package:re_editor/re_editor.dart";
 
 import "../../../prefs.dart";
 import "core.dart";
@@ -12,31 +14,104 @@ import "startup.dart";
 import "webapp.dart";
 import "webserver.dart";
 
-class ConfigFileLoadException implements Exception {
-  final int exitCode;
-  final String stderr;
-
-  ConfigFileLoadException({
-    required this.exitCode,
-    required this.stderr,
-  });
+abstract interface class FatalConfigFileLoadException implements Exception {
+  String getDetails();
 }
 
-class ConfigFileCastException implements Exception {
-  final String message;
+class FatalConfigFileRunException implements FatalConfigFileLoadException {
+  final int _exitCode;
+  final String _stderr;
 
-  ConfigFileCastException({
-    required this.message,
-  });
+  FatalConfigFileRunException({
+    required int exitCode,
+    required String stderr,
+  }) : _exitCode = exitCode,
+       _stderr = stderr;
+
+  @override
+  String getDetails() => _stderr;
+
+  int getExitCode() => _exitCode;
+}
+
+class FatalConfigFileConcludeException implements FatalConfigFileLoadException {
+  final String _message;
+
+  FatalConfigFileConcludeException({
+    required File file,
+  }) : _message = "Could not conclude what type of config this is: ${file.path}";
+
+  @override
+  String getDetails() => _message;
+}
+
+class FatalConfigProblemException implements FatalConfigFileLoadException {
+  final String _message;
+
+  FatalConfigProblemException({
+    required FileConfigFileLoadProblem problem,
+  }) : _message = problem.getDetails();
+
+  @override
+  String getDetails() => _message;
+}
+
+// "Problem" so that they cannot be accidentally thrown
+
+// I want to be able to call getDetails() even when I don't know exactly which one it is:
+// ignore: one_member_abstracts
+abstract interface class FileConfigFileLoadProblem {
+  String getDetails();
+}
+
+class FileConfigFileCastProblem implements FileConfigFileLoadProblem {
+  final String _message;
+
+  FileConfigFileCastProblem({
+    required TypeError typeError,
+  }) : _message = typeError.toString().trim();
+
+  @override
+  String getDetails() => _message;
+}
+
+class FileConfigFileParseProblem implements FileConfigFileLoadProblem {
+  final String _message;
+
+  FileConfigFileParseProblem({
+    required String message,
+  }) : _message = message.trim();
+
+  @override
+  String getDetails() => _message;
+
+  String getDetailsOnly() {
+    final lines = _message.textLines
+      ..removeAt(0)
+      ..removeAt(0);
+    return lines.join("\n");
+  }
+
+  int? getLine() {
+    final RegExp lineFinder = RegExp(r"Line:?\s*(\d+)");
+    final match = lineFinder.firstMatch(_message);
+    if (match != null) {
+      final String? lineNumber = match[1];
+      if (lineNumber != null) {
+        return int.tryParse(lineNumber);
+      }
+    }
+    return null;
+  }
 }
 
 class ConfigFile<T extends BaseConfigModel> {
   static File? _hoconFile;
 
   final File file;
-  T model;
+  Either<FileConfigFileLoadProblem, T> modelOrProblem;
 
-  ConfigFile(this.file, this.model);
+  ConfigFile(this.file, this.modelOrProblem);
 
   late String path = file.path;
 
@@ -64,38 +139,80 @@ class ConfigFile<T extends BaseConfigModel> {
     final int exitCode = result.exitCode;
     final String stderr = result.stderr.toString();
     if (exitCode != 0 || stderr.isNotEmpty) {
-      throw ConfigFileLoadException(exitCode: exitCode, stderr: stderr);
+      throw FatalConfigFileRunException(exitCode: exitCode, stderr: stderr);
     }
     final String stdout = result.stdout.toString();
     final List<String> jsons = stdout.split(String.fromCharCode(0));
 
-    try {
-      return List.generate(files.length, (int index) {
-        final File file = files[index];
-        final configMap = jsonDecode(jsons[index]) as Map<String, Object?>;
-        if (p.basename(file.parent.path) == "maps" || interpretAsMapConfig) {
-          return ConfigFile(file, MapConfigModel.fromJson(configMap));
-        } else {
-          return switch (p.basename(file.path)) {
-            "core.conf" => ConfigFile(file, CoreConfigModel.fromJson(configMap)),
-            "startup.conf" => ConfigFile(file, StartupConfigModel.fromJson(configMap)),
-            "webapp.conf" => ConfigFile(file, WebappConfigModel.fromJson(configMap)),
-            "webserver.conf" => ConfigFile(
-              file,
-              WebserverConfigModel.fromJson(configMap),
-            ),
-            _ => throw ConfigFileLoadException(
-              exitCode: 137,
-              stderr: "Could not conclude what type of config this is:\n ${file.path}",
-            ),
-          };
+    return List.generate(files.length, (int index) {
+      final File file = files[index];
+      final String item = jsons[index];
+      if (item.startsWith("Error ")) {
+        final ex = FileConfigFileParseProblem(message: item);
+        return _fileToConfigFile(
+          file: file,
+          interpretAsMapConfig: interpretAsMapConfig,
+          onMap: () => ConfigFile<MapConfigModel>(file, .left(ex)),
+          onCore: () => ConfigFile<CoreConfigModel>(file, .left(ex)),
+          onStartup: () => ConfigFile<StartupConfigModel>(file, .left(ex)),
+          onWebapp: () => ConfigFile<WebappConfigModel>(file, .left(ex)),
+          onWebserver: () => ConfigFile<WebserverConfigModel>(file, .left(ex)),
+        );
+      } else {
+        final configMap = jsonDecode(item) as Map<String, Object?>;
+        try {
+          return _fileToConfigFile(
+            file: file,
+            interpretAsMapConfig: interpretAsMapConfig,
+            onMap: () => ConfigFile<MapConfigModel>(file, .of(.fromJson(configMap))),
+            onCore: () => ConfigFile<CoreConfigModel>(file, .of(.fromJson(configMap))),
+            onStartup: () =>
+                ConfigFile<StartupConfigModel>(file, .of(.fromJson(configMap))),
+            onWebapp: () =>
+                ConfigFile<WebappConfigModel>(file, .of(.fromJson(configMap))),
+            onWebserver: () =>
+                ConfigFile<WebserverConfigModel>(file, .of(.fromJson(configMap))),
+          );
+
+          // In this case it *is* necessary to catch an Error
+          // ignore: avoid_catching_errors
+        } on TypeError catch (e) {
+          // This happens when the .fromJson call fails due to a type mismatch between the expectation of the model, and the reality that we parsed.
+          // So we turn the Error into Problem for the user instead, because it is up to the user to fix their config so it is not a Problem anymore.
+          final problem = FileConfigFileCastProblem(typeError: e);
+          return _fileToConfigFile(
+            file: file,
+            interpretAsMapConfig: interpretAsMapConfig,
+            onMap: () => ConfigFile<MapConfigModel>(file, .left(problem)),
+            onCore: () => ConfigFile<CoreConfigModel>(file, .left(problem)),
+            onStartup: () => ConfigFile<StartupConfigModel>(file, .left(problem)),
+            onWebapp: () => ConfigFile<WebappConfigModel>(file, .left(problem)),
+            onWebserver: () => ConfigFile<WebserverConfigModel>(file, .left(problem)),
+          );
         }
-      });
-      // Rethrow the Error as a more safe Exception
-      // In this case it *is* necessary to catch an Error
-      // ignore: avoid_catching_errors
-    } on TypeError catch (e) {
-      throw ConfigFileCastException(message: e.toString());
+      }
+    });
+  }
+
+  static ConfigFile<BaseConfigModel> _fileToConfigFile({
+    required File file,
+    required bool interpretAsMapConfig,
+    required _ConfigFileCallback onMap,
+    required _ConfigFileCallback onCore,
+    required _ConfigFileCallback onStartup,
+    required _ConfigFileCallback onWebapp,
+    required _ConfigFileCallback onWebserver,
+  }) {
+    if (p.basename(file.parent.path) == "maps" || interpretAsMapConfig) {
+      return onMap();
+    } else {
+      return switch (p.basename(file.path)) {
+        "core.conf" => onCore(),
+        "startup.conf" => onStartup(),
+        "webapp.conf" => onWebapp(),
+        "webserver.conf" => onWebserver(),
+        _ => throw FatalConfigFileConcludeException(file: file),
+      };
     }
   }
 
@@ -113,9 +230,11 @@ class ConfigFile<T extends BaseConfigModel> {
 
   @override
   String toString() {
-    return "ConfigFile<$T>(file: $file, model: $model)";
+    return "ConfigFile<$T>(file: $file, model: $modelOrProblem)";
   }
 }
+
+typedef _ConfigFileCallback = ConfigFile Function();
 
 abstract class BaseConfigModel {
   const BaseConfigModel();

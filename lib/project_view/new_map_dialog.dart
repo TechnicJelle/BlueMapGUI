@@ -76,12 +76,9 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
 
       final javaPath = ref.read(javaPathProvider)!;
       final config = await ConfigFile.fromFile(newConfig, javaPath);
-      final ConfigFile<MapConfigModel> newMapConfig = ConfigFile(
-        config.file,
-        config.model as MapConfigModel,
-      );
+      config as ConfigFile<MapConfigModel>;
 
-      ref.read(projectProviderNotifier).addMap(newMapConfig);
+      ref.read(projectProviderNotifier).addMap(config);
 
       if (mounted) {
         final nav = Navigator.of(context);

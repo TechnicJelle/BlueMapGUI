@@ -20,15 +20,17 @@ class CoreConfigView extends ConsumerStatefulWidget {
 class _CoreConfigViewState extends ConsumerState<CoreConfigView> {
   ///reference to the actual mapConfig in the _projectProvider,
   ///so changing the model will properly apply
-  late ConfigFile configFile;
+  late ConfigFile<CoreConfigModel> configFile;
 
-  CoreConfigModel get model => configFile.model as CoreConfigModel;
+  CoreConfigModel get model => configFile.modelOrProblem.toNullable()!;
 
-  set model(CoreConfigModel newModel) => configFile.model = newModel;
+  set model(CoreConfigModel newModel) => configFile.modelOrProblem = .of(newModel);
 
   @override
   Widget build(BuildContext context) {
-    configFile = ref.watch(createTypedOpenConfigProvider<CoreConfigModel>())!;
+    configFile = ref.watch(
+      openConfigProvider.select((c) => c is ConfigFile<CoreConfigModel> ? c : null),
+    )!;
 
     final int cpus = Platform.numberOfProcessors;
 

@@ -3,6 +3,7 @@ import "dart:io";
 import "package:crypto/crypto.dart";
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:fpdart/fpdart.dart";
 import "package:path/path.dart" as p;
 
 import "versions.dart";
@@ -123,3 +124,8 @@ Future<NonHashedFile> downloadFile({
   client.close();
   return NonHashedFile(outputFile);
 }
+
+/// If the [Either] is [Right], then change its value from type `R` to
+/// type `C` using function `f`.
+Either<L, C> mapRight<L, R, C>(Either<L, R> either, C Function(R r) f) =>
+    either.swap().mapLeft(f).swap();

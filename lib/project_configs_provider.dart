@@ -4,13 +4,13 @@ import "dart:io";
 
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
-import "package:flutter_riverpod/misc.dart";
 import "package:freezed_annotation/freezed_annotation.dart";
 import "package:path/path.dart" as p;
 
 import "prefs.dart";
 import "project_view/configs/models/base.dart";
 import "project_view/configs/models/map.dart";
+import "utils.dart";
 
 part "project_configs_provider.freezed.dart";
 
@@ -56,9 +56,8 @@ class ProjectConfigsNotifier extends Notifier<ProjectConfigs?> {
 
     final configs = await ConfigFile.fromFiles(configFiles, javaPath);
     for (final ConfigFile config in configs) {
-      if (config.model is MapConfigModel) {
-        final MapConfigModel model = config.model as MapConfigModel;
-        mapConfigs.add(ConfigFile(config.file, model));
+      if (config is ConfigFile<MapConfigModel>) {
+        mapConfigs.add(config);
       } else {
         mainConfigs.add(config);
       }
@@ -85,8 +84,10 @@ class ProjectConfigsNotifier extends Notifier<ProjectConfigs?> {
   static List<ConfigFile<MapConfigModel>> _sortMaps(
     List<ConfigFile<MapConfigModel>> list,
   ) {
-    list.sort((a, b) {
-      final sorting = a.model.sorting.compareTo(b.model.sorting);
+    list.sort((ConfigFile<MapConfigModel> a, ConfigFile<MapConfigModel> b) {
+      final int? aSort = a.modelOrProblem.toNullable()?.sorting;
+      final int? bSort = b.modelOrProblem.toNullable()?.sorting;
+      final sorting = aSort != null && bSort != null ? aSort.compareTo(bSort) : 0;
       return sorting != 0 ? sorting : a.name.compareTo(b.name);
     });
     return list;
@@ -152,7 +153,13 @@ class ProjectConfigsNotifier extends Notifier<ProjectConfigs?> {
     maps.insert(localNewIndex, removed);
     for (int i = 0; i < maps.length; i++) {
       final ConfigFile<MapConfigModel> mapConfig = maps[i];
-      maps[i] = ConfigFile(mapConfig.file, mapConfig.model.copyWith(sorting: i * 100));
+      maps[i] = ConfigFile(
+        mapConfig.file,
+        mapRight(
+          mapConfig.modelOrProblem,
+          (MapConfigModel a) => a.copyWith(sorting: i * 100),
+        ),
+      );
     }
 
     state = state!.copyWith(mapConfigs: maps);
@@ -161,9 +168,14 @@ class ProjectConfigsNotifier extends Notifier<ProjectConfigs?> {
     state = state!.copyWith(openConfig: findConfigToFile(openConfig));
 
     for (final mapConfig in state!.mapConfigs) {
-      mapConfig.changeValueInFile(
-        MapConfigKeys.sorting,
-        jsonEncode(mapConfig.model.sorting),
+      mapConfig.modelOrProblem.match(
+        (FileConfigFileLoadProblem l) {},
+        (MapConfigModel model) {
+          mapConfig.changeValueInFile(
+            MapConfigKeys.sorting,
+            jsonEncode(model.sorting),
+          );
+        },
       );
     }
   }
@@ -215,7 +227,7 @@ class ProjectConfigsNotifier extends Notifier<ProjectConfigs?> {
     for (final ConfigFile config in list) {
       if (p.equals(file.path, config.path)) {
         final config = await ConfigFile.fromFile(file, javaPath);
-        return ConfigFile(file, config.model as T);
+        return config as ConfigFile<T>;
       }
     }
     return null;
@@ -238,10 +250,6 @@ final openProjectProvider = _projectProvider.select((proj) => proj?.projectLocat
 // I don't want these for providers; too long
 // ignore: specify_nonobvious_property_types
 final openConfigProvider = _projectProvider.select((proj) => proj?.openConfig);
-
-///do not use for map configs; only for main configs
-ProviderListenable<ConfigFile<BaseConfigModel>?> createTypedOpenConfigProvider<T>() =>
-    openConfigProvider.select((value) => value?.model is T ? value : null);
 
 // I don't want these for providers; too long
 // ignore: specify_nonobvious_property_types

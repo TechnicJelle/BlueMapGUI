@@ -1,5 +1,3 @@
-import "dart:async";
-
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 
@@ -55,7 +53,14 @@ class _ConfigGUIState extends ConsumerState<ConfigGUI> {
             child: Row(
               mainAxisSize: .min,
               children: [
-                const Text("Advanced Mode"),
+                Text(
+                  "Advanced Mode",
+                  style: TextStyle(
+                    color: advancedMode
+                        ? Colors.white
+                        : TextTheme.of(context).bodyLarge?.color,
+                  ),
+                ),
                 Switch(
                   value: advancedMode,
                   onChanged: loading
@@ -71,47 +76,11 @@ class _ConfigGUIState extends ConsumerState<ConfigGUI> {
                           // advanced mode was just disabled, so we need to re-read the file into the models again
                           if (!justSwitchedToAdvancedMode) {
                             //wait a frame for the file to be properly saved on dispose of the advanced editor
+                            //this cannot be called there, because it's not allowed to red.read in a dispose()
                             WidgetsBinding.instance.addPostFrameCallback((_) async {
-                              try {
-                                await ref
-                                    .read(projectProviderNotifier)
-                                    .refreshConfigFile(openConfig.file);
-                              } on ConfigFileCastException catch (e) {
-                                if (context.mounted) {
-                                  showError([
-                                    const Text(
-                                      """
-There is a critical option missing or commented.
-You need to add it (back) or uncomment it, before you can go back to Simple Mode.""",
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      e.message,
-                                      style: Theme.of(context).textTheme.bodySmall,
-                                    ),
-                                  ]);
-                                }
-                              } on ConfigFileLoadException catch (e) {
-                                if (context.mounted) {
-                                  showError([
-                                    const Text(
-                                      """
-There is likely a syntax error in this config.
-You need to fix that first, before you can go back to Simple Mode.
-See below for more details:""",
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Flexible(
-                                      child: SingleChildScrollView(
-                                        child: Text(
-                                          e.stderr,
-                                          style: Theme.of(context).textTheme.bodySmall,
-                                        ),
-                                      ),
-                                    ),
-                                  ]);
-                                }
-                              }
+                              await ref
+                                  .read(projectProviderNotifier)
+                                  .refreshConfigFile(openConfig.file);
                               setState(() => loading = false);
                             });
                           }
@@ -122,36 +91,6 @@ See below for more details:""",
           ),
         ),
       ],
-    );
-  }
-
-  void showError(List<Widget> children) {
-    ref.read(advancedModeProvider.notifier).set(true);
-    unawaited(
-      showDialog<void>(
-        context: context,
-        builder: (BuildContext dialogContext) {
-          return AlertDialog(
-            title: const Text(
-              "An error occurred while switching to Simple Mode",
-              style: TextStyle(color: Colors.red),
-            ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: children,
-            ),
-            actions: [
-              TextButton(
-                child: const Text("Understood"),
-                onPressed: () {
-                  Navigator.of(dialogContext).pop();
-                },
-              ),
-            ],
-          );
-        },
-      ),
     );
   }
 }

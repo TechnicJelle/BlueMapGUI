@@ -35,8 +35,7 @@ enum _OpenError {
   wrongHash,
   runFail,
   copyFail,
-  openFailMissing,
-  openFailSyntax,
+  openFail,
 }
 
 class _OpeningStateNotifier extends Notifier<_OpeningStep?> {
@@ -323,11 +322,13 @@ It will only be removed from the list.""",
 
     final bool startSuccess = stdout.contains("Generated default config files for you");
 
-    //If there's an issue with a map (e.g. outdated configs), continue opening anyway; don't error out
+    //If there's an issue with a config (e.g. outdated or syntax), continue opening anyway; don't error out
     //The user will see the error later, when they try to start BlueMap itself
-    final bool mapConfigProblem = stdout.contains(RegExp("Failed to load map.?config"));
+    final bool configProblem =
+        stdout.contains(RegExp("Failed to load map.?config")) ||
+        stdout.contains("BlueMap failed to parse this file");
 
-    if (!startSuccess && !mapConfigProblem) {
+    if (!startSuccess && !configProblem) {
       ref
           .read(_openingStateProvider.notifier)
           .error(
@@ -387,15 +388,10 @@ It will only be removed from the list.""",
 
     try {
       await ref.read(projectProviderNotifier).openProject(projectDirectory);
-    } on ConfigFileCastException catch (e) {
+    } on FatalConfigFileLoadException catch (e) {
       ref
           .read(_openingStateProvider.notifier)
-          .error(error: _OpenError.openFailMissing, details: e.message);
-      return;
-    } on ConfigFileLoadException catch (e) {
-      ref
-          .read(_openingStateProvider.notifier)
-          .error(error: _OpenError.openFailSyntax, details: e.stderr);
+          .error(error: _OpenError.openFail, details: e.getDetails());
       return;
     }
 
@@ -423,7 +419,7 @@ It will only be removed from the list.""",
         javaPath,
         interpretAsMapConfig: true,
       );
-    } on ConfigFileLoadException catch (_) {
+    } on FatalConfigFileLoadException catch (_) {
       //If this fails, it's not really a problem. We just don't patch the map templates.
       return;
     }
@@ -512,22 +508,10 @@ Please check your Java settings and try again.""",
                   const SizedBox(height: 8),
                   ?ref.read(_openingStateProvider.notifier).getErrorDetails(context),
                 ],
-                _OpenError.openFailMissing => [
+                _OpenError.openFail => [
                   const Text(
-                    """
-Failed to open project!
-There is likely a critical option missing or commented.
-You need to add it (back) or uncomment it first (in an external program), before you can go open the project again.""",
+                    "A fatal exception occurred when trying to open the project!",
                   ),
-                  const SizedBox(height: 8),
-                  ?ref.read(_openingStateProvider.notifier).getErrorDetails(context),
-                ],
-                _OpenError.openFailSyntax => [
-                  const Text("""
-Failed to open project!
-There is likely a syntax error in one of your configs.
-You need to fix that first (in an external program), before you can go open the project again.
-See below for more details:"""),
                   const SizedBox(height: 8),
                   ?ref.read(_openingStateProvider.notifier).getErrorDetails(context),
                 ],

@@ -19,11 +19,11 @@ class StartupConfigView extends ConsumerStatefulWidget {
 class _StartupConfigViewState extends ConsumerState<StartupConfigView> {
   ///reference to the actual mapConfig in the _projectProvider,
   ///so changing the model will properly apply
-  late ConfigFile configFile;
+  late ConfigFile<StartupConfigModel> configFile;
 
-  StartupConfigModel get model => configFile.model as StartupConfigModel;
+  StartupConfigModel get model => configFile.modelOrProblem.toNullable()!;
 
-  set model(StartupConfigModel newModel) => configFile.model = newModel;
+  set model(StartupConfigModel newModel) => configFile.modelOrProblem = .of(newModel);
 
   late final TextEditingController modsPathController = TextEditingController(
     text: model.modsPath,
@@ -50,7 +50,9 @@ class _StartupConfigViewState extends ConsumerState<StartupConfigView> {
 
   @override
   Widget build(BuildContext context) {
-    configFile = ref.watch(createTypedOpenConfigProvider<StartupConfigModel>())!;
+    configFile = configFile = ref.watch(
+      openConfigProvider.select((c) => c is ConfigFile<StartupConfigModel> ? c : null),
+    )!;
 
     return ListView(
       children: [

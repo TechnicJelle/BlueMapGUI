@@ -19,11 +19,11 @@ class WebserverConfigView extends ConsumerStatefulWidget {
 class _WebserverConfigViewState extends ConsumerState<WebserverConfigView> {
   ///reference to the actual mapConfig in the _projectProvider,
   ///so changing the model will properly apply
-  late ConfigFile configFile;
+  late ConfigFile<WebserverConfigModel> configFile;
 
-  WebserverConfigModel get model => configFile.model as WebserverConfigModel;
+  WebserverConfigModel get model => configFile.modelOrProblem.toNullable()!;
 
-  set model(WebserverConfigModel newModel) => configFile.model = newModel;
+  set model(WebserverConfigModel newModel) => configFile.modelOrProblem = .of(newModel);
 
   late final TextEditingController portController = TextEditingController(
     text: model.port.toString(),
@@ -48,7 +48,9 @@ class _WebserverConfigViewState extends ConsumerState<WebserverConfigView> {
 
   @override
   Widget build(BuildContext context) {
-    configFile = ref.watch(createTypedOpenConfigProvider<WebserverConfigModel>())!;
+    configFile = configFile = ref.watch(
+      openConfigProvider.select((c) => c is ConfigFile<WebserverConfigModel> ? c : null),
+    )!;
 
     return ListView(
       children: [

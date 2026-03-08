@@ -27,6 +27,7 @@ class _AdvancedEditorState extends ConsumerState<AdvancedEditor> {
   ConfigFile? openConfig;
   late final Timer autoSaveTimer;
   bool hasChanged = false;
+  String? problemDescription;
   int? errorOnLine;
 
   @override
@@ -48,40 +49,49 @@ class _AdvancedEditorState extends ConsumerState<AdvancedEditor> {
   }
 
   Future<void> _write(File file) async {
-    await file.writeAsString(codeController.text);
     final project = ref.read(projectProviderNotifier);
+    await file.writeAsString(codeController.text);
 
-    try {
-      await project.refreshConfigFile(file);
-      errorOnLine = null;
-    } on ConfigFileCastException catch (e) {
-      //TODO: Figure out a way to display this error to the user too
-      debugPrint(e.message);
-    } on ConfigFileLoadException catch (e) {
-      final RegExp lineFinder = RegExp(r"line\s*(\d+)");
-      final match = lineFinder.firstMatch(e.stderr);
-      if (match != null) {
-        final String? lineNumber = match[1];
-        if (lineNumber != null) {
-          setState(() {
-            errorOnLine = int.tryParse(lineNumber);
-            // We add 5 to make up for the header that each config has
-            if (errorOnLine != null) errorOnLine = errorOnLine! + 5;
-          });
-        }
-      }
-    }
+    await project.refreshConfigFile(file);
   }
 
   Future<void> readFile(ConfigFile file) async {
+    file.modelOrProblem.getLeft().match(
+      () {
+        setState(() {
+          errorOnLine = null;
+          problemDescription = null;
+        });
+      },
+      (FileConfigFileLoadProblem e) {
+        switch (e) {
+          case FileConfigFileCastProblem():
+            setState(() {
+              problemDescription =
+                  "${e.getDetails()}"
+                  "\nThere is likely a critical option renamed, removed, or commented out.";
+            });
+          case FileConfigFileParseProblem():
+            final int? lineNumber = e.getLine();
+            if (lineNumber != null) {
+              setState(() {
+                errorOnLine = lineNumber;
+                problemDescription = "\n${e.getDetailsOnly()}";
+              });
+            }
+        }
+      },
+    );
     //do not re-open files that are already open
     if (p.equals(file.path, openConfig?.path ?? "")) return;
 
-    codeController.text = await file.file.readAsString();
-    codeController.clearHistory();
-    openConfig = file;
-    hasChanged = false;
-    errorOnLine = null;
+    //wait a frame for the file to be properly saved on dispose of the simple editor
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      codeController.text = await file.file.readAsString();
+      codeController.clearHistory();
+      openConfig = file;
+      hasChanged = false;
+    });
   }
 
   @override
@@ -101,16 +111,13 @@ class _AdvancedEditorState extends ConsumerState<AdvancedEditor> {
       if (previous != null) writeFile(previous);
       if (next != null) unawaited(readFile(next));
     });
-    return ScrollbarTheme(
-      data: Theme.of(context).scrollbarTheme.copyWith(
-        thumbColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.dragged)) return Colors.white38;
-          if (states.contains(WidgetState.hovered)) return Colors.white30;
-          return Colors.white24;
-        }),
-        trackColor: WidgetStateProperty.all(Colors.white10),
-        trackBorderColor: WidgetStateProperty.all(Colors.white12),
-      ),
+    return _ProblemWrapper(
+      problemText: problemDescription == null
+          ? null
+          : Text(
+              "Problem found${errorOnLine != null ? " on line $errorOnLine" : ""}: $problemDescription",
+              style: pixelCode300,
+            ),
       child: CodeEditor(
         padding: const .only(right: 32),
         indicatorBuilder: (context, editingController, chunkController, notifier) {
@@ -134,7 +141,6 @@ class _AdvancedEditorState extends ConsumerState<AdvancedEditor> {
         },
         style: CodeEditorStyle(
           textColor: Colors.white,
-          backgroundColor: Colors.grey.shade900,
           fontFamily: pixelCode200.fontFamily,
           fontSize: pixelCode200.fontSize,
           fontHeight: pixelCode200.height,
@@ -150,6 +156,54 @@ class _AdvancedEditorState extends ConsumerState<AdvancedEditor> {
         scrollbarBuilder: (context, child, details) {
           return Scrollbar(controller: details.controller, child: child);
         },
+      ),
+    );
+  }
+}
+
+class _ProblemWrapper extends StatelessWidget {
+  final Text? problemText;
+  final CodeEditor child;
+
+  const _ProblemWrapper({
+    required this.problemText,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ColoredBox(
+      color: Colors.grey.shade900,
+      child: Column(
+        crossAxisAlignment: .start,
+        children: [
+          if (problemText != null)
+            Padding(
+              padding: const EdgeInsets.only(left: 8, top: 8),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: Colors.red,
+                ),
+                child: problemText,
+              ),
+            ),
+          Expanded(
+            child: ScrollbarTheme(
+              data: Theme.of(context).scrollbarTheme.copyWith(
+                thumbColor: WidgetStateProperty.resolveWith((states) {
+                  if (states.contains(WidgetState.dragged)) return Colors.white38;
+                  if (states.contains(WidgetState.hovered)) return Colors.white30;
+                  return Colors.white24;
+                }),
+                trackColor: WidgetStateProperty.all(Colors.white10),
+                trackBorderColor: WidgetStateProperty.all(Colors.white12),
+              ),
+              child: child,
+            ),
+          ),
+        ],
       ),
     );
   }

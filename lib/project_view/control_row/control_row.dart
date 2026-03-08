@@ -122,7 +122,14 @@ class RunningProcess with WindowListener {
       startupConfigFile,
       _javaPath,
     );
-    final StartupConfigModel startupConfigModel = configFile.model as StartupConfigModel;
+    final StartupConfigModel startupConfigModel = configFile.modelOrProblem.match(
+      (FileConfigFileLoadProblem l) {
+        throw FatalConfigProblemException(problem: l);
+      },
+      (BaseConfigModel r) {
+        return r as StartupConfigModel;
+      },
+    );
 
     //Option: Mods Path
     final String modsPath = startupConfigModel.modsPath;
@@ -172,10 +179,9 @@ class RunningProcess with WindowListener {
     final List<String> bluemapArgs = ["--render", "--watch", "--webserver"];
     try {
       await fillArgsFromStartupConfig(jvmArgs: jvmArgs, bluemapArgs: bluemapArgs);
-
-    } on ConfigFileCastException catch (e) {
+    } on FatalConfigFileLoadException catch (e) {
       _consoleOutputController.add(
-        "[ERROR] Invalid option in Startup Config: ${e.message}",
+        "[ERROR] Fatal exception when trying to load Startup Config: ${e.getDetails()}",
       );
       return;
     }

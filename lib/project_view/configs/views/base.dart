@@ -5,9 +5,11 @@ import "package:file_picker/file_picker.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:flutter_colorpicker/flutter_colorpicker.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
 
 import "../../../main_menu/settings/setting_heading.dart";
 import "../../../utils.dart";
+import "../config_gui.dart";
 import "../models/base.dart";
 import "../models/core.dart";
 import "../models/map.dart";
@@ -27,24 +29,65 @@ class BaseConfigView<T extends BaseConfigModel> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final T model = config.model;
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 1500),
-        child: switch (model) {
-          CoreConfigModel() => const CoreConfigView(),
-          StartupConfigModel() => const StartupConfigView(),
-          WebappConfigModel() => const WebappConfigView(),
-          WebserverConfigModel() => const WebserverConfigView(),
-          MapConfigModel() => const MapConfigView(),
-          _ => const Center(
-            child: Text(
-              "Simple view currently not available for this config.\n"
-              "Please use the Advanced Mode for this config.",
-              textAlign: .center,
+    return config.modelOrProblem.match(
+      (FileConfigFileLoadProblem e) {
+        return const _OpenErrorDisplay(
+          "Simple View currently not available for this config, due to errors.\n"
+          "You can use Advanced Mode to fix them.",
+        );
+      },
+      (T model) {
+        return ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1500),
+          child: switch (model) {
+            CoreConfigModel() => const CoreConfigView(),
+            StartupConfigModel() => const StartupConfigView(),
+            WebappConfigModel() => const WebappConfigView(),
+            WebserverConfigModel() => const WebserverConfigView(),
+            MapConfigModel() => const MapConfigView(),
+            _ => const _OpenErrorDisplay(
+              "Simple View currently not available for this config.\n"
+              "Please use Advanced Mode for this config.",
             ),
+          },
+        );
+      },
+    );
+  }
+}
+
+class _OpenErrorDisplay extends ConsumerWidget {
+  final String errorString;
+
+  const _OpenErrorDisplay(this.errorString);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            color: Colors.red,
           ),
-        },
+          child: Column(
+            mainAxisSize: .min,
+            children: [
+              Text(errorString, textAlign: .center),
+              const SizedBox(height: 12),
+              ElevatedButton(
+                onPressed: () => ref.read(advancedModeProvider.notifier).set(true),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade100),
+                child: const Text(
+                  "Switch to Advanced Mode",
+                  style: TextStyle(color: Colors.black87),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
