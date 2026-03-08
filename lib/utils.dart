@@ -104,24 +104,30 @@ Future<NonHashedFile> downloadFile({
   required File Function(HttpClientResponse response) outputFileGenerator,
   void Function(double progress)? onProgress,
 }) async {
-  final client = HttpClient();
-  final request = await client.getUrl(uri);
-  final response = await request.close();
+  HttpClient? client;
+  final File outputFile;
+  try {
+    client = HttpClient();
+    final request = await client.getUrl(uri);
+    final response = await request.close();
 
-  final File outputFile = outputFileGenerator(response);
-  final IOSink sink = outputFile.openWrite();
+    outputFile = outputFileGenerator(response);
+    final IOSink sink = outputFile.openWrite();
 
-  int current = 0;
-  await response.forEach((List<int> buffer) {
-    if (onProgress != null) {
-      current += buffer.length;
-      final double progress = current.toDouble() / response.contentLength.toDouble();
-      onProgress(progress);
-    }
-    sink.add(buffer);
-  });
-
-  client.close();
+    int current = 0;
+    await response.forEach((List<int> buffer) {
+      if (onProgress != null) {
+        current += buffer.length;
+        final double progress = current.toDouble() / response.contentLength.toDouble();
+        onProgress(progress);
+      }
+      sink.add(buffer);
+    });
+  } on HttpException catch (e) {
+    throw HttpException('Exception trying to download a file "$uri":\n$e');
+  } finally {
+    client?.close();
+  }
   return NonHashedFile(outputFile);
 }
 

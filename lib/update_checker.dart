@@ -27,9 +27,11 @@ class UpdateChecker {
 
   Future<String> _fetchLatestVersion() async {
     if (_disabled) return _currentVersion;
+    HttpClient? client;
     try {
+      client = HttpClient();
       // Connect to GitHub website
-      final HttpClientRequest connection = await HttpClient().getUrl(_url);
+      final HttpClientRequest connection = await client.getUrl(_url);
       connection.followRedirects = false;
       final HttpClientResponse response = await connection.close();
 
@@ -45,6 +47,8 @@ class UpdateChecker {
       return removePrefix(split[split.length - 1]);
     } on HttpException catch (e) {
       throw HttpException("Exception trying to fetch the latest version:\n$e");
+    } finally {
+      client?.close();
     }
   }
 
