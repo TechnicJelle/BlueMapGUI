@@ -1,6 +1,7 @@
 name: Build Flutter Desktop
 
 on:
+  workflow_dispatch:
   push:
     paths-ignore:
       - '**.md'
