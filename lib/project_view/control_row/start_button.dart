@@ -18,13 +18,12 @@ class StartButton extends ConsumerWidget {
       width: 150,
       child: ElevatedButton.icon(
         onPressed: switch (processState) {
-          .stopped => () async {
+          .stopped => () {
             final bool clearConsoleBeforeStart = ref.read(consoleClearProvider);
             if (clearConsoleBeforeStart) {
               ref.read(outputNotifierProvider.notifier).clear();
-              // small delay to let the console be fully empty for a moment
-              await Future<void>.delayed(const Duration(milliseconds: 50));
             }
+
             unawaited(ref.read(processProvider)?.start());
           },
           .running => () => ref.read(processProvider)?.stop(),

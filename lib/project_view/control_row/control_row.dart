@@ -60,9 +60,7 @@ class RunningProcess with WindowListener {
   final _consoleOutputController = StreamController<String>();
 
   ValueStream<RunningProcessState> get state => _stateController.stream;
-  final _stateController = BehaviorSubject<RunningProcessState>.seeded(
-    RunningProcessState.stopped,
-  );
+  final _stateController = BehaviorSubject<RunningProcessState>.seeded(.stopped);
 
   StreamSubscription<String>? _processOutputStreamSub;
 
@@ -151,11 +149,8 @@ class RunningProcess with WindowListener {
   }
 
   Future<void> start() async {
-    if (_stateController.value != RunningProcessState.stopped) {
-      throw Exception("Process is already running!");
-    }
+    setState(RunningProcessState.starting);
 
-    _consoleOutputController.add("Starting...");
     final File bluemapJar = getBlueMapJarFile(_projectDirectory);
 
     if (!bluemapJar.existsSync()) {
@@ -192,7 +187,6 @@ class RunningProcess with WindowListener {
       workingDirectory: _projectDirectory,
     );
     _process = process;
-    _stateController.add(RunningProcessState.starting);
 
     final Stream<String> mergedStream = StreamGroup.merge([
       process.stdout,
@@ -229,7 +223,7 @@ class RunningProcess with WindowListener {
       }
 
       if (event.contains("WebServer bound to")) {
-        _stateController.add(RunningProcessState.running);
+        setState(RunningProcessState.running);
         final String? portText = portExtractionRegex.firstMatch(event)?.group(1);
         _port = int.tryParse(portText ?? "") ?? 8100;
       }
@@ -249,24 +243,52 @@ class RunningProcess with WindowListener {
     });
 
     unawaited(
-      process.exitCode.then((int value) {
-        _stateController.add(RunningProcessState.stopped);
-        unawaited(_processOutputStreamSub?.cancel());
-        _consoleOutputController.add("Stopped. ($value)");
+      process.exitCode.then((int value) async {
+        await _processOutputStreamSub?.cancel();
+        setState(RunningProcessState.stopped, exitCode: value);
       }),
     );
   }
 
   void stop() {
-    if (_stateController.value == RunningProcessState.stopped) {
-      throw Exception("Process is stopped!");
-    }
+    setState(RunningProcessState.stopping);
 
     final bool? success = _process?.kill(ProcessSignal.sigint);
     if (success == false) {
       _consoleOutputController.add("Failed to stop the process.");
     }
-    _stateController.add(RunningProcessState.stopping);
+  }
+
+  void setState(RunningProcessState newState, {int? exitCode}) {
+    switch (newState) {
+      case RunningProcessState.starting:
+        if (_stateController.value != .stopped) {
+          throw Exception(
+            "Attempted to start process, but the process is already running! (Can only start the process if it's stopped)",
+          );
+        }
+      case RunningProcessState.stopping:
+        if (_stateController.value == .stopped) {
+          throw Exception(
+            "Attempted to stop process, but the process is already stopped!",
+          );
+        }
+      // We only care about these↑two
+      // ignore: no_default_cases
+      default:
+        break;
+    }
+
+    _stateController.add(newState);
+
+    _consoleOutputController.add(
+      "[Signal] ${switch (newState) {
+        .stopped => "Stopped. ($exitCode)",
+        .starting => "Starting...",
+        .running => "Running!",
+        .stopping => "Stopping...",
+      }}",
+    );
   }
 }
 

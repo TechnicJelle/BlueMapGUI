@@ -123,6 +123,8 @@ class _ConsoleState extends ConsumerState<Console> {
                   colour = Colors.yellow;
                 } else if (message.contains("INFO")) {
                   colour = Colors.white;
+                } else if (message.contains("[Signal]")) {
+                  colour = Colors.white60;
                 }
                 return SelectableText(message, style: TextStyle(color: colour));
               },
