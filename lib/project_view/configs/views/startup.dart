@@ -67,7 +67,10 @@ class _StartupConfigViewState extends ConsumerState<StartupConfigView> {
               "More information about BlueMap and mods.",
               "https://bluemap.bluecolored.de/wiki/customization/Mods.html",
             ),
-            SettingsBodyText("\nLeave empty to not use any mods."),
+            SettingsBodyText("""
+\nChanging this likely requires a re-render of all the maps in this project.
+Leave empty to not use any mods.
+"""),
           ],
           controller: modsPathController,
           hintText: "No mods active.",
