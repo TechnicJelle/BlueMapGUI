@@ -141,7 +141,7 @@ class ConfigFile<T extends BaseConfigModel> {
 
     final int exitCode = result.exitCode;
     final String stderr = result.stderr.toString();
-    if (exitCode != 0 || stderr.isNotEmpty) {
+    if (exitCode != 0) {
       throw FatalConfigFileRunException(exitCode: exitCode, stderr: stderr);
     }
     final String stdout = result.stdout.toString();
