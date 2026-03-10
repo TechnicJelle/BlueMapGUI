@@ -757,8 +757,8 @@ class BoolListOption extends StatelessWidget {
             Text(option.description),
           ],
         ),
+        //To make up for the Checkbox's 8px of built-in padding:
         const SizedBox(width: 8),
-        //To make up for the Checkbox's 8px of built-in padding
         SizedBox(width: horizontalPadding),
       ],
     );
