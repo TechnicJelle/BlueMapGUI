@@ -1,4 +1,3 @@
-import "dart:io";
 import "dart:math" as math;
 
 import "package:file_picker/file_picker.dart";
@@ -113,11 +112,27 @@ class PathPickerButton extends StatelessWidget {
         icon: const Icon(Icons.drive_folder_upload_rounded),
         label: Text("Pick $purpose folder"),
         onPressed: () async {
-          final initialDir = Directory(initialDirectory);
-          final String? picked = await FilePicker.platform.getDirectoryPath(
-            dialogTitle: "Pick your $purpose folder",
-            initialDirectory: initialDir.existsSync() ? initialDirectory : null,
-          );
+          final String dialogTitle = "Pick your $purpose folder";
+          String? picked;
+          try {
+            // First, we try with an initialDirectory:
+            // - Linux will crash on this, if the path contains any special characters
+            //   (I have submitted a PR to the file_picker library that will fix this: https://github.com/miguelpruivo/flutter_file_picker/pull/1963 )
+            // - Windows will crash on this, if the directory does not exist
+            picked = await FilePicker.platform.getDirectoryPath(
+              dialogTitle: dialogTitle,
+              initialDirectory: initialDirectory,
+            );
+
+            // Ignoring, because we want to catch all Errors and Exceptions, to give it a chance to try again.
+            // If it still crashes after that, we let it go further up.
+            // ignore: avoid_catches_without_on_clauses
+          } catch (_) {
+            // So if it crashed, we try again, but without an initialDirectory:
+            picked = await FilePicker.platform.getDirectoryPath(
+              dialogTitle: dialogTitle,
+            );
+          }
           if (picked == null) return;
           onPicked(picked);
         },
