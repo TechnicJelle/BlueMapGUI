@@ -377,6 +377,7 @@ class TextFieldOption extends StatelessWidget {
   final Widget? button;
   final TextInputType? keyboardType;
   final TextInputFormatter? inputFormatter;
+  final FormFieldValidator<String>? warningValidator;
 
   TextFieldOption({
     required this.title,
@@ -388,6 +389,7 @@ class TextFieldOption extends StatelessWidget {
     this.button,
     this.keyboardType,
     this.inputFormatter,
+    this.warningValidator,
     super.key,
   }) : descriptionList = [SettingsBodyText(description)];
 
@@ -401,6 +403,7 @@ class TextFieldOption extends StatelessWidget {
     this.button,
     this.keyboardType,
     this.inputFormatter,
+    this.warningValidator,
     super.key,
   });
 
@@ -409,17 +412,26 @@ class TextFieldOption extends StatelessWidget {
     return _Option(
       title: title,
       descriptionList: descriptionList,
-      subtitle: TextField(
+      subtitle: TextFormField(
         controller: controller,
         decoration: InputDecoration(
           border: const OutlineInputBorder(),
           hintText: hintText,
           suffixIcon: button,
+          errorStyle: const TextStyle(color: Colors.orange),
+          errorBorder: const OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.grey),
+          ),
+          focusedErrorBorder: const OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.blue, width: 2),
+          ),
         ),
         onChanged: onChanged,
         onEditingComplete: onEditingComplete,
         keyboardType: keyboardType,
         inputFormatters: inputFormatter != null ? [inputFormatter!] : null,
+        validator: warningValidator,
+        autovalidateMode: .onUserInteraction,
       ),
       shouldPadBottom: true,
     );
@@ -745,7 +757,8 @@ class BoolListOption extends StatelessWidget {
             Text(option.description),
           ],
         ),
-        const SizedBox(width: 8), //To make up for the Checkbox's 8px of built-in padding
+        const SizedBox(width: 8),
+        //To make up for the Checkbox's 8px of built-in padding
         SizedBox(width: horizontalPadding),
       ],
     );

@@ -140,6 +140,16 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
           ),
           onChanged: null,
           onEditingComplete: () => setState(validateAndSaveOptionsThatCannotBeBlank),
+          warningValidator: (String? value) {
+            if (value == null) return null;
+            if (!Directory(value).existsSync()) {
+              return "Directory does not exist";
+            }
+            if (!File(p.join(value, "level.dat")).existsSync()) {
+              return "Directory does not seem to contain a Minecraft World";
+            }
+            return null;
+          },
         ),
         TextFieldOption.customDescription(
           title: "Dimension",

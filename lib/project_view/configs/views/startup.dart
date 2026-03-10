@@ -1,4 +1,5 @@
 import "dart:convert";
+import "dart:io";
 
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
@@ -88,6 +89,20 @@ Leave empty to not use any mods.
             StartupConfigKeys.modsPath,
             jsonEncode(model.modsPath),
           ),
+          warningValidator: (String? value) {
+            if (value == null || value.isEmpty) return null;
+            final dir = Directory(value);
+            if (!dir.existsSync()) {
+              return "Directory does not exist";
+            }
+            final bool containsMods = dir.listSync().any(
+              (e) => e.path.contains(RegExp(r".jar$", caseSensitive: false)),
+            );
+            if (!containsMods) {
+              return "Directory does not seem to contain any mods";
+            }
+            return null;
+          },
         ),
         TextFieldOption(
           title: "Minecraft Version",
