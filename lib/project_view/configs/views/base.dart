@@ -470,6 +470,7 @@ class Vector2XZOption extends StatelessWidget {
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: "x",
+                labelText: "x",
               ),
               onChanged: onChanged,
               onEditingComplete: onEditingComplete,
@@ -485,6 +486,7 @@ class Vector2XZOption extends StatelessWidget {
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: "z",
+                labelText: "z",
               ),
               onChanged: onChanged,
               onEditingComplete: onEditingComplete,
