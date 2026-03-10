@@ -64,10 +64,9 @@ class _CoreConfigViewState extends ConsumerState<CoreConfigView> {
             SettingsBodyLink("Mojang's servers", "https://piston-meta.mojang.com/"),
             SettingsBodyText(" for you.\n"),
             SettingsBodyText(
-              "This file contains resources that belong to Mojang and you must not redistribute it or do anything else that is not compliant with Mojang's EULA.",
-            ),
-            SettingsBodyText(
-              "BlueMap uses resources in this file to generate the 3D models used for the map and texture them. Without these, BlueMap will not work.",
+              """
+This file contains resources that belong to Mojang and you must not redistribute it or do anything else that is not compliant with Mojang's EULA.
+BlueMap uses resources in this file to generate the 3D models used for the map and textures. Without these, BlueMap will not work.""",
             ),
           ],
           value: model.acceptDownload,
