@@ -1,5 +1,6 @@
 import "dart:async";
 import "dart:io";
+import "dart:math" as math;
 
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
@@ -14,11 +15,13 @@ class ProjectsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (ref.watch(javaPathProvider.select((path) => path == null))) {
-      return const Center(
-        child: Text(
-          "⟵\n\nPlease set up your Java in the settings\n\n⟵",
-          textAlign: TextAlign.center,
-        ),
+      return const Column(
+        mainAxisAlignment: .center,
+        children: [
+          Text("Please set up your Java in the settings"),
+          SizedBox(height: 8),
+          Icon(Icons.arrow_back),
+        ],
       );
     }
 
@@ -36,6 +39,34 @@ class ProjectsScreen extends ConsumerWidget {
             return ProjectTile(projectDirectory);
           },
         ),
+
+        if (projects.isEmpty)
+          Center(
+            child: Column(
+              mainAxisSize: .min,
+              children: [
+                const Text("You can create a new project with the (+) button"),
+                const SizedBox(height: 6),
+                Transform.rotate(
+                  angle: -math.pi / 4.0,
+                  child: const Icon(Icons.arrow_downward),
+                ),
+              ],
+            ),
+          ),
+
+        if (projects.length == 1)
+          const Center(
+            child: Column(
+              mainAxisSize: .min,
+              children: [
+                Icon(Icons.arrow_upward),
+                SizedBox(height: 6),
+                Text("You can open your project by clicking it"),
+              ],
+            ),
+          ),
+
         Positioned(
           bottom: 16,
           right: 16,
