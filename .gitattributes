@@ -1,3 +1,4 @@
+* text=auto
 *.cpp linguist-detectable=false
 *.cc linguist-detectable=false
 *.h linguist-detectable=false
