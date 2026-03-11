@@ -309,7 +309,7 @@ It will only be removed from the list.""",
     try {
       run = await javaPath.runJarTimeout(
         bluemapJar,
-        const Duration(seconds: 5),
+        const Duration(seconds: 30),
         workingDirectory: projectDirectory,
       );
     } on ProcessException catch (e) {
