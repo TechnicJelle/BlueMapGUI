@@ -123,6 +123,7 @@ Future<NonHashedFile> downloadFile({
       }
       sink.add(buffer);
     });
+    await sink.close();
   } on HttpException catch (e) {
     throw HttpException('Exception trying to download a file "$uri":\n$e');
   } finally {
