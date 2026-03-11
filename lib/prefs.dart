@@ -86,11 +86,22 @@ class JavaPath {
           ..stderr.listen((List<int> e) => e.forEach(stderrBuffer.writeCharCode));
 
     //We kill the process after the duration
-    final Timer killer = Timer(timeout, process.kill);
+    bool wasKilled = false;
+    final Timer killer = Timer(timeout, () {
+      if (process.kill()) wasKilled = true;
+    });
 
     //If the process has already stopped, we cancel the killer
     final int exitCode = await process.exitCode;
     killer.cancel();
+
+    if (wasKilled) {
+      throw ProcessException(
+        jar.path,
+        [...jvmArgs, ...processArgs],
+        "Timeout of $timeout was hit!",
+      );
+    }
 
     return ProcessResult(
       process.pid,
