@@ -18,18 +18,35 @@ class Sidebar extends ConsumerWidget {
     return ListView(
       children: [
         const _ControlPanelTile(),
-        const SizedBox(height: 32),
-        const Text(" Configs"),
+        const Divider(height: 2),
+        const _SidebarHeading("Configs"),
         for (final ConfigFile config in mainConfigs)
           ConfigTile(
             config,
             prettifyName: true,
           ),
-        const SizedBox(height: 32),
-        const Text(" Maps"),
+        const Divider(height: 2),
+        const _SidebarHeading("Maps"),
         const _MapsTiles(),
         const NewMapButton(),
       ],
+    );
+  }
+}
+
+class _SidebarHeading extends StatelessWidget {
+  final String text;
+
+  const _SidebarHeading(this.text);
+
+  static const configHeadingPadding = EdgeInsets.only(left: 14, top: 16, bottom: 8);
+  static const configHeadingStyle = TextStyle(fontSize: 20, fontWeight: .w400);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: configHeadingPadding,
+      child: Text(text, style: configHeadingStyle),
     );
   }
 }
