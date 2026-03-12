@@ -129,4 +129,10 @@ You're welcome to ping me, @TechnicJelle.
 
 ![screenshot](.github/readme_assets/settings_screen.png)
 
-![screenshot](.github/readme_assets/map_config.png)
+![screenshot](.github/readme_assets/config_core.png)
+
+![screenshot](.github/readme_assets/config_core_advanced.png)
+
+![screenshot](.github/readme_assets/config_map_overworld.png)
+
+![screenshot](.github/readme_assets/config_map_overworld_advanced.png)
