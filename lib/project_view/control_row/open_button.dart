@@ -70,7 +70,7 @@ class _OpenButtonState extends ConsumerState<OpenButton> with TickerProviderStat
         unawaited(_scaleController.forward(from: 0));
         unawaited(_glowController.forward(from: 0));
       }
-      if (next.value == .stopping) {
+      if (next.value == .stopping || next.value == .stopped) {
         unawaited(_glowController.animateBack(0, duration: Durations.short4));
       }
     });
