@@ -5,6 +5,7 @@ on:
   push:
     paths-ignore:
       - '**.md'
+      - /website/
 
 env:
   FLUTTER_VERSION: '3.41.1'

@@ -1,9 +1,11 @@
 name: SSG
 
 on:
+  workflow_dispatch:
   push:
     branches: [ "main" ]
-  workflow_dispatch:
+    paths-ignore:
+      - /lib/
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
