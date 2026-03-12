@@ -41,7 +41,7 @@ class _OpenButtonState extends ConsumerState<OpenButton>
 
       final attack = cos(asin(1 - (x / c)));
       final decay = pow(cos((1 / (2 * (1 - c))) * pi * (max(x, c) - c)), s);
-      return 1 + h * (x < c ? attack : decay);
+      return 1 + (h - 1) * (x < c ? attack : decay);
     }).animate(_controller);
   }
 
