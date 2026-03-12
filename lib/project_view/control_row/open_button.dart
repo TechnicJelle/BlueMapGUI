@@ -1,4 +1,5 @@
 import "dart:async";
+import "dart:math";
 
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
@@ -24,13 +25,24 @@ class _OpenButtonState extends ConsumerState<OpenButton>
 
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 2000),
     );
 
-    _animation = CurveTween(curve: Curves.elasticOut).animate(_controller);
+    // Many many thanks to https://github.com/qwerasd205 for helping me bring my animation idea to maths!
+    // https://www.desmos.com/calculator/ri3wqi80au
+    const double attackToDecaySwitchMomentFactor = 0.25;
+    const double maxHeight = 2;
+    const double decaySmooth = 3;
+    _animation = Animatable<double>.fromCallback((double x) {
+      // shortened variable names for easier mathsing
+      const double c = attackToDecaySwitchMomentFactor; // [c]enter
+      const double h = maxHeight; // [h]eight,
+      const double s = decaySmooth; // [s]moothing of tail end
 
-    //set the animation as finished upon start, to prevent scale==0
-    _controller.value = 1.0;
+      final attack = cos(asin(1 - (x / c)));
+      final decay = pow(cos((1 / (2 * (1 - c))) * pi * (max(x, c) - c)), s);
+      return 1 + h * (x < c ? attack : decay);
+    }).animate(_controller);
   }
 
   @override
