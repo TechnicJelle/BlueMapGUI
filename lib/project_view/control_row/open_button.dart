@@ -16,14 +16,14 @@ class OpenButton extends ConsumerStatefulWidget {
 
 class _OpenButtonState extends ConsumerState<OpenButton>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-  late final Animation<double> _animation;
+  late final AnimationController _scaleController;
+  late final Animation<double> _scaleAnimation;
 
   @override
   void initState() {
     super.initState();
 
-    _controller = AnimationController(
+    _scaleController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 2000),
     );
@@ -33,7 +33,7 @@ class _OpenButtonState extends ConsumerState<OpenButton>
     const double attackToDecaySwitchMomentFactor = 0.25;
     const double maxHeight = 2;
     const double decaySmooth = 3;
-    _animation = Animatable<double>.fromCallback((double x) {
+    _scaleAnimation = Animatable<double>.fromCallback((double x) {
       // shortened variable names for easier mathsing
       const double c = attackToDecaySwitchMomentFactor; // [c]enter
       const double h = maxHeight; // [h]eight,
@@ -42,31 +42,29 @@ class _OpenButtonState extends ConsumerState<OpenButton>
       final attack = cos(asin(1 - (x / c)));
       final decay = pow(cos((1 / (2 * (1 - c))) * pi * (max(x, c) - c)), s);
       return 1 + (h - 1) * (x < c ? attack : decay);
-    }).animate(_controller);
+    }).animate(_scaleController);
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _scaleController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final bool isRunning = ref.watch(
-      processStateProvider.select(
-        (asyncValue) => asyncValue.value == RunningProcessState.running,
-      ),
+      processStateProvider.select((asyncValue) => asyncValue.value == .running),
     );
 
     ref.listen(processStateProvider, (previous, next) {
-      if (next.value == RunningProcessState.running) {
-        unawaited(_controller.forward(from: 0));
+      if (next.value == .running) {
+        unawaited(_scaleController.forward(from: 0));
       }
     });
 
     return ScaleTransition(
-      scale: _animation,
+      scale: _scaleAnimation,
       child: ElevatedButton.icon(
         onPressed: isRunning
             ? () async {
