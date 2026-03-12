@@ -1,0 +1,18 @@
+name: ssg
+description: Custom Static Site Generator for the BlueMapGUI Website
+version: 0.0.1
+repository: https://github.com/TechnicJelle/BlueMapGUI
+publish_to: none
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  path: ^1.9.1
+  techs_html_bindings:
+    git:
+      url: https://github.com/TechnicJelle/techs_html_bindings.git
+      ref: main
+
+dev_dependencies:
+  very_good_analysis: ^10.2.0
