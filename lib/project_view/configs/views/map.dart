@@ -122,10 +122,9 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
     )!;
     openConfigFile(openConfig);
 
-    return ListView(
-      padding: const .only(right: 16), //to give the scrollbar some space
+    return ConfigOptionsList(
+      title: "Map: ${openConfig.name}",
       children: [
-        ConfigTitle(title: "Map Config: ${openConfig.name}"),
         TextFieldOption(
           title: "World Path",
           description: "The path to the save folder of the world to render.",

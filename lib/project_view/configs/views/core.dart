@@ -45,9 +45,9 @@ class _CoreConfigViewState extends ConsumerState<CoreConfigView> {
       sliderColor = null;
     }
 
-    return ListView(
+    return ConfigOptionsList(
+      title: "Core Config",
       children: [
-        const ConfigTitle(title: "Core Config"),
         ToggleOption.customDescription(
           title: "Accept Download",
           descriptionList: const [

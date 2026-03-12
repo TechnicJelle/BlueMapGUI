@@ -52,9 +52,9 @@ class _WebserverConfigViewState extends ConsumerState<WebserverConfigView> {
       openConfigProvider.select((c) => c is ConfigFile<WebserverConfigModel> ? c : null),
     )!;
 
-    return ListView(
+    return ConfigOptionsList(
+      title: "Webserver Config",
       children: [
-        const ConfigTitle(title: "Webserver Config"),
         TextFieldOption(
           title: "Port",
           description: "The port that the webserver listens on.",

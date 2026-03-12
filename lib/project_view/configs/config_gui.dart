@@ -49,7 +49,7 @@ class _ConfigGUIState extends ConsumerState<ConfigGUI> {
         Align(
           alignment: .topRight,
           child: Padding(
-            padding: const EdgeInsets.only(right: 12, top: 6),
+            padding: const EdgeInsets.only(right: 12, top: 8),
             child: Row(
               mainAxisSize: .min,
               children: [

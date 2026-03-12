@@ -30,9 +30,9 @@ class _WebappConfigViewState extends ConsumerState<WebappConfigView> {
       openConfigProvider.select((c) => c is ConfigFile<WebappConfigModel> ? c : null),
     )!;
 
-    return ListView(
+    return ConfigOptionsList(
+      title: "Webapp Config",
       children: [
-        const ConfigTitle(title: "Webapp Config"),
         ToggleOption(
           title: "Default to Flat View",
           description:

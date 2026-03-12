@@ -55,9 +55,9 @@ class _StartupConfigViewState extends ConsumerState<StartupConfigView> {
       openConfigProvider.select((c) => c is ConfigFile<StartupConfigModel> ? c : null),
     )!;
 
-    return ListView(
+    return ConfigOptionsList(
+      title: "Startup Config",
       children: [
-        const ConfigTitle(title: "Startup Config"),
         TextFieldOption.customDescription(
           title: "Mods Path",
           descriptionList: const [

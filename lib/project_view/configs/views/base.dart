@@ -141,21 +141,35 @@ class PathPickerButton extends StatelessWidget {
   }
 }
 
-class ConfigTitle extends StatelessWidget {
+class ConfigOptionsList extends StatelessWidget {
   final String title;
+  final List<Widget> children;
 
-  const ConfigTitle({required this.title, super.key});
+  const ConfigOptionsList({required this.title, required this.children, super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const .only(left: 16, top: 16, bottom: 12),
-      child: Text(
-        title,
-        style: TextTheme.of(context).headlineMedium?.copyWith(
-          color: TextTheme.of(context).titleSmall?.color,
+    return CustomScrollView(
+      slivers: [
+        SliverAppBar(
+          flexibleSpace: FlexibleSpaceBar(
+            expandedTitleScale: 2,
+            title: Text(
+              title,
+              style: TextTheme.of(context).headlineSmall?.copyWith(
+                color: TextTheme.of(context).titleSmall?.color,
+                fontWeight: .w500,
+              ),
+            ),
+            // right: 200 is to ensure that the Advanced Mode switch does not overlap the title
+            titlePadding: const EdgeInsets.only(left: 16, bottom: 12, right: 200),
+          ),
+          expandedHeight: 78,
+          backgroundColor: Colors.transparent,
+          pinned: true,
         ),
-      ),
+        SliverList.list(children: children),
+      ],
     );
   }
 }
