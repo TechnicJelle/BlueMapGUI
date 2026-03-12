@@ -38,21 +38,20 @@ Click on it to open it.
 
 Opening will take a bit longer the first time, because it needs to download the BlueMap file.
 
-You can return to the main menu by closing the project, by clicking the close button in the top right corner.
+You can return to the main menu by closing the project with the close button in the top right corner.
 
 ### 3. Setting up BlueMap
 #### 3.a Accepting the download
 You can now try to start BlueMap by clicking the `▶ Start` button.
 
 But this first time, it will not work yet.
-You will see instructions to accept a download in the Core config.
+You will see instructions in yellow to accept a download in the Core config.
 
 > This is because BlueMap needs to download some files from Mojang to work properly,
 > and according to the Mojang EULA, you have to manually confirm this download.
 
-Luckily, you can do this very simply, by clicking the Core button in the left sidebar.  
-This will open the config editor, where you can edit the config to accept the download.  
-Find the `accept-download` option, and change the `false` to `true`.
+Luckily, you can do this very simply, by clicking on `Core` config tab in the left sidebar.  
+Find the **Accept Download** option, and enable it by ticking the checkbox.
 
 #### 3.b Configuring your maps
 Now, you have to configure your maps.
@@ -62,33 +61,14 @@ A dialog will open up where you need to choose a template (overworld, nether, or
 and type in a unique ID for the map. This can be anything you like.  
 Once you're happy with these settings, click the blue `Create` button.
 
-You will now see the ID you typed in the sidebar, under the **Map configs** section.
+You will now see the ID you typed in the sidebar, under the **Maps** section.
 
-The config editor should be opened on your new map automatically,
-but if it isn't you can click the newly created map in the sidebar to open it.
+The options page for this map should then be visible, but if it isn't,
+you can click the newly created map tab in the sidebar to open it.
 
-You need to edit this file to tell BlueMap where on your computer your world is.
-
-For the time being, you have to manually provide the path to your world folder.  
-_I'll make a simpler workflow for this [later](https://github.com/TechnicJelle/BlueMapGUI/milestone/2)._
-
-So find your world folder on your computer and copy the path to it.
-
-**Example paths:**
-##### Windows
-```hocon
-world: "C:/Users/TechnicJelle/AppData/Roaming/.minecraft/saves/MyCoolWorld/"
-```
-> [!NOTE]  
-> Make sure to use forward slashes (` / `) on Windows as well!  
-> The path you copied likely has backslashes (` \ `), so you have to change them manually.
-
-##### Linux
-```hocon
-world: "/home/technicjelle/.minecraft/saves/MyCoolWorld/"
-```
-
-Then in the config editor, find the `world` option, and paste the path you copied into it.
+You now need to tell BlueMap where on your computer your world is,
+so click the `Pick world folder` button in the top right,
+use the file picker to navigate to where your world is, and select it.
 
 #### 3.c (OPTIONAL) Setting up resource-packs & data-packs
 To make BlueMap use your preferred resource-packs and data-packs,
@@ -105,36 +85,31 @@ _Managing resource-packs and data-packs will be made nicer [in the future](https
 #### 3.d (OPTIONAL) Setting up mods
 To make modded blocks show up correctly, BlueMap needs to know which mods you're using.
 
-To tell BlueMap about your mods, go to the `Startup` tab in the sidebar,
-and fill in the path to your mods folder in the `mods-path` option.
-
-**Example paths:**
-##### Windows
-```hocon
-mods-path: "C:/Users/TechnicJelle/AppData/Roaming/.minecraft/mods/"
-```
-> [!NOTE]  
-> Make sure to use forward slashes (` / `) on Windows as well!  
-> The path you copied likely has backslashes (` \ `), so you have to change them manually.
-
-##### Linux
-```hocon
-mods-path: "/home/technicjelle/.minecraft/mods/"
-```
+To tell BlueMap about your mods, go to the `Startup` config tab in the sidebar,
+click the `Pick world folder` button in the top right,
+use the file picker to navigate to where your mods folder is, and select it.
 
 BlueMap does not support all blocks from all mods, but most things will likely work.
 You can read more about BlueMap's mod support [on the BlueMap wiki](https://bluemap.bluecolored.de/wiki/customization/Mods.html).
 
 If you already started BlueMap before setting this up, you may see purple/black blocks in your map.  
 To fix this, you need to re-render the map with the new settings:  
-Click the `Open in file manager` button in the top right, go into the `web` folder,
-then into the `maps` folder, and delete the folder with the ID of the map you want to re-render.  
-Lastly, go back to the `Control Panel` tab in the sidebar, and click the `▶ Start` button again.
+Click on your maps in the sidebar, scroll all the way down to the **Danger Zone**, and click the `Re-Render` button.
+Do this for every map that you have.  
+Once you have done that, go back to the `Control Panel` tab in the sidebar, and click the `▶ Start` button again.  
 BlueMap will now re-render the map with the new settings.
 
+Note that this option applies to all maps in this project,
+so you should only add maps of worlds that all use the same mods in each project.  
+You can make new projects for different modpacks.
+
 #### 3.e (OPTIONAL) Minecraft version
-If you're not on the latest version of Minecraft,
-you can change the `minecraft-version` option in the `Startup` tab in the sidebar.
+If your world is not on the latest version of Minecraft,
+you can set the **Minecraft Version** option in the `Startup` config tab in the sidebar.
+
+Note that this option applies to all maps in this project,
+so you should only add maps of worlds that all use the same Minecraft Version in each project.  
+You can make new projects for different versions.
 
 ### 4. Starting BlueMap
 Once you've set up all the maps you want to render,
