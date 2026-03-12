@@ -29,7 +29,7 @@ class ProjectsScreen extends ConsumerWidget {
 
     return Stack(
       children: [
-        ListView.builder(
+        ListView.separated(
           itemCount: projects.length + 1,
           itemBuilder: (BuildContext context, int index) {
             if (index == projects.length) {
@@ -38,6 +38,8 @@ class ProjectsScreen extends ConsumerWidget {
             final projectDirectory = projects[index];
             return ProjectTile(projectDirectory);
           },
+          separatorBuilder: (BuildContext context, int index) =>
+              const Divider(height: 1),
         ),
 
         if (projects.isEmpty)

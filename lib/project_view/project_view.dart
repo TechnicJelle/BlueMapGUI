@@ -18,11 +18,7 @@ class ProjectView extends ConsumerWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Container(
-          constraints: const BoxConstraints(maxWidth: 200),
-          child: const Sidebar(),
-        ),
-        const VerticalDivider(width: 2),
+        const ProjectSidebar(),
         Expanded(
           child: isConfigOpen ? const ConfigGUI() : const ControlPanel(),
         ),

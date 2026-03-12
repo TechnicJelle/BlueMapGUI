@@ -6,6 +6,7 @@ import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:path/path.dart" as p;
 import "package:re_editor/re_editor.dart";
 import "package:re_highlight/languages/yaml.dart" show langYaml;
+import "package:re_highlight/styles/a11y-light.dart" show a11YLightTheme;
 import "package:re_highlight/styles/ir-black.dart" show irBlackTheme;
 
 import "../../project_configs_provider.dart";
@@ -111,6 +112,15 @@ class _AdvancedEditorState extends ConsumerState<AdvancedEditor> {
       if (previous != null) writeFile(previous);
       if (next != null) unawaited(readFile(next));
     });
+
+    final brightness = Theme.brightnessOf(context);
+    final Map<String, TextStyle> codeTheme = {}
+      ..addAll(switch (brightness) {
+        Brightness.dark => irBlackTheme,
+        Brightness.light => a11YLightTheme,
+      });
+    codeTheme["comment"] = const TextStyle(color: Colors.green);
+
     return _ProblemWrapper(
       problemText: problemDescription == null
           ? null
@@ -140,12 +150,11 @@ class _AdvancedEditorState extends ConsumerState<AdvancedEditor> {
           );
         },
         style: CodeEditorStyle(
-          textColor: Colors.white,
           fontFamily: pixelCode200.fontFamily,
           fontSize: pixelCode200.fontSize,
           fontHeight: pixelCode200.height,
           codeTheme: CodeHighlightTheme(
-            theme: irBlackTheme,
+            theme: codeTheme,
             languages: {"yaml": CodeHighlightThemeMode(mode: langYaml)},
           ),
         ),
@@ -172,39 +181,36 @@ class _ProblemWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ColoredBox(
-      color: Colors.grey.shade900,
-      child: Column(
-        crossAxisAlignment: .start,
-        children: [
-          if (problemText != null)
-            Padding(
-              padding: const EdgeInsets.only(left: 8, top: 8),
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: Colors.red,
-                ),
-                child: problemText,
+    return Column(
+      crossAxisAlignment: .start,
+      children: [
+        if (problemText != null)
+          Padding(
+            padding: const EdgeInsets.only(left: 8, top: 8),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: Colors.red,
               ),
-            ),
-          Expanded(
-            child: ScrollbarTheme(
-              data: Theme.of(context).scrollbarTheme.copyWith(
-                thumbColor: WidgetStateProperty.resolveWith((states) {
-                  if (states.contains(WidgetState.dragged)) return Colors.white38;
-                  if (states.contains(WidgetState.hovered)) return Colors.white30;
-                  return Colors.white24;
-                }),
-                trackColor: WidgetStateProperty.all(Colors.white10),
-                trackBorderColor: WidgetStateProperty.all(Colors.white12),
-              ),
-              child: child,
+              child: problemText,
             ),
           ),
-        ],
-      ),
+        Expanded(
+          child: ScrollbarTheme(
+            data: Theme.of(context).scrollbarTheme.copyWith(
+              thumbColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.dragged)) return Colors.white38;
+                if (states.contains(WidgetState.hovered)) return Colors.white30;
+                return Colors.white24;
+              }),
+              trackColor: WidgetStateProperty.all(Colors.white10),
+              trackBorderColor: WidgetStateProperty.all(Colors.white12),
+            ),
+            child: child,
+          ),
+        ),
+      ],
     );
   }
 }

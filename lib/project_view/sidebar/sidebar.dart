@@ -2,30 +2,27 @@ import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 
 import "../../project_configs_provider.dart";
+import "../../sidebar.dart";
 import "../configs/config_gui.dart";
 import "../configs/models/base.dart";
+import "../configs/models/map.dart";
 import "../control_row/control_row.dart";
 import "config_tile.dart";
 import "new_map_button.dart";
 
-class Sidebar extends ConsumerWidget {
-  const Sidebar({super.key});
+class ProjectSidebar extends ConsumerWidget {
+  const ProjectSidebar({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final mainConfigs = ref.watch(mainConfigsProvider)!;
 
-    return ListView(
+    return Sidebar(
       children: [
         const _ControlPanelTile(),
-        const Divider(height: 2),
         const _SidebarHeading("Configs"),
         for (final ConfigFile config in mainConfigs)
-          ConfigTile(
-            config,
-            prettifyName: true,
-          ),
-        const Divider(height: 2),
+          ConfigTile(config, prettifyName: true),
         const _SidebarHeading("Maps"),
         const _MapsTiles(),
         const NewMapButton(),
@@ -39,7 +36,7 @@ class _SidebarHeading extends StatelessWidget {
 
   const _SidebarHeading(this.text);
 
-  static const configHeadingPadding = EdgeInsets.only(left: 14, top: 16, bottom: 8);
+  static const configHeadingPadding = EdgeInsets.only(left: 14, top: 32, bottom: 8);
   static const configHeadingStyle = TextStyle(fontSize: 20, fontWeight: .w400);
 
   @override
@@ -62,8 +59,8 @@ class _ControlPanelTile extends ConsumerWidget {
     return Tooltip(
       message: "Status: ${processState?.name}",
       waitDuration: Durations.long4,
-      child: ListTile(
-        title: const Text("Control Panel"),
+      child: SidebarTab(
+        title: "Control Panel",
         trailing: openConfig != null && processState != .stopped
             ? processState == .running
                   ? const Icon(Icons.play_arrow)
@@ -73,6 +70,7 @@ class _ControlPanelTile extends ConsumerWidget {
           ref.read(projectProviderNotifier).closeConfig();
         },
         selected: openConfig == null,
+        minTileHeight: 60,
       ),
     );
   }
@@ -110,21 +108,20 @@ class _MapsTiles extends ConsumerWidget {
         ? ListView.builder(
             shrinkWrap: true,
             itemCount: mapConfigs.length,
-            itemBuilder: (context, index) => ConfigTile(
-              mapConfigs[index],
-              key: ValueKey(index),
-            ),
+            itemBuilder: (context, index) => _buildMapTile(mapConfigs, index),
           )
         : ReorderableListView.builder(
             shrinkWrap: true,
             itemCount: mapConfigs.length,
-            itemBuilder: (context, index) => ConfigTile(
-              mapConfigs[index],
-              key: ValueKey(index),
-            ),
+            itemBuilder: (context, index) => _buildMapTile(mapConfigs, index),
             onReorder: (int oldIndex, int newIndex) {
               ref.read(projectProviderNotifier).swapMaps(oldIndex, newIndex);
             },
+            proxyDecorator: (child, index, animation) =>
+                Material(shape: SidebarTab.shape, child: child),
           );
   }
+
+  ConfigTile _buildMapTile(List<ConfigFile<MapConfigModel>> mapConfigs, int index) =>
+      ConfigTile(mapConfigs[index], key: ValueKey(index));
 }

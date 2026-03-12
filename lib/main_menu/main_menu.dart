@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 
+import "../sidebar.dart";
 import "projects/projects_screen.dart";
 import "settings/settings_screen.dart";
 
@@ -21,24 +22,23 @@ class _MainMenuState extends ConsumerState<MainMenu> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Container(
-          constraints: const BoxConstraints(maxWidth: 200),
-          child: ListView(
-            children: [
-              ListTile(
-                title: const Text("Projects"),
-                selected: state == MainMenuState.projects,
-                onTap: () => setState(() => state = MainMenuState.projects),
-              ),
-              ListTile(
-                title: const Text("Settings"),
-                selected: state == MainMenuState.settings,
-                onTap: () => setState(() => state = MainMenuState.settings),
-              ),
-            ],
-          ),
+        Sidebar(
+          children: [
+            SidebarTab(
+              title: "Projects",
+              selected: state == MainMenuState.projects,
+              onTap: () => setState(() => state = MainMenuState.projects),
+              minTileHeight: 64,
+            ),
+            const SizedBox(height: 1),
+            SidebarTab(
+              title: "Settings",
+              selected: state == MainMenuState.settings,
+              onTap: () => setState(() => state = MainMenuState.settings),
+              minTileHeight: 64,
+            ),
+          ],
         ),
-        const VerticalDivider(width: 2),
         Expanded(
           child: switch (state) {
             MainMenuState.projects => const ProjectsScreen(),
