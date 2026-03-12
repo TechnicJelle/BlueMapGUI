@@ -18,7 +18,7 @@ void main(List<String> arguments) {
     head: Head(
       title: title,
       metas: [
-        Meta.httpEquiv(httpEquiv: "refresh", content: "5;url=$redirectTo"),
+        Meta.httpEquiv(httpEquiv: "refresh", content: "0;url=$redirectTo"),
         Meta.name(name: "og:title", content: title),
         Meta.name(name: "description", content: description),
         Meta.name(name: "og:description", content: description),
