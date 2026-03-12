@@ -66,7 +66,7 @@ class MyHomePage extends ConsumerWidget {
             tooltip: "Help",
             onPressed: () {
               unawaited(
-                launchUrlString("https://technicjelle.com/BlueMapGUI"),
+                launchUrlString("https://technicjelle.com/BlueMapGUI/help"),
               );
             },
             icon: const Icon(Icons.help),
