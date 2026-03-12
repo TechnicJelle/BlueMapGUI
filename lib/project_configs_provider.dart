@@ -64,7 +64,7 @@ class ProjectConfigsNotifier extends Notifier<ProjectConfigs?> {
     }
 
     _sortMains(mainConfigs);
-    _sortMaps(mapConfigs);
+    sortMaps(mapConfigs);
 
     state = ProjectConfigs(
       projectLocation: projectDirectory,
@@ -81,7 +81,7 @@ class ProjectConfigsNotifier extends Notifier<ProjectConfigs?> {
   }
 
   ///sort map configs based on internal sorting value
-  static List<ConfigFile<MapConfigModel>> _sortMaps(
+  static List<ConfigFile<MapConfigModel>> sortMaps(
     List<ConfigFile<MapConfigModel>> list,
   ) {
     list.sort((ConfigFile<MapConfigModel> a, ConfigFile<MapConfigModel> b) {
@@ -108,7 +108,7 @@ class ProjectConfigsNotifier extends Notifier<ProjectConfigs?> {
   void addMap(ConfigFile<MapConfigModel> newMapConfig) {
     final ProjectConfigs project = state!;
     state = project.copyWith(
-      mapConfigs: _sortMaps([...project.mapConfigs, newMapConfig]),
+      mapConfigs: sortMaps([...project.mapConfigs, newMapConfig]),
       openConfig: newMapConfig,
     );
   }
@@ -206,7 +206,7 @@ class ProjectConfigsNotifier extends Notifier<ProjectConfigs?> {
     final mapConfigToUpdate = await _refreshConfig(file, state!.mapConfigs, javaPath);
     if (mapConfigToUpdate != null) {
       state = state!.copyWith(
-        mapConfigs: _sortMaps(
+        mapConfigs: sortMaps(
           _copyListWithout(state!.mapConfigs, file)..add(mapConfigToUpdate),
         ),
       );

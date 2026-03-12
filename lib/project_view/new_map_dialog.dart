@@ -1,4 +1,6 @@
+import "dart:async";
 import "dart:io";
+import "dart:math";
 
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
@@ -30,7 +32,7 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
   File? selectedTemplate;
 
   //State stuff
-  bool validating = false;
+  bool loading = false;
   String? errorMessage;
 
   @override
@@ -45,14 +47,28 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
         .whereType<File>()
         .toList();
 
-    options = mapTemplates
-        .map(
-          (template) => DropdownMenuEntry(
-            value: template,
-            label: p.basenameWithoutExtension(template.path).capitalize(),
-          ),
-        )
-        .toList();
+    loading = true;
+    final javaPath = ref.read(javaPathProvider)!;
+    unawaited(
+      ConfigFile.fromFiles(mapTemplates, javaPath, interpretAsMapConfig: true).then(
+        (List<ConfigFile<BaseConfigModel>> configs) {
+          final List<ConfigFile<MapConfigModel>> mapConfigs = configs
+              .map((e) => e as ConfigFile<MapConfigModel>)
+              .toList();
+          setState(() {
+            options = ProjectConfigsNotifier.sortMaps(mapConfigs)
+                .map(
+                  (template) => DropdownMenuEntry(
+                    value: template.file,
+                    label: p.basenameWithoutExtension(template.path).capitalize(),
+                  ),
+                )
+                .toList();
+            loading = false;
+          });
+        },
+      ),
+    );
   }
 
   @override
@@ -62,10 +78,10 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
   }
 
   Future<void> validateAndCreate() async {
-    if (validating) return;
+    if (loading) return;
     final formState = formKey.currentState;
     if (formState != null && formState.validate()) {
-      setState(() => validating = true);
+      setState(() => loading = true);
       final File template = selectedTemplate!;
       final String id = idController.text;
 
@@ -79,7 +95,7 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
         // This can happen if, for example, the provided map-id is just WAY too long
         setState(() {
           errorMessage = e.message;
-          validating = false;
+          loading = false;
         });
         return;
       }
@@ -93,7 +109,7 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
       } on FatalConfigFileLoadException catch (e) {
         setState(() {
           errorMessage = e.getDetails();
-          validating = false;
+          loading = false;
         });
         await newConfig.delete();
         return;
@@ -103,7 +119,7 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
         if (nav.canPop()) nav.pop();
       }
     }
-    setState(() => validating = false);
+    setState(() => loading = false);
   }
 
   @override
@@ -114,7 +130,7 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
       content: Form(
         key: formKey,
         child: Column(
-          crossAxisAlignment: validating ? .center : .start,
+          crossAxisAlignment: loading ? .center : .start,
           mainAxisSize: .min,
           children: thisErrorMessage != null
               ? [
@@ -126,7 +142,7 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
                   ),
                   Text(thisErrorMessage, style: pixelCode200),
                 ]
-              : validating
+              : loading
               ? [const CircularProgressIndicator()]
               : [
                   const Text("Map type:"),
@@ -190,7 +206,7 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
           },
           child: const Text("Cancel"),
         ),
-        if (!validating && errorMessage == null)
+        if (!loading && errorMessage == null)
           ElevatedButton(onPressed: validateAndCreate, child: const Text("Create")),
       ],
     );
