@@ -117,6 +117,8 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
       if (mounted) {
         final nav = Navigator.of(context);
         if (nav.canPop()) nav.pop();
+        // Do not continue to the `loading = false` below, so that the popup does not show the form again while the popup is disappearing
+        return;
       }
     }
     setState(() => loading = false);
