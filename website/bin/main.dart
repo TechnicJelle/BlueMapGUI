@@ -30,7 +30,7 @@ void main(List<String> arguments) {
         Meta.httpEquiv(httpEquiv: "X-Clacks-Overhead", content: "GNU Terry Pratchett"),
       ],
       links: [
-        Link.icon(type: "image/png", sizes: "48x48", href: "/${icon(48)}"),
+        Link.icon(type: "image/png", sizes: "48x48", href: icon(48)),
       ],
       styles: [
         Style(
