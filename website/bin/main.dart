@@ -3,8 +3,10 @@ import "dart:io";
 import "package:path/path.dart" as p;
 import "package:techs_html_bindings/elements.dart";
 
+late final Directory buildDir;
+
 void main(List<String> arguments) {
-  final Directory buildDir = Directory("build")..createSync();
+  buildDir = Directory("build")..createSync();
   final File index = File(p.join(buildDir.path, "index.html"));
 
   const String title = "BlueMap GUI";
@@ -76,11 +78,11 @@ html {
 }
 
 String icon(int size) {
-  final File iconFile = File("../assets/icon_$size.png");
+  final String filename = "icon_$size.png";
+  final File iconFile = File("../assets/$filename");
   if (!iconFile.existsSync()) {
     throw FileSystemException("File not found!", iconFile.path);
   }
-  final File newFile = File("build/icon_$size.png");
-  iconFile.copySync(newFile.path);
-  return p.basename(newFile.path);
+  iconFile.copySync(p.join(buildDir.path, filename));
+  return filename;
 }
