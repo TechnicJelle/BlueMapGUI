@@ -6,6 +6,8 @@ on:
     branches: [ "main" ]
     paths-ignore:
       - /lib/
+  # Update the download link on the website
+  release:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
