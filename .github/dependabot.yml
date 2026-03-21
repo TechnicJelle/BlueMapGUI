@@ -6,8 +6,11 @@
 version: 2
 updates:
   - package-ecosystem: "pub"
-    # Files stored in repository root
     directory: "/"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "pub"
+    directory: "/website/"
     schedule:
       interval: "weekly"
   - package-ecosystem: "github-actions"
