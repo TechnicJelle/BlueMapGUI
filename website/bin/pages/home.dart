@@ -50,7 +50,12 @@ Future<void> createHomePage() async {
               ),
             ],
           ),
-          Image(src: "images/control_panel.png", alt: "screenshot", classes: ["hero"]),
+          Picture.darkLight(
+            classes: ["hero"],
+            darkSrc: "images/dark/control_panel.png",
+            lightSrc: "images/light/control_panel.png",
+            alt: "Screenshot",
+          ),
           H2(children: [T("Download")], autoLink: false),
           Div(
             classes: ["download-buttons"],

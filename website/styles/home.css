@@ -12,7 +12,7 @@ main {
 	text-wrap-style: balance;
 }
 
-img.hero {
+picture.hero img {
 	display: inline-block;
 	max-width: min(100%, 95vw);
 	margin-block: 1em;
