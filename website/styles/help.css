@@ -17,7 +17,7 @@ section.guide {
 	border-radius: 1em;
 }
 
-section.guide :first-child {
+section.guide > :first-child {
 	margin-top: 0.5em;
 }
 
@@ -27,7 +27,7 @@ aside nav {
 	border-radius: 1em;
 }
 
-aside nav :first-child {
+aside nav > :first-child {
 	margin-top: 0;
 }
 
