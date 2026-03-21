@@ -1,0 +1,126 @@
+html {
+	background-color: var(--secondary-background-color);
+}
+
+main {
+	display: grid;
+	gap: 1em;
+}
+
+section.guide {
+	background-color: var(--primary-background-color);
+	max-width: max(100ch, 1000px);
+	text-wrap-style: pretty;
+
+	padding: 0.75em 2em;
+	margin: 1em auto;
+	border-radius: 1em;
+}
+
+section.guide :first-child {
+	margin-top: 0.5em;
+}
+
+aside nav {
+	background-color: var(--primary-background-color);
+	padding: 1em;
+	border-radius: 1em;
+}
+
+aside nav :first-child {
+	margin-top: 0;
+}
+
+aside nav > ol,
+aside nav > :last-child {
+	margin-bottom: 0;
+}
+
+aside nav ol {
+	padding-left: 1.5em;
+	line-height: 1.5;
+}
+
+aside nav > :last-child {
+	padding-left: 0.5em;
+}
+
+/* Wide */
+@media screen and (min-width: 1000px) {
+	aside nav {
+		position: fixed;
+		top: 5em;
+	}
+
+	main {
+		padding-left: 1em;
+		grid-template-columns: 1fr 33.5ch;
+	}
+}
+
+/* Thin */
+@media screen and (max-width: 1000px) {
+	main > aside {
+		grid-row: 1;
+	}
+
+	aside nav {
+		margin-inline: 1em;
+		margin-top: 1em;
+	}
+
+	section.guide {
+		margin: 0 0 1em;
+		padding: 0.25em 1em;
+	}
+}
+
+/* Super thin */
+@media screen and (max-width: 500px) {
+	section.guide {
+		padding: 0 0.5em;
+	}
+}
+
+h2 > a.link,
+h3 > a.link,
+h4 > a.link {
+	display: none;
+	text-decoration: none;
+}
+
+/* These are emoji (🔗) which don't look good with a normal underline, so we do a full outline instead */
+.link:hover {
+	--radius: 0.03em;
+	---radius: calc(-1 * var(--radius));
+	--blur: 0.03em;
+	text-shadow: var(---radius) var(---radius) var(--blur) var(--link-colour),
+	0 var(---radius) var(--blur) var(--link-colour),
+	var(--radius) var(---radius) var(--blur) var(--link-colour),
+	var(--radius) 0 var(--blur) var(--link-colour),
+	var(--radius) var(--radius) var(--blur) var(--link-colour),
+	0 var(--radius) var(--blur) var(--link-colour),
+	var(---radius) var(--radius) var(--blur) var(--link-colour),
+	var(---radius) 0 var(--blur) var(--link-colour);
+}
+
+/* Anchor point for the link emoji */
+h2, h3, h4 {
+	position: relative;
+}
+
+h2:hover > a.link,
+h3:hover > a.link,
+h4:hover > a.link,
+.card:hover a.link {
+	display: inline;
+	font-size: 0.7em;
+	margin-left: 0.3em;
+	position: absolute; /*do not actually take up any space, to prevent layout shifts*/
+	top: 0.2em;
+}
+
+/* h2 needs a bit more offset */
+h2:hover > a.link {
+	top: 0.3em;
+}

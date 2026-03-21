@@ -1,0 +1,106 @@
+html {
+	font-family: "Roboto", sans-serif;
+	height: 100%;
+}
+
+body {
+	padding: 0;
+	margin: 0;
+	height: 100%;
+}
+
+header, button {
+	font-family: system-ui;
+}
+
+header {
+	position: fixed;
+	width: 100%;
+	z-index: 1;
+}
+
+main {
+	/* To make up for the header overlay's height */
+	padding-top: 4em;
+}
+
+header ul {
+	margin: 0;
+	padding: 0.5em 0.75em;
+
+	background-color: var(--primary);
+
+	list-style: none;
+
+	display: flex;
+	justify-content: flex-end;
+	align-items: stretch;
+	gap: 2em;
+}
+
+header ul li:first-child {
+	margin-right: auto;
+}
+
+header ul li:first-child a {
+	display: flex;
+	align-items: center;
+	gap: 0.5em;
+}
+
+header img {
+	display: block;
+	font-size: 0.75em;
+}
+
+header ul li a {
+	text-decoration: none;
+	color: white;
+	font-size: 1.5em;
+	font-weight: 500;
+
+	display: block;
+	height: 100%;
+	align-content: center;
+}
+
+@media screen and (max-width: 600px) {
+	header ul li a {
+		font-size: 1.1em;
+	}
+}
+
+header a:hover,
+header a:focus-visible {
+	text-decoration: underline;
+	outline: none;
+}
+
+header a:hover img,
+header a:focus-visible img {
+	border-radius: 8px;
+	outline: 1px solid white;
+}
+
+footer {
+	text-align: right;
+}
+
+footer p {
+	margin: 0 0.5em 0.5em 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	scroll-margin-top: 5rem;
+}
+
+/* Push footer to bottom */
+body {
+	min-height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+main {
+	flex-grow: 1;
+}

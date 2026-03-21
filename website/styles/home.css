@@ -1,0 +1,77 @@
+main {
+	text-align: center;
+}
+
+.tagline {
+	font-weight: bold;
+}
+
+.description {
+	max-width: 60ch;
+	margin: auto;
+	text-wrap-style: balance;
+}
+
+img.hero {
+	display: inline-block;
+	max-width: min(100%, 95vw);
+	margin-block: 1em;
+}
+
+#download{
+	margin-top: 0;
+}
+
+.download-buttons a {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5em;
+
+	padding: 0.5em 0.75em;
+	border-radius: 8px;
+
+	text-decoration: none;
+
+	background-color: var(--primary);
+	color: white;
+
+	font-family: system-ui;
+	font-size: 1.5em;
+	font-weight: 500;
+}
+
+.download-buttons a:hover,
+.download-buttons a:focus-visible {
+	filter: brightness(120%);
+}
+
+.download-buttons a:focus-visible {
+	outline: 1px solid light-dark(black, white);
+}
+
+.download-previews {
+	font-style: italic;
+	font-size: 0.875em;
+	margin-block: 0.5em;
+}
+
+/*noinspection CssOverwrittenProperties*/
+.download-previews a {
+	color: grey;
+	color: light-dark(dimgrey, lightgray);
+}
+
+.download-changelog {
+	font-weight: 500;
+	font-size: 1.125em;
+	margin-top: 0.75em;
+	margin-bottom: 3em;
+}
+
+.download-changelog a {
+	color: inherit;
+}
+
+.star {
+	font-size: 1.15em;
+}

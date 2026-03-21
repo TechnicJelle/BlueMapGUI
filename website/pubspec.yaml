@@ -5,9 +5,10 @@ repository: https://github.com/TechnicJelle/BlueMapGUI
 publish_to: none
 
 environment:
-  sdk: ^3.9.2
+  sdk: ^3.10.0
 
 dependencies:
+  logging: ^1.3.0
   path: ^1.9.1
   techs_html_bindings:
     git:
