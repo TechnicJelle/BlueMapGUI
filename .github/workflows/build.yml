@@ -6,6 +6,7 @@ on:
     paths-ignore:
       - '**.md'
       - 'website/**'
+      - '.github/readme_assets/**'
 
 env:
   FLUTTER_VERSION: '3.41.1'
