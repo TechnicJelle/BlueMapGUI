@@ -5,7 +5,7 @@ on:
   push:
     branches: [ "main" ]
     paths-ignore:
-      - /lib/
+     - 'lib/**'
   # Update the download link on the website
   release:
 
