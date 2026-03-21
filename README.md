@@ -13,7 +13,10 @@ This program is a GUI wrapper around the BlueMap CLI tool,
 which makes it easier to use for people who are not familiar with the command line,
 don't have a server, or just want a more user-friendly experience.
 
-![screenshot](.github/readme_assets/control_panel.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/readme_assets/dark/control_panel.png">
+  <img alt="screenshot" src=".github/readme_assets/light/control_panel.png">
+</picture>
 
 ## [Click here to download!](../../releases/latest)
 
@@ -29,14 +32,32 @@ You're welcome to ping me, @TechnicJelle.
 4. Run `flutter run` to build and run the program
 
 ## More screenshots
-![screenshot](.github/readme_assets/projects_list.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/readme_assets/dark/projects_list.png">
+  <img alt="screenshot" src=".github/readme_assets/light/projects_list.png">
+</picture>
 
-![screenshot](.github/readme_assets/settings_screen.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/readme_assets/dark/settings_screen.png">
+  <img alt="screenshot" src=".github/readme_assets/light/settings_screen.png">
+</picture>
 
-![screenshot](.github/readme_assets/config_core.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/readme_assets/dark/config_core.png">
+  <img alt="screenshot" src=".github/readme_assets/light/config_core.png">
+</picture>
 
-![screenshot](.github/readme_assets/config_core_advanced.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/readme_assets/dark/config_core_advanced.png">
+  <img alt="screenshot" src=".github/readme_assets/light/config_core_advanced.png">
+</picture>
 
-![screenshot](.github/readme_assets/config_map_overworld.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/readme_assets/dark/config_map_overworld.png">
+  <img alt="screenshot" src=".github/readme_assets/light/config_map_overworld.png">
+</picture>
 
-![screenshot](.github/readme_assets/config_map_overworld_advanced.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/readme_assets/dark/config_map_overworld_advanced.png">
+  <img alt="screenshot" src=".github/readme_assets/light/config_map_overworld_advanced.png">
+</picture>
