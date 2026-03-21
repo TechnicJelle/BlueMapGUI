@@ -113,7 +113,9 @@ Future<void> createHomePage() async {
           ),
           P(
             children: [
-              T("If you <em>really</em> like it, consider "),
+              T("If you "),
+              Em(children: [T("really")]),
+              T(" like it, consider "),
               A(
                 href: "https://github.com/sponsors/TechnicJelle",
                 children: [T("sponsoring me on GitHub")],
