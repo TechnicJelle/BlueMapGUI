@@ -27,44 +27,7 @@ void createHelpPage() {
             classes: ["guide"],
             children: markdown(File("../USAGE.md").readAsStringSync()),
           ),
-          Aside(
-            children: [
-              Nav(
-                children: [
-                  H2(id: "toc", children: [T("Table of Contents")]),
-                  OrderedList(
-                    items: [
-                      _li("#1-setting-up-java", "Setting up Java"),
-                      _li("#2-creating-a-project", "Creating a project"),
-                      ListItem(
-                        children: [
-                          _a("#3-setting-up-bluemap", "Setting up BlueMap"),
-                          OrderedList(
-                            type: .lowercaseLetters,
-                            items: [
-                              _li(
-                                "#3a-accepting-the-download",
-                                "Accepting the download",
-                              ),
-                              _li("#3b-configuring-your-maps", "Configuring your maps"),
-                              _li(
-                                "#3c-optional-setting-up-resourcepacks--datapacks",
-                                "Resource-packs & Data-packs",
-                              ),
-                              _li("#3d-optional-setting-up-mods", "Mods"),
-                              _li("#3e-optional-minecraft-version", "Minecraft Version"),
-                            ],
-                          ),
-                        ],
-                      ),
-                     _li("#4-starting-bluemap", "Starting BlueMap"),
-                    ],
-                  ),
-                 _a("#support", "Support"),
-                ],
-              ),
-            ],
-          ),
+          _toc(),
         ],
       ),
       footer: generateFooter(),
@@ -73,6 +36,47 @@ void createHelpPage() {
 
   final dirHelp = Directory(p.join(dirBuild.path, "help"))..createSync();
   File(p.join(dirHelp.path, "index.html")).writeAsStringSync(html);
+}
+
+Aside _toc() {
+  return Aside(
+    children: [
+      Nav(
+        children: [
+          H2(id: "toc", children: [T("Table of Contents")]),
+          OrderedList(
+            items: [
+              _li("#1-setting-up-java", "Setting up Java"),
+              _li("#2-creating-a-project", "Creating a project"),
+              ListItem(
+                children: [
+                  _a("#3-setting-up-bluemap", "Setting up BlueMap"),
+                  OrderedList(
+                    type: .lowercaseLetters,
+                    items: [
+                      _li(
+                        "#3a-accepting-the-download",
+                        "Accepting the download",
+                      ),
+                      _li("#3b-configuring-your-maps", "Configuring your maps"),
+                      _li(
+                        "#3c-optional-setting-up-resourcepacks--datapacks",
+                        "Resource-packs & Data-packs",
+                      ),
+                      _li("#3d-optional-setting-up-mods", "Mods"),
+                      _li("#3e-optional-minecraft-version", "Minecraft Version"),
+                    ],
+                  ),
+                ],
+              ),
+              _li("#4-starting-bluemap", "Starting BlueMap"),
+            ],
+          ),
+          _a("#support", "Support"),
+        ],
+      ),
+    ],
+  );
 }
 
 A _a(String href, String label) {
