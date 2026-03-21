@@ -17,7 +17,7 @@ Head generateHead({
   return Head(
     title: fullTitle,
     metas: [
-      Meta.name(name: "og:title", content: pageTitle),
+      Meta.name(name: "og:title", content: pageTitle ?? fullTitle),
       Meta.name(name: "description", content: pageDescription),
       Meta.name(name: "og:description", content: pageDescription),
       Meta.name(name: "theme-color", content: "#2196F3"),
