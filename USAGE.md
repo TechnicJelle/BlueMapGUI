@@ -1,4 +1,7 @@
 ## Usage Guide
+This page will guide you through setting up and using BlueMap GUI.
+Please feel free to use the Table of Contents to skip to the parts that you're interested in.
+
 ### 1. Setting up Java
 When you first open the program, you will need to choose which Java installation you want to use.  
 Go to the `Settings` tab in the sidebar on the left to select whether you want to:
