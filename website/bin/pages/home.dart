@@ -6,6 +6,7 @@ import "package:ssg/components/head.dart";
 import "package:ssg/components/header.dart";
 import "package:ssg/constants.dart";
 import "package:techs_html_bindings/elements.dart";
+import "package:techs_html_bindings/markdown.dart";
 
 // I am being evil and including a file from a different project's lib.
 // That cannot be transformed into a relative import.
@@ -111,22 +112,8 @@ Future<void> createHomePage() async {
             classes: ["star"],
             children: [T("If you like the software, please give me a star on GitHub")],
           ),
-          P(
-            children: [
-              T("If you "),
-              Em(children: [T("really")]),
-              T(" like it, consider "),
-              A(
-                href: "https://github.com/sponsors/TechnicJelle",
-                children: [T("sponsoring me on GitHub")],
-              ),
-              T("  or "),
-              A(
-                href: "https://ko-fi.com/technicjelle",
-                children: [T("buying me a Ko-fi")],
-              ),
-              T("!"),
-            ],
+          ...markdown(
+            "If you _really_ like it, consider [sponsoring me on GitHub](https://github.com/sponsors/TechnicJelle) or [buying me a Ko-fi](https://ko-fi.com/technicjelle)!",
           ),
         ],
       ),
