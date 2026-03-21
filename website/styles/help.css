@@ -47,6 +47,10 @@ aside nav > :last-child {
 
 /* Wide */
 @media screen and (min-width: 1000px) {
+	main > .guide {
+		grid-row: 1;
+	}
+
 	aside nav {
 		position: fixed;
 		top: 5em;
@@ -60,10 +64,6 @@ aside nav > :last-child {
 
 /* Thin */
 @media screen and (max-width: 1000px) {
-	main > aside {
-		grid-row: 1;
-	}
-
 	aside nav {
 		margin-inline: 1em;
 		margin-top: 1em;

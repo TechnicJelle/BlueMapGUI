@@ -23,11 +23,11 @@ void createHelpPage() {
       header: generateHeader(pathToHome: "../", pathToHelp: "."),
       main: Main(
         children: [
+          _toc(),
           Section(
             classes: ["guide"],
             children: markdown(File("../USAGE.md").readAsStringSync()),
           ),
-          _toc(),
         ],
       ),
       footer: generateFooter(),
