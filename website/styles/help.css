@@ -21,6 +21,15 @@ section.guide > :first-child {
 	margin-top: 0.5em;
 }
 
+section.guide h1,
+section.guide h2,
+section.guide h3,
+section.guide h4,
+section.guide h5,
+section.guide h6 {
+	margin: 1.5em 0 min(0.5em, 1rem);
+}
+
 aside nav {
 	background-color: var(--primary-background-color);
 	padding: 1em;
@@ -80,6 +89,35 @@ aside nav > :last-child {
 	section.guide {
 		padding: 0 0.5em;
 	}
+}
+
+pre, :not(pre) > code {
+	background-color: light-dark(lightgray, dimgrey);
+	border-radius: 4px;
+	padding: 1em 1.25em;
+}
+
+:not(pre) > code {
+	padding: 0 0.6em 0.1em;
+
+	font-family: system-ui;
+	font-size: 0.9rem;
+}
+
+blockquote {
+	background: #88888888;
+	border-left: 8px solid #888888bb;
+	margin: 0;
+	padding: 0.5em 1em;
+	border-radius: 8px;
+}
+
+blockquote > :first-child {
+	margin-top: 0;
+}
+
+blockquote > :last-child {
+	margin-bottom: 0;
 }
 
 h2 > a.link,
