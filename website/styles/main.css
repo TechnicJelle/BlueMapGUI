@@ -9,6 +9,11 @@ body {
 	height: 100%;
 }
 
+h1, h2, h3, h4, h5, h6 {
+	scroll-margin-top: 5rem;
+}
+
+/* Header --> */
 header, button {
 	font-family: system-ui;
 }
@@ -81,6 +86,7 @@ header a:focus-visible img {
 	border-radius: 8px;
 	outline: 1px solid white;
 }
+/* <-- Header */
 
 footer {
 	text-align: right;
@@ -90,11 +96,7 @@ footer p {
 	margin: 0 0.5em 0.5em 0;
 }
 
-h1, h2, h3, h4, h5, h6 {
-	scroll-margin-top: 5rem;
-}
-
-/* Push footer to bottom */
+/* Push footer to bottom --> */
 body {
 	min-height: 100%;
 	display: flex;
@@ -104,3 +106,4 @@ body {
 main {
 	flex-grow: 1;
 }
+/* <-- Push footer to bottom */
