@@ -1,3 +1,4 @@
+<!-- Clean this up again once the bindings' Markdown parser is better -->
 
 ## Usage Guide
 
@@ -6,9 +7,9 @@
 When you first open the program, you will need to choose which Java installation you want to use.  
 Go to the `Settings` tab in the sidebar on the left to select whether you want to:
 
-- Use the Java installation on your system.
-- Automatically download a suitable installation of Java for your system.
-- Pick a Java installation manually. Useful if you don't have Java installed system-wide or if it's too old.  
+• Use the Java installation on your system.  
+• Automatically download a suitable installation of Java for your system.  
+• Pick a Java installation manually. Useful if you don't have Java installed system-wide or if it's too old.  
   Also useful if your system isn't supported by the automatic downloader.
 
 
@@ -37,7 +38,7 @@ You can now try to start BlueMap by clicking the `▶ Start` button.
 But this first time, it will not work yet.
 You will see instructions in yellow to accept a download in the Core config.
 
-> This is because BlueMap needs to download some files from Mojang to work properly,
+> This is because BlueMap needs to download some files from Mojang to work properly,  
 > and according to the Mojang EULA, you have to manually confirm this download.
 
 Luckily, you can do this very simply, by clicking on `Core` config tab in the left sidebar.  
