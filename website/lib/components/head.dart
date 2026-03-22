@@ -27,6 +27,7 @@ Head generateHead({
     links: [
       Link.icon(type: "image/png", sizes: "48x48", href: _icon(48)),
       ...Link.preloadedStylesheet(href: "${relativeToRoot}main.css"),
+      Link.stylesheet(href: "${relativeToRoot}fonts/PixelCode_v2.2/PixelCode.css"),
     ],
     styles: [
       Style(css: File("styles/theme.css").readAsStringSync()),

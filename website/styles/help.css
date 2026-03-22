@@ -72,7 +72,7 @@ aside nav > :last-child {
 
 	main {
 		padding-left: 1em;
-		grid-template-columns: 1fr 33.5ch;
+		grid-template-columns: 1fr 35ch;
 	}
 }
 

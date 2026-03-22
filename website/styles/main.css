@@ -11,6 +11,12 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
 	scroll-margin-top: 5rem;
+	font-family: "Pixel Code", "Roboto", sans-serif;
+	font-weight: 600;
+}
+
+h1 {
+	font-weight: 700;
 }
 
 a {
@@ -91,6 +97,7 @@ header a:focus-visible img {
 	border-radius: 8px;
 	outline: 1px solid white;
 }
+
 /* <-- Header */
 
 footer {
@@ -111,4 +118,5 @@ body {
 main {
 	flex-grow: 1;
 }
+
 /* <-- Push footer to bottom */
