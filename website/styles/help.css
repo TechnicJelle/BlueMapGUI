@@ -34,8 +34,14 @@ aside nav {
 	background-color: var(--primary-background-color);
 	padding: 1em;
 	border-radius: 1em;
+	line-height: 1.5;
 }
 
+aside nav > h2 {
+	margin-bottom: 0.4em;
+}
+
+aside nav > ol,
 aside nav > :first-child {
 	margin-top: 0;
 }
@@ -47,7 +53,6 @@ aside nav > :last-child {
 
 aside nav ol {
 	padding-left: 1.5em;
-	line-height: 1.5;
 }
 
 aside nav > :last-child {

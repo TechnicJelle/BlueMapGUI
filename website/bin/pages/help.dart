@@ -44,6 +44,7 @@ Aside _toc() {
       Nav(
         children: [
           H2(id: "toc", children: [T("Table of Contents")]),
+          _a("#usage-guide", "Usage Guide"),
           OrderedList(
             items: [
               _li("#1-setting-up-java", "Setting up Java"),
