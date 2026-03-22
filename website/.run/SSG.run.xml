@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="SSG" type="DartCommandLineRunConfigurationType" factoryName="Dart Command Line Application">
+    <option name="envs">
+      <entry key="TECHS_IMAGE_ROOT" value="build" />
+    </option>
+    <option name="filePath" value="$PROJECT_DIR$/bin/main.dart" />
+    <option name="workingDirectory" value="$PROJECT_DIR$" />
+    <method v="2" />
+  </configuration>
+</component>

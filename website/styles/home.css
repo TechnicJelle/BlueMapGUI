@@ -14,7 +14,7 @@ main {
 
 picture.hero img {
 	display: inline-block;
-	max-width: min(100%, 95vw);
+	max-width: min(100%, 95vw) !important;
 	margin-block: 1em;
 }
 

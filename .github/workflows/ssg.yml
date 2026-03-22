@@ -43,6 +43,8 @@ jobs:
 
       - name: Build the Website
         working-directory: website
+        env:
+          TECHS_IMAGE_ROOT: build
         run: dart run bin/main.dart
 
       - name: Upload artifact
