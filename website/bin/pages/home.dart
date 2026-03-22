@@ -92,7 +92,7 @@ Future<void> createHomePage() async {
             children: [
               A(
                 href: "$repo/actions/workflows/build.yml",
-                children: [T("Preview Builds")],
+                children: [T("Preview Builds ›")],
               ),
             ],
           ),
@@ -101,7 +101,7 @@ Future<void> createHomePage() async {
             children: [
               A(
                 href: "$repo/releases",
-                children: [T("Changelog")],
+                children: [T("Changelog ›")],
               ),
             ],
           ),

@@ -13,6 +13,17 @@ h1, h2, h3, h4, h5, h6 {
 	scroll-margin-top: 5rem;
 }
 
+a {
+	text-decoration: none;
+}
+
+a:hover,
+a:focus-visible {
+	filter: brightness(120%);
+	text-decoration: underline;
+	outline: none;
+}
+
 /* Header --> */
 header, button {
 	font-family: system-ui;
@@ -73,12 +84,6 @@ header ul li a {
 	header ul li a {
 		font-size: 1.1em;
 	}
-}
-
-header a:hover,
-header a:focus-visible {
-	text-decoration: underline;
-	outline: none;
 }
 
 header a:hover img,
