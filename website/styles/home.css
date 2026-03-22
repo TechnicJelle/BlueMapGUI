@@ -52,7 +52,14 @@ picture.hero img {
 .download-previews {
 	font-style: italic;
 	font-size: 0.875em;
-	margin-block: 0.5em;
+	margin-block: 0.75em;
+}
+
+.download-previews:hover,
+.download-previews:focus-visible,
+.download-changelog:hover,
+.download-previews:focus-visible {
+	font-weight: 500;
 }
 
 /*noinspection CssOverwrittenProperties*/
