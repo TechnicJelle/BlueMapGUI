@@ -25,7 +25,6 @@ a {
 
 a:hover,
 a:focus-visible {
-	filter: brightness(120%);
 	text-decoration: underline;
 	outline: none;
 }
