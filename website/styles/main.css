@@ -101,16 +101,59 @@ header a:focus-visible img {
 /* <-- Header */
 
 footer {
-	text-align: right;
-	color: #808080;
+	display: flex;
+	justify-content: space-between;
+	column-gap: 2em;
+	row-gap: 0.5em;
 
 	border-top: 1px solid #80808080;
 
+	margin-top: 3em;
 	padding: 1em 1em 0.75em;
 }
 
-footer p {
-	margin: 0;
+@media screen and (max-width: 900px) {
+	footer {
+		flex-direction: column;
+	}
+
+	footer > span {
+		text-align: center;
+	}
+}
+
+footer a {
+	color: #aaaaaa;
+}
+
+footer a[target="_blank"]::after {
+	content: "";
+	display: inline-block;
+	height: 1em;
+	width: 1em;
+	background-size: 100%;
+	background-image: url("icons/newtab.svg");
+	background-repeat: no-repeat;
+	position: relative;
+	top: 2px;
+	left: 2px;
+}
+
+footer > :first-child {
+	display: flex;
+	justify-content: center;
+	column-gap: 2em;
+	row-gap: 0.2em;
+}
+
+@media screen and (max-width: 450px) {
+	footer > :first-child {
+		flex-direction: column;
+	}
+}
+
+footer > :last-child {
+	color: #808080;
 }
 
 /* Push footer to bottom --> */

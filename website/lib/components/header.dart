@@ -1,5 +1,7 @@
 import "package:techs_html_bindings/elements.dart";
 
+import "../constants.dart";
+
 Header generateHeader({
   String pathToHome = "./",
   String pathToHelp = "help",
@@ -33,10 +35,7 @@ Header generateHeader({
               ),
               ListItem(
                 children: [
-                  A(
-                    href: "https://github.com/TechnicJelle/BlueMapGUI",
-                    children: [T("Source Code")],
-                  ),
+                  A(href: repo, children: [T("Source Code")]),
                 ],
               ),
             ],

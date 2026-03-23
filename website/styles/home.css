@@ -72,13 +72,8 @@ picture.hero img {
 	font-weight: 400;
 	font-size: 1.125em;
 	margin-top: 0.75em;
-	margin-bottom: 3em;
 }
 
 .download-changelog a {
 	color: inherit;
-}
-
-.star {
-	font-size: 1.15em;
 }
