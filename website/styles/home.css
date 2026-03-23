@@ -62,10 +62,8 @@ picture.hero img {
 	font-weight: 500;
 }
 
-/*noinspection CssOverwrittenProperties*/
 .download-previews a {
-	color: grey;
-	color: light-dark(dimgrey, lightgray);
+	color: var(--text-muted);
 }
 
 .download-changelog {

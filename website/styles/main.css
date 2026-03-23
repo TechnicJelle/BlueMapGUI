@@ -31,6 +31,7 @@ a:focus-visible {
 }
 
 /* Header --> */
+
 header, button {
 	font-family: system-ui;
 }
@@ -100,6 +101,8 @@ header a:focus-visible img {
 
 /* <-- Header */
 
+/* Footer --> */
+
 footer {
 	display: flex;
 	justify-content: space-between;
@@ -123,7 +126,7 @@ footer {
 }
 
 footer a {
-	color: #aaaaaa;
+	color: var(--text-muted);
 }
 
 footer a[target="_blank"]::after {
@@ -153,7 +156,7 @@ footer > :first-child {
 }
 
 footer > :last-child {
-	color: #808080;
+	color: #808080C4;
 }
 
 /* Push footer to bottom --> */
@@ -168,3 +171,5 @@ main {
 }
 
 /* <-- Push footer to bottom */
+
+/* <-- Footer */
