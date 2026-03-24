@@ -103,23 +103,26 @@ header a:focus-visible img {
 /* Footer --> */
 
 footer {
+	margin-top: 3em;
+	border-top: 1px solid #80808080;
+	padding: 1em 1em 0.75em;
+}
+
+.footer-top {
 	display: flex;
 	justify-content: space-between;
 	column-gap: 2em;
 	row-gap: 0.5em;
-
-	border-top: 1px solid #80808080;
-
-	margin-top: 3em;
-	padding: 1em 1em 0.75em;
 }
 
+/* Thin screens: */
 @media screen and (max-width: 900px) {
-	footer {
+	.footer-top {
 		flex-direction: column;
 	}
 
-	footer > span {
+	.disclaimer,
+	.footer-top > span {
 		text-align: center;
 	}
 }
@@ -141,7 +144,7 @@ footer a[target="_blank"]::after {
 	left: 2px;
 }
 
-footer > :first-child {
+.footer-links {
 	display: flex;
 	justify-content: center;
 	column-gap: 2em;
@@ -149,13 +152,18 @@ footer > :first-child {
 }
 
 @media screen and (max-width: 450px) {
-	footer > :first-child {
+	.footer-links {
 		flex-direction: column;
 	}
 }
 
-footer > :last-child {
+footer .updated-on {
 	color: #808080C4;
+}
+
+footer .disclaimer {
+	margin: 0.5em 0 0;
+	color: #80808080;
 }
 
 /* Push footer to bottom --> */
