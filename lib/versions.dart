@@ -1,7 +1,7 @@
 // == Hardcoded BlueMap CLI JAR download URL and hash ==
-const blueMapTag = "5.16";
+const blueMapTag = "5.17";
 const blueMapCliJarHash =
-    "7940d561890373897f8f6be91a52e765461f40e5be4e1c4401004073ee0d2580"; //SHA256
+    "49a1d324af7cb85c1153bbe24d086fd5e93ef6ffdb9ab7276b281ade137da55f"; //SHA256
 
 // == Derived variables ==
 final blueMapCliJarUrl = Uri.https(
@@ -13,8 +13,8 @@ const String vDev = "development";
 const String version = String.fromEnvironment("version", defaultValue: vDev);
 
 // == Java Bundle ==
-const String javaBundleVersion = "jdk-21.0.8+9";
+const String javaBundleVersion = "jdk-25.0.2+10";
 const String javaBundleLinuxX64Hash =
-    "968c283e104059dae86ea1d670672a80170f27a39529d815843ec9c1f0fa2a03"; //SHA256
+    "d6c89e08f42be94cd55eab20190958a35b993625018a3ac59cb3d16d8445cf98"; //SHA256
 const String javaBundleWindowsX64Hash =
-    "238d74ec4ec9422d416fa98805ba375eecd8bc8f971bd0c61a21051a4fe42db8"; //SHA256
+    "1919e7e1603bc5937187139db2d65824f8d95ef42d0423ae9f9f1d9eb97842f6"; //SHA256

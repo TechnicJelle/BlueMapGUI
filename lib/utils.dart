@@ -107,7 +107,7 @@ Future<NonHashedFile> downloadFile({
   HttpClient? client;
   final File outputFile;
   try {
-    client = HttpClient();
+    client = HttpClient()..userAgent = "BlueMap GUI $version";
     final request = await client.getUrl(uri);
     final response = await request.close();
 

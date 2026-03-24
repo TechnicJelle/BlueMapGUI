@@ -319,6 +319,7 @@ It will only be removed from the list.""",
       return;
     }
     final String stdout = run.stdout.toString();
+    final String stderr = run.stderr.toString();
 
     final bool startSuccess = stdout.contains("Generated default config files for you");
 
@@ -329,11 +330,12 @@ It will only be removed from the list.""",
         stdout.contains("BlueMap failed to parse this file");
 
     if (!startSuccess && !configProblem) {
+      final String combined = "$stderr\n\n$stdout".trim();
       ref
           .read(_openingStateProvider.notifier)
           .error(
             error: _OpenError.runFail,
-            details: stdout.trim().isEmpty ? "<no output>" : stdout,
+            details: combined.isNotEmpty ? combined : "<no output>",
           );
       return;
     }

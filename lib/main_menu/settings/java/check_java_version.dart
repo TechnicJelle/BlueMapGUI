@@ -2,7 +2,7 @@ import "dart:io";
 
 import "../../../prefs.dart";
 
-const int _minJavaVersion = 21;
+const int _minJavaVersion = 25;
 
 class JavaVersionCheckException implements Exception {
   final String message;
