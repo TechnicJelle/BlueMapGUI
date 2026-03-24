@@ -31,75 +31,127 @@ Future<void> createHomePage() async {
       header: generateHeader(),
       main: Main(
         children: [
-          H1(children: [T("BlueMap GUI")]),
-          P(
-            classes: ["tagline"],
-            children: [
-              T("See your worlds in full 3D with "),
-              A(href: "https://bluemap.bluecolored.de/", children: [T("BlueMap")]),
-              T(" with the ease of simple buttons!"),
-            ],
-          ),
-          P(
-            classes: ["description"],
-            children: [
-              T(
-                "This program is a GUI wrapper around the BlueMap CLI tool, which makes it easier to use for people who are not familiar with the command line, don't have a server, or just want a more user-friendly experience.",
-              ),
-            ],
-          ),
-          Picture.darkLight(
-            classes: ["hero"],
-            darkSrc: "images/dark/control_panel.png",
-            lightSrc: "images/light/control_panel.png",
-            alt: "Screenshot",
-          ),
-          H2(children: [T("Download")], autoLink: false),
-          Div(
-            classes: ["download-buttons"],
-            children: [
-              A(
-                href: url(latestVersion, platform: "Windows_x64"),
+          _two(
+            [
+              H1.text("BlueMap GUI"),
+              P(
+                classes: ["tagline"],
                 children: [
-                  Image(
-                    src: "icons/windows.svg",
-                    alt: "Windows icon",
-                    height: 32,
-                    width: 36,
-                  ),
-                  T("Windows"),
+                  T("See your worlds in full 3D with "),
+                  A.text("BlueMap", href: "https://bluemap.bluecolored.de/"),
+                  T(" with the ease of simple buttons!"),
                 ],
               ),
-              A(
-                href: url(latestVersion, platform: "Linux_x64"),
+              P.text("With this desktop program, you can render your Minecraft worlds and view them in your browser."),
+              P(
+                id: "downloads",
+                classes: ["download-buttons"],
                 children: [
-                  Image(
-                    src: "icons/linux.svg",
-                    alt: "Linux icon",
-                    height: 32,
-                    width: 27,
+                  A(
+                    href: url(latestVersion, platform: "Windows_x64"),
+                    children: [
+                      Image(
+                        src: "icons/windows.svg",
+                        alt: "Windows icon",
+                        height: 32,
+                        width: 36,
+                      ),
+                      T("Windows"),
+                    ],
                   ),
-                  T("Linux"),
+                  A(
+                    href: url(latestVersion, platform: "Linux_x64"),
+                    children: [
+                      Image(
+                        src: "icons/linux.svg",
+                        alt: "Linux icon",
+                        height: 32,
+                        width: 27,
+                      ),
+                      T("Linux"),
+                    ],
+                  ),
+                ],
+              ),
+              Br(),
+              P(
+                classes: ["download-extras"],
+                children: [
+                  A(
+                    href: "$repo/releases",
+                    children: [T("Changelog ›")],
+                  ),
+                  A(
+                    href: "$repo/actions/workflows/build.yml",
+                    children: [T("Preview Builds ›")],
+                  ),
                 ],
               ),
             ],
+            Picture.darkLight(
+              darkSrc: "images/dark/control_panel.png",
+              lightSrc: "images/light/control_panel.png",
+              alt: "Screenshot",
+            ),
           ),
-          P(
-            classes: ["download-previews"],
-            children: [
-              A(
-                href: "$repo/actions/workflows/build.yml",
-                children: [T("Preview Builds ›")],
+          _two(
+            [
+              H2.text("Powered by BlueMap", autoLink: false),
+              P.text(
+                "BlueMap GUI is a wrapper around the BlueMap CLI tool. BlueMap itself is mainly meant as a mod/plugin for servers, but its CLI can render any world at all; even worlds that aren't part of a server, like single-player worlds, or worlds that you downloaded. BlueMap GUI makes it easy to use for people who are not familiar with the command line, don't have a server, or just want a more user-friendly experience.",
               ),
             ],
+            Picture.darkLight(
+              darkSrc: "images/dark/bluemap.png",
+              lightSrc: "images/light/bluemap.png",
+              alt: "Screenshot",
+            ),
+          ),
+          _two(
+            [
+              H2.text("Simple Configuration Editor", autoLink: false),
+              P.text(
+                "Meticulously crafted to show only the settings you need, right where you want them, with detailed explanations of what they do.",
+              ),
+            ],
+            Picture.darkLight(
+              darkSrc: "images/dark/config_map_overworld.png",
+              lightSrc: "images/light/config_map_overworld.png",
+              alt: "Screenshot",
+            ),
+          ),
+          _two(
+            [
+              H2.text("Advanced Configuration Editor", autoLink: false),
+              P.text(
+                "If you find that the simple configuration editor lacks something, or you just want to explore the \"Hidden\" options, then you can always switch to the Advanced Configuration Editor. This view shows the actual \"raw\" configuration files of Bluemap.",
+              ),
+            ],
+            Picture.darkLight(
+              darkSrc: "images/dark/config_map_overworld_advanced.png",
+              lightSrc: "images/light/config_map_overworld_advanced.png",
+              alt: "Screenshot",
+            ),
+          ),
+          _two(
+            [
+              H2.text("Manage Multiple Projects", autoLink: false),
+              P.text(
+                "You can manage multiple worlds, across different Minecraft versions and even modpacks by making Projects.",
+              ),
+            ],
+            Picture.darkLight(
+              darkSrc: "images/dark/projects_list.png",
+              lightSrc: "images/light/projects_list.png",
+              alt: "Screenshot",
+            ),
           ),
           P(
-            classes: ["download-changelog"],
+            classes: ["final-download"],
             children: [
-              A(
-                href: "$repo/releases",
-                children: [T("Changelog ›")],
-              ),
+              Span.text("Are you convinced, yet?"),
+              Br(),
+              A.text("Download", href: "#downloads"),
             ],
           ),
         ],
@@ -109,6 +161,16 @@ Future<void> createHomePage() async {
   ).build();
 
   File(p.join(dirBuild.path, "index.html")).writeAsStringSync(html);
+}
+
+Section _two(List<Element> aside, Picture picture) {
+  return Section(
+    classes: ["two"],
+    children: [
+      Div(children: aside),
+      picture,
+    ],
+  );
 }
 
 String url(String latestVersion, {required String platform}) =>

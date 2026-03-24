@@ -1,27 +1,41 @@
+:root {
+	--picture-width: 1280px;
+	--picture-border-size: 2px;
+	--max-item-width: calc(var(--picture-width) + 2 * var(--picture-border-size));
+}
+
+html {
+	scroll-behavior: smooth;
+}
+
 main {
-	text-align: center;
+	padding-inline: 1em;
+}
+
+main h1:first-of-type {
+	margin-top: 0;
 }
 
 .tagline {
 	font-weight: bold;
 }
 
-.description {
-	max-width: 60ch;
-	margin: auto;
-	text-wrap-style: balance;
+picture > img {
+	display: block;
+	border: var(--picture-border-size) solid #14161B;
+	border-radius: 8px;
 }
 
-picture.hero img {
-	display: inline-block;
-	max-width: min(100%, 95vw) !important;
-	margin-block: 1em;
+/* Download buttons --> */
+
+.download-buttons,
+.download-extras {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: 1em;
 }
 
-#download{
-	margin-top: 0;
-}
-
+.final-download a,
 .download-buttons a {
 	display: inline-flex;
 	align-items: center;
@@ -40,38 +54,119 @@ picture.hero img {
 	font-weight: 500;
 }
 
+.final-download a:hover,
+.final-download a:focus-visible,
 .download-buttons a:hover,
 .download-buttons a:focus-visible {
 	background-color: var(--primary-hover);
 }
 
+.final-download a:focus-visible,
 .download-buttons a:focus-visible {
 	outline: 1px solid light-dark(black, white);
 }
 
-.download-previews {
-	font-style: italic;
-	font-size: 0.875em;
-	margin-block: 0.75em;
+.download-extras {
+	margin-top: 0;
+	margin-bottom: 32px;
 }
 
-.download-previews:hover,
-.download-previews:focus-visible,
-.download-changelog:hover,
-.download-previews:focus-visible {
-	font-weight: 500;
-}
-
-.download-previews a {
+.download-extras a {
 	color: var(--text-muted);
 }
 
-.download-changelog {
-	font-weight: 400;
-	font-size: 1.125em;
-	margin-top: 0.75em;
+.final-download {
+	text-align: center;
 }
 
-.download-changelog a {
-	color: inherit;
+.final-download span {
+	font-size: 1.1em;
+	font-weight: 500;
 }
+
+.final-download a {
+	margin-top: 0.5em;
+}
+
+/* <-- Download buttons */
+
+
+/* Download buttons when scrolled towards from the .final-download --> */
+
+#downloads {
+	scroll-margin-top: 100vh;
+}
+
+#downloads:target a {
+	animation: highlightDownloads 3s ease-out;
+}
+
+@keyframes highlightDownloads {
+	from {
+		box-shadow: 0 0 2em var(--primary),
+		0 0 1em var(--primary),
+		0 0 0.1em var(--primary);
+	}
+	to {
+		box-shadow: 0 0 0 var(--primary);
+	}
+}
+
+/* <-- Download buttons when scrolled towards from the .final-download */
+
+
+/* Side-by-side columns -> */
+
+.two {
+	display: grid;
+	margin: 2em auto;
+	max-width: var(--max-item-width);
+}
+
+.two > div {
+	max-width: 100%;
+	text-wrap-style: balance;
+	margin: auto 0; /* Center vertically */
+	line-height: 1.5;
+}
+
+.two > picture {
+	justify-self: center;
+}
+
+@media screen and (min-width: 1500px) {
+	main {
+		padding-inline: 2em;
+	}
+
+	.two {
+		max-width: unset;
+		grid-template-columns: 1fr 1fr;
+		justify-items: unset;
+		column-gap: 2em;
+		margin-block: 3em;
+	}
+
+	.two > div {
+		max-width: var(--max-item-width);
+	}
+
+	/* Swap every other text with the picture */
+	.two:nth-child(2n + 0) > div {
+		order: 1;
+	}
+
+	/* Align pictures and text in the left column to the middle of the page */
+	.two:nth-child(2n + 0) > picture,
+	.two:nth-child(2n + 1) > div {
+		text-align: end;
+		justify-self: end;
+	}
+
+	/* Align pictures in the right column to the middle of the page */
+	.two:nth-child(2n + 1) > picture {
+		justify-self: start;
+	}
+}
+
+/* <-- Side-by-side columns */
