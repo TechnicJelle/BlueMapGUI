@@ -284,12 +284,14 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
     }
 
     final String stdout = run.stdout.toString();
+    final String stderr = run.stderr.toString();
     if (!stdout.contains("Generated default config files for you")) {
+      final String combined = "$stderr\n\n$stdout".trim();
       ref
           .read(_openingStateProvider.notifier)
           .error(
             error: _OpenError.runFail,
-            details: stdout.trim().isEmpty ? "<no output>" : stdout,
+            details: combined.isNotEmpty ? combined : "<no output>",
           );
       return;
     }
