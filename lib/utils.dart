@@ -75,7 +75,7 @@ Future<NonHashedFile> downloadFile({
   required File Function(HttpClientResponse response) outputFileGenerator,
   void Function(double progress)? onProgress,
 }) async {
-  final client = HttpClient();
+  final client = HttpClient()..userAgent = "BlueMap GUI $version";
   final request = await client.getUrl(uri);
   final response = await request.close();
 

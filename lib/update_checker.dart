@@ -1,5 +1,7 @@
 import "dart:io";
 
+import "versions.dart";
+
 class UpdateChecker {
   final String _currentVersion;
   final Uri _url;
@@ -29,7 +31,8 @@ class UpdateChecker {
     if (_disabled) return _currentVersion;
     try {
       // Connect to GitHub website
-      final HttpClientRequest connection = await HttpClient().getUrl(_url);
+      final client = HttpClient()..userAgent = "BlueMap GUI $version";
+      final HttpClientRequest connection = await client.getUrl(_url);
       connection.followRedirects = false;
       final HttpClientResponse response = await connection.close();
 
