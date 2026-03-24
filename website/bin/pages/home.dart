@@ -124,7 +124,7 @@ Future<void> createHomePage() async {
             [
               H2.text("Advanced Configuration Editor", autoLink: false),
               P.text(
-                "If you find that the simple configuration editor lacks something, or you just want to explore the \"Hidden\" options, then you can always switch to the Advanced Configuration Editor. This view shows the actual \"raw\" configuration files of Bluemap.",
+                "If you find that the simple configuration editor lacks something, or you just want to explore the \"hidden\" options, then you can always switch to the Advanced Configuration Editor. This view shows the actual \"raw\" configuration files of Bluemap.",
               ),
             ],
             Picture.darkLight(
@@ -137,7 +137,7 @@ Future<void> createHomePage() async {
             [
               H2.text("Manage Multiple Projects", autoLink: false),
               P.text(
-                "You can manage multiple worlds, across different Minecraft versions and even modpacks by making Projects.",
+                "You can manage multiple worlds, across different Minecraft versions, and even modpacks by making Projects.",
               ),
             ],
             Picture.darkLight(
