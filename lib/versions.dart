@@ -1,7 +1,7 @@
 // == Hardcoded BlueMap CLI JAR download URL and hash ==
-const blueMapTag = "5.17";
+const blueMapTag = "5.18";
 const blueMapCliJarHash =
-    "49a1d324af7cb85c1153bbe24d086fd5e93ef6ffdb9ab7276b281ade137da55f"; //SHA256
+    "84ccd6857f63f1094a0222417245eab80e2ab714f35d7257d3f7b3c04dfde5eb"; //SHA256
 
 // == Derived variables ==
 final blueMapCliJarUrl = Uri.https(
@@ -9,8 +9,9 @@ final blueMapCliJarUrl = Uri.https(
   "BlueMap-Minecraft/BlueMap/releases/download/v$blueMapTag/bluemap-$blueMapTag-cli.jar",
 );
 
-const String vDev = "development";
-const String version = String.fromEnvironment("version", defaultValue: vDev);
+const String _vDev = "development";
+const String version = String.fromEnvironment("version", defaultValue: _vDev);
+const bool isDevelopment = version == _vDev;
 
 // == Java Managed ==
 const String javaManagedVersion = "jdk-25.0.2+10";
