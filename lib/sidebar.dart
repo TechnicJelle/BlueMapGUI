@@ -56,7 +56,7 @@ class SidebarTab extends StatelessWidget {
       title: Row(
         mainAxisAlignment: .spaceBetween,
         children: [
-          Text(title),
+          Flexible(child: Text(title)),
           if (trailing != null)
             Padding(
               padding: const EdgeInsets.only(right: 8),
