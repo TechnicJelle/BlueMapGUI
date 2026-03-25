@@ -12,7 +12,7 @@ import "../../versions.dart";
 // ignore: specify_nonobvious_property_types
 final updateProvider = FutureProvider.autoDispose<String?>((ref) async {
   //Only check for updates in release versions
-  if (!version.startsWith("v")) return null;
+  if (isDevelopment) return null;
 
   final UpdateChecker updateChecker = UpdateChecker(
     author: "TechnicJelle",

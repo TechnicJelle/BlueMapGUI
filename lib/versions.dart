@@ -9,8 +9,9 @@ final blueMapCliJarUrl = Uri.https(
   "BlueMap-Minecraft/BlueMap/releases/download/v$blueMapTag/bluemap-$blueMapTag-cli.jar",
 );
 
-const String vDev = "development";
-const String version = String.fromEnvironment("version", defaultValue: vDev);
+const String _vDev = "development";
+const String version = String.fromEnvironment("version", defaultValue: _vDev);
+const bool isDevelopment = version == _vDev;
 
 // == Java Bundle ==
 const String javaBundleVersion = "jdk-25.0.2+10";
