@@ -86,13 +86,7 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
         jsonEncode(model.dimension),
       );
     }
-    if (nameController.text.trim().isNotEmpty) {
-      model = model.copyWith(name: nameController.text);
-      configFile!.changeValueInFile(
-        MapConfigKeys.name,
-        jsonEncode(model.name),
-      );
-    }
+    _saveName();
     if (startPosXController?.text.trim().isNotEmpty ?? false) {
       model = model.copyWith(
         startPos: model.startPos!.copyWith(x: int.parse(startPosXController!.text)),
@@ -109,6 +103,16 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
       configFile!.changeValueInFile(
         MapConfigKeys.startPos,
         model.startPos!.toHocon(),
+      );
+    }
+  }
+
+  void _saveName() {
+    if (nameController.text.trim().isNotEmpty) {
+      model = model.copyWith(name: nameController.text);
+      configFile!.changeValueInFile(
+        MapConfigKeys.name,
+        jsonEncode(model.name),
       );
     }
   }
@@ -174,7 +178,7 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
               "The display name of this map (how this map will be named on the website).",
           controller: nameController,
           hintText: "Must not be empty!",
-          onChanged: null,
+          onChanged: (_) => _saveName(),
           onEditingComplete: () => setState(validateAndSaveOptionsThatCannotBeBlank),
         ),
         Vector2XZOption(

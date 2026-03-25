@@ -8,8 +8,6 @@ import "package:path/path.dart" as p;
 
 import "versions.dart";
 
-final RegExp regexSafeCharacters = RegExp(r"^[a-zA-Z0-9_-]+$");
-
 extension StringExtension on String {
   String capitalize() {
     return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
@@ -30,6 +28,17 @@ Directory getMapTemplatesDirectory(Directory projectDirectory) {
   return Directory(
     p.join(projectDirectory.path, "config", "map-templates-$blueMapTag"),
   );
+}
+
+final RegExp _regexMapIdSafeCharacters = RegExp("[^a-zA-Z0-9_-]+");
+
+String nameToID(String name) {
+  return name.trim().replaceAll(_regexMapIdSafeCharacters, "-");
+}
+
+File getNewMapConfig(Directory projectDirectory, String name) {
+  final String id = nameToID(name);
+  return File(p.join(projectDirectory.path, "config", "maps", "$id.conf"));
 }
 
 const TextStyle pixelCode200 = TextStyle(

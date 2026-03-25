@@ -8,7 +8,8 @@ import "package:path/path.dart" as p;
 import "package:path_provider/path_provider.dart";
 
 import "../../prefs.dart";
-import "../../utils.dart";
+
+final RegExp _regexDirNameSafeCharacters = RegExp(r"^[ a-zA-Z0-9_-]+$");
 
 class NewProjectDialog extends ConsumerStatefulWidget {
   const NewProjectDialog({super.key});
@@ -126,7 +127,7 @@ class NewProjectDialogState extends ConsumerState<NewProjectDialog> {
                   if (s == null || s.trim().isEmpty) {
                     return "Can't be empty";
                   }
-                  if (!regexSafeCharacters.hasMatch(s)) {
+                  if (!_regexDirNameSafeCharacters.hasMatch(s)) {
                     return "Invalid character";
                   }
                   return null;

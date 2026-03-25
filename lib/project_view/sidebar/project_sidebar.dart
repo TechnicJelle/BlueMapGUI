@@ -21,8 +21,7 @@ class ProjectSidebar extends ConsumerWidget {
       children: [
         const _ControlPanelTile(),
         const _SidebarHeading("Configs"),
-        for (final ConfigFile config in mainConfigs)
-          ConfigTile(config, prettifyName: true),
+        for (final ConfigFile config in mainConfigs) ConfigTile(config),
         const _SidebarHeading("Maps"),
         const _MapsTiles(),
         const NewMapButton(),

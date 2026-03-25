@@ -1,4 +1,5 @@
 import "dart:async";
+import "dart:convert";
 import "dart:io";
 import "dart:math";
 
@@ -22,7 +23,7 @@ class NewMapDialog extends ConsumerStatefulWidget {
 class _NewMapDialogState extends ConsumerState<NewMapDialog> {
   //Widget stuff
   final formKey = GlobalKey<FormState>();
-  final idController = TextEditingController();
+  final nameController = TextEditingController();
 
   //Data stuff
   late final List<DropdownMenuEntry<File>> options;
@@ -73,7 +74,7 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
 
   @override
   void dispose() {
-    idController.dispose();
+    nameController.dispose();
     super.dispose();
   }
 
@@ -83,11 +84,9 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
     if (formState != null && formState.validate()) {
       setState(() => loading = true);
       final File template = selectedTemplate!;
-      final String id = idController.text;
+      final String name = nameController.text;
 
-      final File newConfig = File(
-        p.join(projectDirectory.path, "config", "maps", "$id.conf"),
-      );
+      final File newConfig = getNewMapConfig(projectDirectory, name);
 
       try {
         template.copySync(newConfig.path);
@@ -104,6 +103,14 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
       try {
         final config = await ConfigFile.fromFile(newConfig, javaPath);
         config as ConfigFile<MapConfigModel>;
+
+        config.modelOrProblem.match((_) {}, (MapConfigModel model) {
+          final MapConfigModel newModel = model.copyWith(name: name.trim());
+          config.modelOrProblem = .of(newModel);
+          // Don't like cascades here
+          // ignore: cascade_invocations
+          config.changeValueInFile(MapConfigKeys.name, jsonEncode(newModel.name));
+        });
 
         ref.read(projectProviderNotifier).addMap(config);
       } on FatalConfigFileLoadException catch (e) {
@@ -147,7 +154,7 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
               : loading
               ? [const CircularProgressIndicator()]
               : [
-                  const Text("Map type:"),
+                  const Text("Map Type:"),
                   const SizedBox(height: 8),
                   FormField(
                     autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -171,13 +178,15 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  const Text("Map ID:"),
+                  const Text("Map Name:"),
+                  const SizedBox(height: 8),
                   TextFormField(
-                    controller: idController,
+                    controller: nameController,
                     decoration: InputDecoration(
                       hintText: selectedTemplate == null
-                          ? "my-cool-map"
-                          : "my-cool-${p.basenameWithoutExtension(selectedTemplate!.path)}-map",
+                          ? "My Cool Map"
+                          : "My Cool ${p.basenameWithoutExtension(selectedTemplate!.path).capitalize()} Map",
+                      border: const OutlineInputBorder(),
                     ),
                     textInputAction: TextInputAction.done,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -185,18 +194,19 @@ class _NewMapDialogState extends ConsumerState<NewMapDialog> {
                       if (s == null || s.trim().isEmpty) {
                         return "Can't be empty";
                       }
-                      if (!regexSafeCharacters.hasMatch(s)) {
-                        return "Invalid character";
-                      }
-                      final File potentialNewConfig = File(
-                        p.join(projectDirectory.path, "config", "maps", "$s.conf"),
-                      );
-                      if (potentialNewConfig.existsSync()) {
+                      final File newConfig = getNewMapConfig(projectDirectory, s);
+                      if (newConfig.existsSync()) {
                         return "Can't have a duplicate ID";
                       }
                       return null;
                     },
+                    onChanged: (_) => setState(() {}),
                     onFieldSubmitted: (_) => validateAndCreate(),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    "Map ID: ${nameToID(nameController.text)}",
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
                   ),
                 ],
         ),

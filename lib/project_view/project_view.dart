@@ -4,7 +4,7 @@ import "package:flutter_riverpod/flutter_riverpod.dart";
 import "../project_configs_provider.dart";
 import "configs/config_gui.dart";
 import "control_panel.dart";
-import "sidebar/sidebar.dart";
+import "sidebar/project_sidebar.dart";
 
 class ProjectView extends ConsumerWidget {
   const ProjectView({super.key});

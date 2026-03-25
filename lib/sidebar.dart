@@ -28,6 +28,7 @@ class SidebarTab extends StatelessWidget {
   final bool selected;
   final String title;
   final GestureTapCallback onTap;
+  final Widget? subtitle;
   final Widget? trailing;
   final double? minTileHeight;
 
@@ -35,6 +36,7 @@ class SidebarTab extends StatelessWidget {
     required this.title,
     required this.selected,
     required this.onTap,
+    this.subtitle,
     this.trailing,
     this.minTileHeight,
     super.key,
@@ -53,16 +55,11 @@ class SidebarTab extends StatelessWidget {
       tileColor: Colors.black12,
       selectedTileColor: primary,
       selected: selected,
-      title: Row(
-        mainAxisAlignment: .spaceBetween,
-        children: [
-          Flexible(child: Text(title)),
-          if (trailing != null)
-            Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: trailing,
-            ),
-        ],
+      title: Text(title),
+      subtitle: subtitle,
+      trailing: Padding(
+        padding: const EdgeInsets.only(right: 8),
+        child: trailing,
       ),
       onTap: onTap,
       minTileHeight: minTileHeight,

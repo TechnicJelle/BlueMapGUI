@@ -6,24 +6,39 @@ import "../../project_configs_provider.dart";
 import "../../sidebar.dart";
 import "../../utils.dart";
 import "../configs/models/base.dart";
+import "../configs/models/map.dart";
 
 class ConfigTile extends ConsumerWidget {
   final ConfigFile configFile;
-  final bool prettifyName;
 
-  const ConfigTile(
-    this.configFile, {
-    this.prettifyName = false,
-    super.key,
-  });
+  const ConfigTile(this.configFile, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final ConfigFile? openConfig = ref.watch(openConfigProvider);
 
-    final String configName = configFile.name;
+    final filename = configFile.name;
+    Widget? mapId = Tooltip(
+      message: "Map ID: $filename",
+      child: Text(filename),
+    );
+    final String configName = configFile.modelOrProblem.match(
+      (_) => filename, // Broken map config
+      (BaseConfigModel r) {
+        if (r is MapConfigModel) {
+          // Functional map config
+          return r.name;
+        } else {
+          // Normal (non-map) configs
+          mapId = null;
+          return filename.capitalize();
+        }
+      },
+    );
+
     return SidebarTab(
-      title: prettifyName ? configName.capitalize() : configName,
+      title: configName,
+      subtitle: mapId,
       trailing: configFile.modelOrProblem.isLeft()
           ? const Tooltip(
               message: "Error in config",
