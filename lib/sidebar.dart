@@ -43,7 +43,7 @@ class SidebarTab extends StatelessWidget {
   });
 
   static const shape = RoundedRectangleBorder(
-    borderRadius: BorderRadius.horizontal(left: Radius.circular(80)),
+    borderRadius: BorderRadius.horizontal(left: Radius.circular(32)),
   );
 
   @override
