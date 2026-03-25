@@ -11,6 +11,7 @@ import "main_menu/main_menu.dart";
 import "prefs.dart";
 import "project_configs_provider.dart";
 import "project_view/close_project_button.dart";
+import "project_view/control_row/update_button.dart";
 import "project_view/open_in_explorer_button.dart";
 import "project_view/project_view.dart";
 import "tech_app.dart";
@@ -62,6 +63,10 @@ class MyHomePage extends ConsumerWidget {
       appBar: AppBar(
         title: Tooltip(message: projectDirectory?.path ?? "Hi :)", child: Text(title)),
         actions: [
+          const Padding(
+            padding: EdgeInsets.only(top: 10, bottom: 10, right: 12),
+            child: UpdateButton(),
+          ),
           IconButton(
             tooltip: "Help",
             onPressed: () {
@@ -75,6 +80,8 @@ class MyHomePage extends ConsumerWidget {
             const OpenInFileManagerButton(),
             const CloseProjectButton(),
           ],
+          //Make icons slightly less squished in the corner
+          const SizedBox(width: 8),
         ],
       ),
       body: Stack(

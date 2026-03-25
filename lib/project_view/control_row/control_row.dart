@@ -17,7 +17,6 @@ import "../configs/models/base.dart";
 import "../configs/models/startup.dart";
 import "open_button.dart";
 import "start_button.dart";
-import "update_button.dart";
 
 final portExtractionRegex = RegExp(r"(?:port\s*|:)(\d{4,5})$");
 
@@ -303,9 +302,6 @@ class ControlRow extends StatelessWidget {
         StartButton(),
         SizedBox(width: 16),
         OpenButton(),
-        SizedBox(width: 32),
-        Spacer(),
-        UpdateButton(),
       ],
     );
   }
