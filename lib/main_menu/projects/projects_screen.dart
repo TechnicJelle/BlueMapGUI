@@ -69,8 +69,8 @@ class _ProjectsScreenState extends ConsumerState<ProjectsScreen> {
         );
       } else if (thisJavaError.contains("select")) {
         return const _JavaError(
-          "Bundled Java version is too old.\n"
-          'Please update in the settings: unset your Java Executable and reselect "Bundled".',
+          "Managed Java version is too old.\n"
+          'Please update in the settings: unset your Java Executable and reselect "Managed".',
         );
       } else {
         return _JavaError(thisJavaError);

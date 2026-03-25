@@ -12,9 +12,9 @@ final blueMapCliJarUrl = Uri.https(
 const String vDev = "development";
 const String version = String.fromEnvironment("version", defaultValue: vDev);
 
-// == Java Bundle ==
-const String javaBundleVersion = "jdk-25.0.2+10";
-const String javaBundleLinuxX64Hash =
+// == Java Managed ==
+const String javaManagedVersion = "jdk-25.0.2+10";
+const String javaManagedLinuxX64Hash =
     "d6c89e08f42be94cd55eab20190958a35b993625018a3ac59cb3d16d8445cf98"; //SHA256
-const String javaBundleWindowsX64Hash =
+const String javaManagedWindowsX64Hash =
     "1919e7e1603bc5937187139db2d65824f8d95ef42d0423ae9f9f1d9eb97842f6"; //SHA256

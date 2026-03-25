@@ -16,7 +16,7 @@ import "check_java_version.dart";
 
 enum _SystemRadioState { loading, success, errored }
 
-enum _BundledRadioState { empty, downloading, hashing, unpacking, success, errored }
+enum _ManagedRadioState { empty, downloading, hashing, unpacking, success, errored }
 
 enum _CustomRadioState { empty, success, errored }
 
@@ -39,29 +39,29 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
   int? systemJavaVersion;
   String? systemError;
 
-  _BundledRadioState bundledRadioState = .empty;
+  _ManagedRadioState managedRadioState = .empty;
 
-  late final Uri? bundledDownloadLink;
-  late final String? bundleHash;
-  String? bundledError;
-  double? bundleProgress;
+  late final Uri? managedDownloadLink;
+  late final String? managedHash;
+  String? managedError;
+  double? managedProgress;
 
-  void initBundleDownloadLink() {
+  void initManagedDownloadLink() {
     Uri createLink(String platform, String architecture) {
       return Uri.https(
         "api.adoptium.net",
-        "/v3/binary/version/$javaBundleVersion/$platform/$architecture/jre/hotspot/normal/eclipse",
+        "/v3/binary/version/$javaManagedVersion/$platform/$architecture/jre/hotspot/normal/eclipse",
       );
     }
 
     // Hashes are SHA256
     switch (Abi.current()) {
       case Abi.linuxX64:
-        bundledDownloadLink = createLink("linux", "x64");
-        bundleHash = javaBundleLinuxX64Hash;
+        managedDownloadLink = createLink("linux", "x64");
+        managedHash = javaManagedLinuxX64Hash;
       case Abi.windowsX64:
-        bundledDownloadLink = createLink("windows", "x64");
-        bundleHash = javaBundleWindowsX64Hash;
+        managedDownloadLink = createLink("windows", "x64");
+        managedHash = javaManagedWindowsX64Hash;
     }
   }
 
@@ -74,7 +74,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
   void initState() {
     super.initState();
 
-    initBundleDownloadLink();
+    initManagedDownloadLink();
 
     // System
     unawaited(
@@ -137,9 +137,9 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
             onUnset();
           case .system:
             onSystem();
-          case .bundled:
+          case .managed:
             setState(() => inProgress = true);
-            await onBundled();
+            await onManaged();
             setState(() => inProgress = false);
           case .custom:
             setState(() => inProgress = true);
@@ -173,10 +173,10 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
             enabled: systemRadioState == .success && !inProgress,
           ),
           RadioListTile(
-            value: JavaPathMode.bundled,
-            title: Text(JavaPathMode.bundled.name.capitalize()),
+            value: JavaPathMode.managed,
+            title: Text(JavaPathMode.managed.name.capitalize()),
 
-            subtitle: bundledDownloadLink == null
+            subtitle: managedDownloadLink == null
                 ? const Text(
                     "Your computer is incompatible with the automatic download. Please try the Custom mode below.",
                     style: red,
@@ -185,7 +185,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
                     crossAxisAlignment: .start,
                     mainAxisSize: .min,
                     children: [
-                      switch (bundledRadioState) {
+                      switch (managedRadioState) {
                         .empty => const Text(
                           "Automatically download Java. Use this if you don't have a working System Installation, and you don't want to use a custom one either.",
                         ),
@@ -195,16 +195,16 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
                         .success => const Text(
                           "Successfully downloaded! You are ready to go!",
                         ),
-                        .errored => Text("$bundledError", style: red),
+                        .errored => Text("$managedError", style: red),
                       },
-                      if (bundledRadioState == .downloading ||
-                          bundledRadioState == .hashing ||
-                          bundledRadioState == .unpacking)
-                        LinearProgressIndicator(value: bundleProgress),
+                      if (managedRadioState == .downloading ||
+                          managedRadioState == .hashing ||
+                          managedRadioState == .unpacking)
+                        LinearProgressIndicator(value: managedProgress),
                     ],
                   ),
 
-            enabled: bundledDownloadLink != null && !inProgress,
+            enabled: managedDownloadLink != null && !inProgress,
           ),
           RadioListTile(
             value: JavaPathMode.custom,
@@ -251,36 +251,36 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
     return null;
   }
 
-  Future<void> onBundled() async {
-    final Uri? downloadLink = bundledDownloadLink;
-    final String? hash = bundleHash;
+  Future<void> onManaged() async {
+    final Uri? downloadLink = managedDownloadLink;
+    final String? hash = managedHash;
     if (downloadLink == null || hash == null) return;
 
     setState(() {
-      bundledRadioState = .downloading;
-      bundleProgress = null;
+      managedRadioState = .downloading;
+      managedProgress = null;
     });
 
     final Directory supportDir = await getApplicationSupportDirectory();
-    final Directory javaBundleDirectory = Directory(p.join(supportDir.path, "java"));
+    final Directory javaManagedDirectory = Directory(p.join(supportDir.path, "java"));
 
-    // Delete old Java Bundle(s)
-    if (javaBundleDirectory.existsSync()) {
+    // Delete old Java Manageds(s)
+    if (javaManagedDirectory.existsSync()) {
       try {
-        await javaBundleDirectory.delete(recursive: true);
+        await javaManagedDirectory.delete(recursive: true);
       } on FileSystemException catch (e) {
         setState(() {
-          bundledRadioState = .errored;
-          bundledError = e.toString();
-          bundleProgress = null;
+          managedRadioState = .errored;
+          managedError = e.toString();
+          managedProgress = null;
         });
         return;
       }
     }
 
-    final NonHashedFile susBundleArchive;
+    final NonHashedFile susManagedArchive;
     try {
-      susBundleArchive = await downloadFile(
+      susManagedArchive = await downloadFile(
         uri: downloadLink,
         outputFileGenerator: (response) {
           final String filename = response.redirects.first.location.getFileName();
@@ -288,85 +288,85 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
         },
         onProgress: (double progress) {
           setState(() {
-            bundleProgress = progress;
+            managedProgress = progress;
           });
         },
       );
     } on IOException catch (e) {
       setState(() {
-        bundledRadioState = .errored;
-        bundledError = e.toString();
-        bundleProgress = null;
+        managedRadioState = .errored;
+        managedError = e.toString();
+        managedProgress = null;
       });
       return;
     }
 
     setState(() {
-      bundledRadioState = .hashing;
-      bundleProgress = null;
+      managedRadioState = .hashing;
+      managedProgress = null;
     });
 
-    final File? hashedBundleArchive = await susBundleArchive.hashFile(hash);
-    if (hashedBundleArchive == null) {
+    final File? hashedManagedArchive = await susManagedArchive.hashFile(hash);
+    if (hashedManagedArchive == null) {
       setState(() {
-        bundledRadioState = .errored;
-        bundledError =
-            "Could not verify the downloaded Java Bundle archive's integrity!\n"
+        managedRadioState = .errored;
+        managedError =
+            "Could not verify the downloaded Java archive's integrity!\n"
             "The hash of the downloaded file does not match the expected hash.";
-        bundleProgress = null;
+        managedProgress = null;
       });
       return;
     }
-    final File javaBundleArchive = hashedBundleArchive;
+    final File javaManagedArchive = hashedManagedArchive;
 
     setState(() {
-      bundledRadioState = .unpacking;
+      managedRadioState = .unpacking;
     });
 
     try {
-      await extractFileToDisk(javaBundleArchive.path, javaBundleDirectory.path);
+      await extractFileToDisk(javaManagedArchive.path, javaManagedDirectory.path);
     } on IOException catch (e) {
       setState(() {
-        bundledRadioState = .errored;
-        bundledError = e.toString();
-        bundleProgress = null;
+        managedRadioState = .errored;
+        managedError = e.toString();
+        managedProgress = null;
       });
       return;
     }
 
     // Delete the archive; it is not needed anymore.
     try {
-      await javaBundleArchive.delete(recursive: true);
+      await javaManagedArchive.delete(recursive: true);
     } on FileSystemException catch (e) {
       setState(() {
-        bundledRadioState = .errored;
-        bundledError = e.toString();
-        bundleProgress = null;
+        managedRadioState = .errored;
+        managedError = e.toString();
+        managedProgress = null;
       });
       return;
     }
 
     final Directory binDir = Directory(
-      p.join((await javaBundleDirectory.list().first).path, "bin"),
+      p.join((await javaManagedDirectory.list().first).path, "bin"),
     );
 
     final File? javaExecutable = await findJavaExecutableInDirectory(binDir);
     if (javaExecutable == null) {
       setState(() {
-        bundledRadioState = .errored;
-        bundledError = "Could not find Java Executable in the downloaded bundle.";
-        bundleProgress = null;
+        managedRadioState = .errored;
+        managedError = "Could not find Java Executable in the download.";
+        managedProgress = null;
       });
       return;
     }
 
     setState(() {
-      bundledRadioState = .success;
-      bundledError = null;
-      bundleProgress = null;
+      managedRadioState = .success;
+      managedError = null;
+      managedProgress = null;
       ref
           .read(javaPathProvider.notifier)
-          .setJavaPath(JavaPath(.bundled, javaExecutable.path));
+          .setJavaPath(JavaPath(.managed, javaExecutable.path));
     });
   }
 

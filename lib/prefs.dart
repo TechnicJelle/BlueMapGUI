@@ -22,7 +22,7 @@ Future<void> initPrefs() async {
   );
 }
 
-enum JavaPathMode { unset, system, bundled, custom }
+enum JavaPathMode { unset, system, managed, custom }
 
 class JavaPath {
   JavaPathMode type;

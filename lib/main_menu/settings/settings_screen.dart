@@ -16,7 +16,7 @@ class SettingsScreen extends StatelessWidget {
         SettingHeading(context, "Java Executable", const [
           SettingsBodyText("You can download Java manually "),
           SettingsBodyLink("here", "https://adoptium.net/temurin/releases/"),
-          SettingsBodyText(", or use the automatic Bundled mode."),
+          SettingsBodyText(", or use the automatic Managed mode."),
         ]),
         const JavaPicker(),
 
