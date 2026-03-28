@@ -11,8 +11,9 @@ import "../../versions.dart";
 // I don't want these for providers; too long
 // ignore: specify_nonobvious_property_types
 final updateProvider = FutureProvider.autoDispose<String?>((ref) async {
-  //Only check for updates in release versions
-  if (isDevelopment) return null;
+  // Only check for updates in release versions
+  // We do not check if `version == _vDev`, because that would show the update button in the per-commit builds too.
+  if (!version.startsWith("v")) return null;
 
   final UpdateChecker updateChecker = UpdateChecker(
     author: "TechnicJelle",

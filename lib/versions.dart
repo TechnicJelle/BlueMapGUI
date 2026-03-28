@@ -11,7 +11,6 @@ final blueMapCliJarUrl = Uri.https(
 
 const String _vDev = "development";
 const String version = String.fromEnvironment("version", defaultValue: _vDev);
-const bool isDevelopment = version == _vDev;
 
 // == Java Managed ==
 const String javaManagedVersion = "jdk-25.0.2+10";
