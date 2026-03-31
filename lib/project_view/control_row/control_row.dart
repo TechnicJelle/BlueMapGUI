@@ -63,6 +63,8 @@ class RunningProcess with WindowListener {
 
   StreamSubscription<String>? _processOutputStreamSub;
 
+  bool _shownSpeedupTip = false;
+
   RunningProcess(this._projectDirectory, this._javaPath) {
     windowManager.addListener(this);
     // Add this line to override the default close handler
@@ -153,10 +155,9 @@ class RunningProcess with WindowListener {
     final File bluemapJar = getBlueMapJarFile(_projectDirectory);
 
     if (!bluemapJar.existsSync()) {
-      _consoleOutputController.add(
-        "[ERROR] BlueMap CLI JAR not found."
-        " Try closing and re-opening the project to re-download it.",
-      );
+      _consoleOutputController.add("""
+[ERROR] BlueMap CLI JAR not found.
+        Try closing and re-opening the project to re-download it.""");
       setState(RunningProcessState.stopped);
       return;
     }
@@ -164,10 +165,9 @@ class RunningProcess with WindowListener {
     final NonHashedFile nonHashedBlueMapJar = NonHashedFile(bluemapJar);
     final File? hashedBlueMapJar = await nonHashedBlueMapJar.hashFile(blueMapCliJarHash);
     if (hashedBlueMapJar == null) {
-      _consoleOutputController.add(
-        "[WARNING] BlueMap CLI JAR hash is not valid. "
-        "Your BlueMap CLI JAR may be modified, corrupted or outdated.",
-      );
+      _consoleOutputController.add("""
+[WARNING] BlueMap CLI JAR hash is not valid.
+          Your BlueMap CLI JAR may be modified, corrupted or outdated.""");
     }
 
     final List<String> jvmArgs = [];
@@ -206,13 +206,12 @@ class RunningProcess with WindowListener {
 
       if (event.contains("This usually happens when the configured port ") &&
           event.contains(" is already in use by some other program.")) {
-        _consoleOutputController.add(
-          " There is probably already a BlueMap process running.\n"
-          " Make sure that you don't have BlueMap installed as a mod on your Minecraft client,\n"
-          "  and check in your Task Manager for any orphaned BlueMapCLI processes and close them.\n"
-          " If you are sure there is no other BlueMap process running and this error persists,\n"
-          "  try restarting your computer.",
-        );
+        _consoleOutputController.add("""
+ There is probably already a BlueMap process running.
+ Make sure that you don't have BlueMap installed as a mod on your Minecraft client,
+ and check in your Task Manager for any orphaned BlueMapCLI processes and close them.
+ If you are sure there is no other BlueMap process running and this error persists,
+ try restarting your computer.""");
       }
 
       if (event.contains(RegExp("Failed to load map.?config"))) {
@@ -231,15 +230,25 @@ class RunningProcess with WindowListener {
 
       if (event.contains("WebServer started")) {
         _consoleOutputController.add(
-          " You can now click the open button above, to see your map!",
+          """
+[TIP] You can now already click the open button above, to see your map!
+      BlueMap will continue rendering in the background!
+      You can click the "Update Map" button in the sidebar on the website to see the newly rendered chunks.""",
         );
       }
 
       if (event.contains("Start updating 0 maps")) {
+        _consoleOutputController.add("""
+[WARNING] There are no maps configured (correctly), so BlueMap will be doing nothing!
+          You should create a map with the "New Map" button on the left.""");
+      }
+
+      if (!_shownSpeedupTip && event.contains("(ETA:")) {
         _consoleOutputController.add(
-          "[WARNING] You don't have any maps, so BlueMap will be doing nothing!\n"
-          " You should create a map with the \"New Map\" button on the left.",
+          """
+[TIP] You can speed up the rendering process by increasing the "Render Thread Count" option in the Core tab.""",
         );
+        _shownSpeedupTip = true;
       }
     });
 
@@ -258,6 +267,7 @@ class RunningProcess with WindowListener {
     if (success == false) {
       _consoleOutputController.add("Failed to stop the process.");
     }
+    _shownSpeedupTip = false;
   }
 
   void setState(RunningProcessState newState, {int? exitCode}) {
