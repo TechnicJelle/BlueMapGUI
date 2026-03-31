@@ -177,16 +177,20 @@ class _Option extends StatefulWidget {
 
   final String title;
   final List<SettingsBodyBase> descriptionList;
+  final bool controlsMultipleOptions;
   final Widget? subtitle;
   final Widget? button;
   final bool shouldPadBottom;
+  final bool enabled;
 
   const _Option({
     required this.title,
     required this.descriptionList,
+    required this.controlsMultipleOptions,
     this.subtitle,
     this.button,
     this.shouldPadBottom = false,
+    this.enabled = true,
   });
 
   @override
@@ -201,7 +205,7 @@ class _OptionState extends State<_Option> {
   @override
   Widget build(BuildContext context) {
     hoverColour ??= Theme.of(context).hoverColor;
-    return MouseRegion(
+    final child = MouseRegion(
       onEnter: (_) => setState(() => hovered = true),
       onExit: (_) => setState(() => hovered = false),
       child: ListTile(
@@ -210,6 +214,7 @@ class _OptionState extends State<_Option> {
           widget.title,
           padding: _Option._settingHeadingPadding,
           widget.descriptionList,
+          strikeThroughTitle: !widget.enabled,
         ),
         subtitle: widget.shouldPadBottom
             ? Padding(
@@ -221,6 +226,19 @@ class _OptionState extends State<_Option> {
         tileColor: hovered ? hoverColour : null,
       ),
     );
+
+    return widget.enabled
+        ? child
+        : Tooltip(
+            message: widget.controlsMultipleOptions
+                ? """
+Config file does not contain (some of) these options! It is probably too old.
+Buttons will be disabled until the config file contains all the options."""
+                : """
+Config file does not contain this option! It is probably too old.
+Button will be disabled until the config file contains the option.""",
+            child: child,
+          );
   }
 }
 
@@ -266,6 +284,7 @@ class IntSliderOption extends StatelessWidget {
     return _Option(
       title: title,
       descriptionList: descriptionList,
+      controlsMultipleOptions: false,
       subtitle: Column(
         children: [
           Row(
@@ -336,46 +355,37 @@ class DoubleSliderOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final child = SliderTheme(
-      data: const SliderThemeData(showValueIndicator: ShowValueIndicator.onDrag),
-      child: _Option(
-        title: title,
-        descriptionList: descriptionList,
-        subtitle: Column(
-          children: [
-            Row(
-              children: [
-                if (value != null)
-                  Text(
-                    value!.toStringAsFixed(2),
-                    style: pixelCode200,
-                  ),
-                Expanded(
-                  child: Slider(
-                    value: value ?? max,
-                    label: value?.toStringAsFixed(2) ?? "",
-                    min: min,
-                    max: math.max(value ?? max, max),
-                    onChanged: value == null || value! > max ? null : onChanged,
-                    onChangeEnd: onChangeEnd,
-                    activeColor: sliderColor,
-                  ),
+    return _Option(
+      title: title,
+      descriptionList: descriptionList,
+      controlsMultipleOptions: false,
+      enabled: value != null,
+      subtitle: Column(
+        children: [
+          Row(
+            children: [
+              if (value != null)
+                Text(
+                  value!.toStringAsFixed(2),
+                  style: pixelCode200,
                 ),
-              ],
-            ),
-            ?warning,
-          ],
-        ),
+              Expanded(
+                child: Slider(
+                  value: value ?? max,
+                  label: value?.toStringAsFixed(2) ?? "",
+                  min: min,
+                  max: math.max(value ?? max, max),
+                  onChanged: value == null || value! > max ? null : onChanged,
+                  onChangeEnd: onChangeEnd,
+                  activeColor: sliderColor,
+                ),
+              ),
+            ],
+          ),
+          ?warning,
+        ],
       ),
     );
-    return value == null
-        ? Tooltip(
-            message: """
-Config file does not contain this option! It is probably too old.
-Button will be disabled until the config file contains the option.""",
-            child: child,
-          )
-        : child;
   }
 }
 
@@ -424,6 +434,7 @@ class TextFieldOption extends StatelessWidget {
     return _Option(
       title: title,
       descriptionList: descriptionList,
+      controlsMultipleOptions: false,
       subtitle: TextFormField(
         controller: controller,
         decoration: InputDecoration(
@@ -497,9 +508,11 @@ class Vector2XZOption extends StatelessWidget {
       return oldValue;
     });
 
-    final child = _Option(
+    return _Option(
       title: title,
       descriptionList: descriptionList,
+      controlsMultipleOptions: true,
+      enabled: controllerX != null && controllerZ != null,
       subtitle: Row(
         children: [
           Flexible(
@@ -537,15 +550,6 @@ class Vector2XZOption extends StatelessWidget {
       ),
       shouldPadBottom: true,
     );
-
-    return controllerX != null && controllerZ != null
-        ? child
-        : Tooltip(
-            message: """
-Config file does not contain (some of) these options! It is probably too old.
-Buttons will be disabled until the config file contains all the options.""",
-            child: child,
-          );
   }
 }
 
@@ -573,30 +577,22 @@ class ToggleOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final child = CheckboxListTile(
-      title: SettingHeading(
-        context,
-        title,
-        padding: _Option._settingHeadingPadding,
-        descriptionList,
+    final enabled = value != null;
+    return _Option(
+      title: title,
+      descriptionList: descriptionList,
+      controlsMultipleOptions: false,
+      enabled: enabled,
+      button: Checkbox(
+        value: value,
+        onChanged: (bool? value) {
+          if (value == null) return;
+          onChanged(value);
+        },
+        tristate: !enabled,
+        fillColor: !enabled ? .all(Colors.grey) : null,
       ),
-      value: value,
-      onChanged: (bool? value) {
-        if (value == null) return;
-        onChanged(value);
-      },
-      tristate: value == null,
-      enabled: value != null,
-      fillColor: value == null ? .all(Colors.grey) : null,
     );
-    return value == null
-        ? Tooltip(
-            message: """
-Config file does not contain this option! It is probably too old.
-Button will be disabled until the config file contains the option.""",
-            child: child,
-          )
-        : child;
   }
 }
 
@@ -631,6 +627,7 @@ class ColourOption extends StatelessWidget {
     return _Option(
       title: title,
       descriptionList: descriptionList,
+      controlsMultipleOptions: false,
       button: ElevatedButton.icon(
         style: ElevatedButton.styleFrom(backgroundColor: colour),
         icon: Icon(Icons.color_lens, color: textColour),
@@ -778,13 +775,15 @@ class BoolListOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool enabled = !options.any((option) => option.enabled == null);
     return _Option(
       title: title,
       descriptionList: descriptionList,
+      controlsMultipleOptions: true,
+      enabled: enabled,
       subtitle: LayoutBuilder(
         builder: (context, constraints) {
-          final bool enabled = !options.any((option) => option.enabled == null);
-          final child = ToggleButtons(
+          return ToggleButtons(
             borderRadius: const BorderRadius.all(Radius.circular(8)),
             direction: constraints.maxWidth < breakpoint ? .vertical : .horizontal,
             onPressed: enabled
@@ -808,15 +807,6 @@ class BoolListOption extends StatelessWidget {
                 })
                 .toList(growable: false),
           );
-
-          return enabled
-              ? child
-              : Tooltip(
-                  message: """
-Config file does not contain (some of) these options! It is probably too old.
-Buttons will be disabled until the config file contains all the options.""",
-                  child: child,
-                );
         },
       ),
       shouldPadBottom: true,

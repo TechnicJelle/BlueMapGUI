@@ -55,6 +55,9 @@ class TechApp extends MaterialApp {
                    borderRadius: BorderRadiusGeometry.circular(3),
                  ),
                ),
+               sliderTheme: const SliderThemeData(
+                 showValueIndicator: ShowValueIndicator.onDrag,
+               ),
              ),
              child: child!,
            );

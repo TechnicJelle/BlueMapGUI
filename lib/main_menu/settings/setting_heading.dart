@@ -8,12 +8,14 @@ class SettingHeading extends StatelessWidget {
   final String title;
   late final List<TextSpan> textSpans = [];
   final EdgeInsets padding;
+  final bool strikeThroughTitle;
 
   SettingHeading(
     BuildContext context,
     this.title,
     List<SettingsBodyBase> text, {
     this.padding = const EdgeInsets.only(left: 16, bottom: 8, top: 16),
+    this.strikeThroughTitle = false,
     super.key,
   }) {
     for (final SettingsBodyBase body in text) {
@@ -26,6 +28,7 @@ class SettingHeading extends StatelessWidget {
     this.title,
     String text, {
     this.padding = const EdgeInsets.only(left: 16, bottom: 8, top: 16),
+    this.strikeThroughTitle = false,
     super.key,
   }) {
     textSpans.add(SettingsBodyText(text).build(context));
@@ -34,7 +37,14 @@ class SettingHeading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    final TextStyle? titleStyle = textTheme.headlineSmall;
+    TextStyle? titleStyle = textTheme.headlineSmall;
+    if (strikeThroughTitle) {
+      titleStyle = titleStyle?.copyWith(
+        decoration: .lineThrough,
+        decorationThickness: 2,
+        color: titleStyle.color?.withAlpha(150),
+      );
+    }
     return Padding(
       padding: padding,
       child: Padding(
