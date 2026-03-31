@@ -78,7 +78,10 @@ class _ControlPanelTile extends ConsumerWidget {
 class AllowMapReorderingNotifier extends Notifier<bool> {
   @override
   bool build() {
-    final bool advancedMode = ref.watch(advancedModeProvider);
+    final bool advancedMode = ref
+        .watch(advancedModeProvider)
+        .when(data: (value) => value, loading: () => true);
+
     final mapConfigs = ref.watch(mapConfigsProvider);
     if (mapConfigs == null) return advancedMode;
     final bool aMapConfigHasAProblem = mapConfigs

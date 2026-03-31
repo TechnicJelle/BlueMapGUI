@@ -15,3 +15,4 @@ targets:
         generate_for:
           - lib/project_configs_provider.dart
           - lib/project_view/configs/models/*.dart
+          - lib/project_view/configs/config_gui.dart
