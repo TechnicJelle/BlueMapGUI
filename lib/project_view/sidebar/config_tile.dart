@@ -23,13 +23,24 @@ class ConfigTile extends ConsumerWidget {
       child: Text(filename),
     );
     final String configName = configFile.modelOrProblem.match(
-      (_) => filename, // Broken map config
+      // Broken config
+      (_) {
+        mapId = null;
+        if (configFile is ConfigFile<MapConfigModel>) {
+          // Broken map config
+          return filename;
+        } else {
+          // Broken normal (non-map) config
+          return filename.capitalize();
+        }
+      },
+      // Functional config
       (BaseConfigModel r) {
         if (r is MapConfigModel) {
           // Functional map config
           return r.name;
         } else {
-          // Normal (non-map) configs
+          // Functional normal (non-map) config
           mapId = null;
           return filename.capitalize();
         }
