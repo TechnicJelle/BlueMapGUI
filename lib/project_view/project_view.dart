@@ -27,9 +27,21 @@ class ProjectView extends ConsumerWidget {
               : Stack(
                   children: [
                     advancedMode.when(
-                      data: (value) => value
+                      data: (enabled) => enabled
                           ? AdvancedEditor(openConfig)
-                          : BaseConfigView(openConfig),
+                          : LayoutBuilder(
+                              builder: (context, constraints) {
+                                final configView = BaseConfigView(openConfig);
+                                return Center(
+                                  child: constraints.maxWidth < 1900
+                                      ? configView
+                                      : ConstrainedBox(
+                                          constraints: const .new(maxWidth: 1500),
+                                          child: configView,
+                                        ),
+                                );
+                              },
+                            ),
                       loading: () => const Center(child: CircularProgressIndicator()),
                     ),
                     const AdvancedModeToggle(),

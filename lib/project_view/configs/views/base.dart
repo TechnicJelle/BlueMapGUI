@@ -28,31 +28,26 @@ class BaseConfigView<T extends BaseConfigModel> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: config.modelOrProblem.match(
-        (FileConfigFileLoadProblem e) {
-          return const _OpenErrorDisplay(
-            "Simple View currently not available for this config, due to errors.\n"
-            "You can use Advanced Mode to fix them.",
-          );
-        },
-        (T model) {
-          return ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 1500),
-            child: switch (model) {
-              CoreConfigModel() => const CoreConfigView(),
-              StartupConfigModel() => const StartupConfigView(),
-              WebappConfigModel() => const WebappConfigView(),
-              WebserverConfigModel() => const WebserverConfigView(),
-              MapConfigModel() => const MapConfigView(),
-              _ => const _OpenErrorDisplay(
-                "Simple View currently not available for this config.\n"
-                "Please use Advanced Mode for this config.",
-              ),
-            },
-          );
-        },
-      ),
+    return config.modelOrProblem.match(
+      (FileConfigFileLoadProblem e) {
+        return const _OpenErrorDisplay(
+          "Simple View currently not available for this config, due to errors.\n"
+          "You can use Advanced Mode to fix them.",
+        );
+      },
+      (T model) {
+        return switch (model) {
+          CoreConfigModel() => const CoreConfigView(),
+          StartupConfigModel() => const StartupConfigView(),
+          WebappConfigModel() => const WebappConfigView(),
+          WebserverConfigModel() => const WebserverConfigView(),
+          MapConfigModel() => const MapConfigView(),
+          _ => const _OpenErrorDisplay(
+            "Simple View currently not available for this config.\n"
+            "Please use Advanced Mode for this config.",
+          ),
+        };
+      },
     );
   }
 }
