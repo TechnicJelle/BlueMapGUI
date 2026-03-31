@@ -30,10 +30,10 @@ Directory getMapTemplatesDirectory(Directory projectDirectory) {
   );
 }
 
-final RegExp _regexMapIdSafeCharacters = RegExp("[^a-zA-Z0-9_-]+");
+final RegExp _regexMapIdSafeCharacters = RegExp("[^a-z0-9_-]+");
 
 String nameToID(String name) {
-  return name.trim().replaceAll(_regexMapIdSafeCharacters, "-");
+  return name.trim().toLowerCase().replaceAll(_regexMapIdSafeCharacters, "-");
 }
 
 File getNewMapConfig(Directory projectDirectory, String name) {
