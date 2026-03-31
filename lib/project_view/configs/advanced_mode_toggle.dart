@@ -3,11 +3,9 @@ import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:freezed_annotation/freezed_annotation.dart";
 
 import "../../project_configs_provider.dart";
-import "advanced_editor.dart";
 import "models/base.dart";
-import "views/base.dart";
 
-part "config_gui.freezed.dart";
+part "advanced_mode_toggle.freezed.dart";
 
 @freezed
 sealed class AdvancedMode with _$AdvancedMode {
@@ -41,26 +39,6 @@ class AdvancedModeNotifier extends Notifier<AdvancedMode> {
         state = .data(newState);
       });
     }
-  }
-}
-
-class ConfigGUI extends ConsumerWidget {
-  const ConfigGUI({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final ConfigFile openConfig = ref.watch(openConfigProvider)!;
-    final AdvancedMode advancedMode = ref.watch(advancedModeProvider);
-
-    return Stack(
-      children: [
-        advancedMode.when(
-          data: (val) => val ? AdvancedEditor(openConfig) : BaseConfigView(openConfig),
-          loading: () => const Center(child: CircularProgressIndicator()),
-        ),
-        const AdvancedModeToggle(),
-      ],
-    );
   }
 }
 

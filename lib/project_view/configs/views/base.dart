@@ -8,7 +8,7 @@ import "package:flutter_riverpod/flutter_riverpod.dart";
 
 import "../../../main_menu/settings/setting_heading.dart";
 import "../../../utils.dart";
-import "../config_gui.dart";
+import "../advanced_mode_toggle.dart";
 import "../models/base.dart";
 import "../models/core.dart";
 import "../models/map.dart";

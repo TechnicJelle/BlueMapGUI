@@ -2,7 +2,10 @@ import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 
 import "../project_configs_provider.dart";
-import "configs/config_gui.dart";
+import "configs/advanced_editor.dart";
+import "configs/advanced_mode_toggle.dart";
+import "configs/models/base.dart";
+import "configs/views/base.dart";
 import "control_panel.dart";
 import "sidebar/project_sidebar.dart";
 
@@ -11,16 +14,27 @@ class ProjectView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final bool isConfigOpen = ref.watch(
-      openConfigProvider.select((config) => config != null),
-    );
+    final ConfigFile? openConfig = ref.watch(openConfigProvider);
+    final AdvancedMode advancedMode = ref.watch(advancedModeProvider);
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const ProjectSidebar(),
         Expanded(
-          child: isConfigOpen ? const ConfigGUI() : const ControlPanel(),
+          child: openConfig == null
+              ? const ControlPanel()
+              : Stack(
+                  children: [
+                    advancedMode.when(
+                      data: (value) => value
+                          ? AdvancedEditor(openConfig)
+                          : BaseConfigView(openConfig),
+                      loading: () => const Center(child: CircularProgressIndicator()),
+                    ),
+                    const AdvancedModeToggle(),
+                  ],
+                ),
         ),
       ],
     );

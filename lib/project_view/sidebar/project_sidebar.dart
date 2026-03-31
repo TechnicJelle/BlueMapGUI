@@ -3,7 +3,7 @@ import "package:flutter_riverpod/flutter_riverpod.dart";
 
 import "../../project_configs_provider.dart";
 import "../../sidebar.dart";
-import "../configs/config_gui.dart";
+import "../configs/advanced_mode_toggle.dart";
 import "../configs/models/base.dart";
 import "../configs/models/map.dart";
 import "../control_row/control_row.dart";
