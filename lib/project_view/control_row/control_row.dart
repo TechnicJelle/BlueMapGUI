@@ -122,12 +122,8 @@ class RunningProcess with WindowListener {
       _javaPath,
     );
     final StartupConfigModel startupConfigModel = configFile.modelOrProblem.match(
-      (FileConfigFileLoadProblem l) {
-        throw FatalConfigProblemException(problem: l);
-      },
-      (BaseConfigModel r) {
-        return r as StartupConfigModel;
-      },
+      (FileConfigFileLoadProblem l) => throw FatalConfigProblemException(problem: l),
+      (BaseConfigModel r) => r as StartupConfigModel,
     );
 
     //Option: Mods Path
