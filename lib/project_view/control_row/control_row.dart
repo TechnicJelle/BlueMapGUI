@@ -157,6 +157,7 @@ class RunningProcess with WindowListener {
         "[ERROR] BlueMap CLI JAR not found."
         " Try closing and re-opening the project to re-download it.",
       );
+      setState(RunningProcessState.stopped);
       return;
     }
 
@@ -177,6 +178,7 @@ class RunningProcess with WindowListener {
       _consoleOutputController.add(
         "[ERROR] Fatal exception when trying to load Startup Config: ${e.getDetails()}",
       );
+      setState(RunningProcessState.stopped);
       return;
     }
     final process = await _javaPath.startJar(
@@ -282,7 +284,7 @@ class RunningProcess with WindowListener {
 
     _consoleOutputController.add(
       "[Signal] ${switch (newState) {
-        .stopped => "Stopped. ($exitCode)",
+        .stopped => "Stopped.${exitCode == null ? "" : " ($exitCode)"}",
         .starting => "Starting...",
         .running => "Running!",
         .stopping => "Stopping...",
