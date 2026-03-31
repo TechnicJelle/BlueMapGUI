@@ -168,7 +168,10 @@ class ConfigOptionsList extends StatelessWidget {
           backgroundColor: Colors.transparent,
           pinned: true,
         ),
-        SliverList.list(children: children),
+        SliverPadding(
+          padding: const .only(right: 8), //space for the scrollbar
+          sliver: SliverList.list(children: children),
+        ),
       ],
     );
   }
