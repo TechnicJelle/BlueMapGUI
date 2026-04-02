@@ -182,6 +182,7 @@ class _Option extends StatefulWidget {
   final Widget? button;
   final bool shouldPadBottom;
   final bool enabled;
+  final GestureTapCallback? onTap;
 
   const _Option({
     required this.title,
@@ -191,6 +192,7 @@ class _Option extends StatefulWidget {
     this.button,
     this.shouldPadBottom = false,
     this.enabled = true,
+    this.onTap,
   });
 
   @override
@@ -224,6 +226,7 @@ class _OptionState extends State<_Option> {
             : widget.subtitle,
         trailing: widget.button,
         tileColor: hovered ? hoverColour : null,
+        onTap: widget.onTap,
       ),
     );
 
@@ -592,6 +595,11 @@ class ToggleOption extends StatelessWidget {
         tristate: !enabled,
         fillColor: !enabled ? .all(Colors.grey) : null,
       ),
+      onTap: () {
+        final bool? newValue = value;
+        if (newValue == null) return;
+        onChanged(!newValue);
+      },
     );
   }
 }
