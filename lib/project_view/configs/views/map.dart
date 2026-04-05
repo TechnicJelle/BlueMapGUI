@@ -148,7 +148,7 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
             if (!Directory(value).existsSync()) {
               return "Directory does not exist";
             }
-            if (!File(p.join(value, "level.dat")).existsSync()) {
+            if (!Directory(p.join(value, "region")).existsSync()) {
               return "Directory does not seem to contain a Minecraft World";
             }
             return null;
