@@ -160,8 +160,9 @@ class NewProjectDialogState extends ConsumerState<NewProjectDialog> {
                     padding: const EdgeInsets.only(top: 24, left: 8),
                     child: ElevatedButton.icon(
                       onPressed: () async {
-                        final String? picked = await FilePicker.platform
-                            .getDirectoryPath(dialogTitle: "Pick project location");
+                        final String? picked = await FilePicker.getDirectoryPath(
+                          dialogTitle: "Pick project location",
+                        );
                         if (picked == null) return;
 
                         setState(() {
