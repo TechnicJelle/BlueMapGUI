@@ -114,7 +114,7 @@ class PathPickerButton extends StatelessWidget {
             // - Linux will crash on this, if the path contains any special characters
             //   (I have submitted a PR to the file_picker library that will fix this: https://github.com/miguelpruivo/flutter_file_picker/pull/1963 )
             // - Windows will crash on this, if the directory does not exist
-            picked = await FilePicker.platform.getDirectoryPath(
+            picked = await FilePicker.getDirectoryPath(
               dialogTitle: dialogTitle,
               initialDirectory: initialDirectory,
             );
@@ -124,7 +124,7 @@ class PathPickerButton extends StatelessWidget {
             // ignore: avoid_catches_without_on_clauses
           } catch (_) {
             // So if it crashed, we try again, but without an initialDirectory:
-            picked = await FilePicker.platform.getDirectoryPath(
+            picked = await FilePicker.getDirectoryPath(
               dialogTitle: dialogTitle,
             );
           }

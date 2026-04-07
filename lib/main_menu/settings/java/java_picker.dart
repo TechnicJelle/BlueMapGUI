@@ -371,7 +371,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
   }
 
   Future<void> onCustom() async {
-    final FilePickerResult? browsed = await FilePicker.platform.pickFiles(
+    final FilePickerResult? browsed = await FilePicker.pickFiles(
       dialogTitle: "Select Java executable",
       // Specifically mention this, because we can't use FileType.custom, which would be expected here.
       // This is because it doesn't support files with no extension, which is the case for executables on linux.
