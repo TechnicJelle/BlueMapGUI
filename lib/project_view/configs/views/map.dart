@@ -143,15 +143,27 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
           ),
           onChanged: null,
           onEditingComplete: () => setState(validateAndSaveOptionsThatCannotBeBlank),
-          warningValidator: (String? value) {
-            if (value == null) return null;
-            if (!Directory(value).existsSync()) {
-              return "Directory does not exist";
+          warningValidator: (String? worldPath) {
+            if (worldPath == null) return null;
+
+            if (!Directory(worldPath).existsSync()) return "Directory does not exist";
+
+            if (File(p.join(worldPath, "level.dat")).existsSync()) return null;
+            if (Directory(p.join(worldPath, "region")).existsSync()) return null;
+
+            final dimsDir = Directory(p.join(worldPath, "dimensions"));
+            if (dimsDir.existsSync()) {
+              for (final FileSystemEntity namespaceFSE in dimsDir.listSync()) {
+                if (namespaceFSE is! Directory) continue;
+                for (final FileSystemEntity dimensionFSE in namespaceFSE.listSync()) {
+                  if (Directory(p.join(dimensionFSE.path, "region")).existsSync()) {
+                    return null;
+                  }
+                }
+              }
             }
-            if (!Directory(p.join(value, "region")).existsSync()) {
-              return "Directory does not seem to contain a Minecraft World";
-            }
-            return null;
+
+            return "Directory does not seem to contain a Minecraft World";
           },
         ),
         TextFieldOption.customDescription(
