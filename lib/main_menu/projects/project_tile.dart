@@ -452,7 +452,7 @@ class _OpenProjectDialog extends ConsumerWidget {
               .checking => const Text(
                 "Checking if BlueMap CLI JAR has already been downloaded...",
               ),
-              .downloading => const Text("Downloading BlueMap CLI JAR..."),
+              .downloading => const Text("Downloading BlueMap v$blueMapTag CLI JAR..."),
               .hashing => const Text("Verifying BlueMap CLI JAR hash..."),
               .running => const Text(
                 "Running BlueMap CLI to generate default configs...",
