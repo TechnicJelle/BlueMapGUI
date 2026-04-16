@@ -44,7 +44,7 @@ class _OpeningStateNotifier extends Notifier<_OpeningStep?> {
 
   @override
   _OpeningStep build() {
-    return _OpeningStep.nothing;
+    return .nothing;
   }
 
   void set(_OpeningStep newState) {
@@ -227,15 +227,13 @@ It will only be removed from the list.""",
 
     // == Check if project directory exists ==
     if (!projectDirectory.existsSync()) {
-      ref
-          .read(_openingStateProvider.notifier)
-          .error(error: _OpenError.directoryNotFound);
+      ref.read(_openingStateProvider.notifier).error(error: .directoryNotFound);
       setState(() => projectDirectoryExists = false); //to update the subtitle
       return;
     }
 
     // == Checking for BlueMap CLI JAR ==
-    ref.read(_openingStateProvider.notifier).set(_OpeningStep.checking);
+    ref.read(_openingStateProvider.notifier).set(.checking);
     final File potentialBlueMapJar = getBlueMapJarFile(projectDirectory);
 
     final File bluemapJar;
@@ -243,7 +241,7 @@ It will only be removed from the list.""",
     if (potentialBlueMapJar.existsSync()) {
       bluemapJar = potentialBlueMapJar;
     } else {
-      ref.read(_openingStateProvider.notifier).set(_OpeningStep.downloading);
+      ref.read(_openingStateProvider.notifier).set(.downloading);
       final NonHashedFile susBlueMapJar;
       try {
         susBlueMapJar = await downloadFile(
@@ -257,28 +255,28 @@ It will only be removed from the list.""",
       } on IOException catch (e) {
         ref
             .read(_openingStateProvider.notifier)
-            .error(error: _OpenError.downloadFailed, details: e.toString());
+            .error(error: .downloadFailed, details: e.toString());
         return;
       }
 
       // == Verify BlueMap CLI JAR hash ==
-      ref.read(_openingStateProvider.notifier).set(_OpeningStep.hashing);
+      ref.read(_openingStateProvider.notifier).set(.hashing);
       final File? hashedBlueMapJar = await susBlueMapJar.hashFile(blueMapCliJarHash);
       if (hashedBlueMapJar == null) {
-        ref.read(_openingStateProvider.notifier).error(error: _OpenError.wrongHash);
+        ref.read(_openingStateProvider.notifier).error(error: .wrongHash);
         return;
       }
       bluemapJar = hashedBlueMapJar;
     }
 
     // == Run BlueMap CLI JAR to generate default configs ==
-    ref.read(_openingStateProvider.notifier).set(_OpeningStep.running);
+    ref.read(_openingStateProvider.notifier).set(.running);
 
     final JavaPath? javaPath = ref.read(javaPathProvider);
     if (javaPath == null) {
       ref
           .read(_openingStateProvider.notifier)
-          .error(error: _OpenError.runFail, details: "Java Path was null");
+          .error(error: .runFail, details: "Java Path was null");
       return;
     }
 
@@ -287,7 +285,7 @@ It will only be removed from the list.""",
     } on JavaVersionCheckException catch (e) {
       ref
           .read(_openingStateProvider.notifier)
-          .error(error: _OpenError.runFail, details: e.message);
+          .error(error: .runFail, details: e.message);
       return;
     }
 
@@ -315,7 +313,7 @@ It will only be removed from the list.""",
     } on ProcessException catch (e) {
       ref
           .read(_openingStateProvider.notifier)
-          .error(error: _OpenError.runFail, details: e.toString());
+          .error(error: .runFail, details: e.toString());
       return;
     }
     final String stdout = run.stdout.toString();
@@ -334,14 +332,14 @@ It will only be removed from the list.""",
       ref
           .read(_openingStateProvider.notifier)
           .error(
-            error: _OpenError.runFail,
+            error: .runFail,
             details: combined.isNotEmpty ? combined : "<no output>",
           );
       return;
     }
 
     // == Turn default maps directory into templates directory ==
-    ref.read(_openingStateProvider.notifier).set(_OpeningStep.mapping);
+    ref.read(_openingStateProvider.notifier).set(.mapping);
     //Check if we are currently upgrading an outdated project
     if (tempMapsDir == null) {
       //We are not currently upgrading an outdated project
@@ -365,7 +363,7 @@ It will only be removed from the list.""",
     }
 
     // == Copy BlueMap GUI Configs ==
-    ref.read(_openingStateProvider.notifier).set(_OpeningStep.copying);
+    ref.read(_openingStateProvider.notifier).set(.copying);
     final File startupConfigFile = File(
       p.join(projectDirectory.path, "config", "startup.conf"),
     );
@@ -380,20 +378,20 @@ It will only be removed from the list.""",
       } on FileSystemException catch (e) {
         ref
             .read(_openingStateProvider.notifier)
-            .error(error: _OpenError.copyFail, details: e.toString());
+            .error(error: .copyFail, details: e.toString());
         return;
       }
     }
 
     // == Open project ==
-    ref.read(_openingStateProvider.notifier).set(_OpeningStep.opening);
+    ref.read(_openingStateProvider.notifier).set(.opening);
 
     try {
       await ref.read(projectProviderNotifier).openProject(projectDirectory);
     } on FatalConfigFileLoadException catch (e) {
       ref
           .read(_openingStateProvider.notifier)
-          .error(error: _OpenError.openFail, details: e.getDetails());
+          .error(error: .openFail, details: e.getDetails());
       return;
     }
 
@@ -450,34 +448,32 @@ class _OpenProjectDialog extends ConsumerWidget {
               style: TextStyle(color: Colors.red),
             )
           : switch (pickingStep) {
-              _OpeningStep.nothing => const Text("Preparing to open the project..."),
-              _OpeningStep.checking => const Text(
+              .nothing => const Text("Preparing to open the project..."),
+              .checking => const Text(
                 "Checking if BlueMap CLI JAR has already been downloaded...",
               ),
-              _OpeningStep.downloading => const Text("Downloading BlueMap CLI JAR..."),
-              _OpeningStep.hashing => const Text("Verifying BlueMap CLI JAR hash..."),
-              _OpeningStep.running => const Text(
+              .downloading => const Text("Downloading BlueMap CLI JAR..."),
+              .hashing => const Text("Verifying BlueMap CLI JAR hash..."),
+              .running => const Text(
                 "Running BlueMap CLI to generate default configs...",
               ),
-              _OpeningStep.mapping => const Text(
+              .mapping => const Text(
                 "Turning BlueMap's default map configs into templates...",
               ),
-              _OpeningStep.copying => const Text(
-                "Copying BlueMap GUI configs into the project...",
-              ),
-              _OpeningStep.opening => const Text("Opening project..."),
+              .copying => const Text("Copying BlueMap GUI configs into the project..."),
+              .opening => const Text("Opening project..."),
             },
       content: isError && openError != null
           ? Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: .min,
+              crossAxisAlignment: .start,
               children: switch (openError) {
-                _OpenError.directoryNotFound => [
+                .directoryNotFound => [
                   const Text("The project directory could not be found!"),
                   const SizedBox(height: 8),
                   const Text("Try removing it from the list and recreating it."),
                 ],
-                _OpenError.downloadFailed => [
+                .downloadFailed => [
                   const Text(
                     """
 Failed to download BlueMap CLI JAR.
@@ -487,7 +483,7 @@ Check your internet connection and try again.
                   const SizedBox(height: 8),
                   ?ref.read(_openingStateProvider.notifier).getErrorDetails(context),
                 ],
-                _OpenError.wrongHash => [
+                .wrongHash => [
                   const Text(
                     """
 Could not verify the downloaded BlueMap CLI JAR's integrity!
@@ -496,7 +492,7 @@ The hash of the downloaded file does not match the expected hash.""",
                   const SizedBox(height: 8),
                   const Text("Please try again later or download the file manually."),
                 ],
-                _OpenError.runFail => [
+                .runFail => [
                   const Text(
                     """
 Failed to run the CLI to generate default BlueMap configs!
@@ -505,12 +501,12 @@ Please check your Java settings and try again.""",
                   const SizedBox(height: 8),
                   ?ref.read(_openingStateProvider.notifier).getErrorDetails(context),
                 ],
-                _OpenError.copyFail => [
+                .copyFail => [
                   const Text("Failed to copy BlueMap GUI config into the project!"),
                   const SizedBox(height: 8),
                   ?ref.read(_openingStateProvider.notifier).getErrorDetails(context),
                 ],
-                _OpenError.openFail => [
+                .openFail => [
                   const Text(
                     "A fatal exception occurred when trying to open the project!",
                   ),
