@@ -61,7 +61,7 @@ Aside _toc() {
                       ),
                       _li("#3b-configuring-your-maps", "Configuring your maps"),
                       _li(
-                        "#3c-optional-setting-up-resourcepacks--datapacks",
+                        "#3c-optional-setting-up-resourcepacks-datapacks",
                         "Resource-packs & Data-packs",
                       ),
                       _li("#3d-optional-setting-up-mods", "Mods"),

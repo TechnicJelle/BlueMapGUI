@@ -25,6 +25,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.19.1"
+  csslib:
+    dependency: transitive
+    description:
+      name: csslib
+      sha256: "09bad715f418841f976c77db72d5398dc1253c21fb9c0c7f0b0b985860b2d58e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2"
   ffi:
     dependency: transitive
     description:
@@ -33,6 +41,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.0"
+  html:
+    dependency: transitive
+    description:
+      name: html
+      sha256: "6d1264f2dffa1b1101c25a91dff0dc2daee4c18e87cd8538729773c073dbf602"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.15.6"
   image:
     dependency: transitive
     description:
@@ -89,15 +105,31 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.5.0"
+  source_span:
+    dependency: transitive
+    description:
+      name: source_span
+      sha256: "56a02f1f4cd1a2d96303c0144c93bd6d909eea6bee6bf5a0e0b685edbd4c47ab"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.10.2"
   techs_html_bindings:
     dependency: "direct main"
     description:
       path: "."
       ref: boring-md
-      resolved-ref: dfdfe0a7cf23d892286def8e321ed0dda2e641db
+      resolved-ref: bdc47940e007a744bf57c8e522c86b91c19a95b7
       url: "https://github.com/TechnicJelle/techs_html_bindings.git"
     source: git
     version: "1.0.0"
+  term_glyph:
+    dependency: transitive
+    description:
+      name: term_glyph
+      sha256: "7f554798625ea768a7518313e58f83891c7f5024f88e46e7182a4558850a4b8e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.2"
   very_good_analysis:
     dependency: "direct dev"
     description:
