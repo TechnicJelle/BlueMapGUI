@@ -62,6 +62,9 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
       case Abi.windowsX64:
         managedDownloadLink = createLink("windows", "x64");
         managedHash = javaManagedWindowsX64Hash;
+      default:
+        managedDownloadLink = null;
+        managedHash = null;
     }
   }
 
