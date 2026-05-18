@@ -168,7 +168,7 @@ Section _two(List<Element> aside, Picture picture) {
     classes: ["two"],
     children: [
       Div(children: aside),
-      picture,
+      A.newTab(href: picture.image.src, children: [picture]),
     ],
   );
 }
