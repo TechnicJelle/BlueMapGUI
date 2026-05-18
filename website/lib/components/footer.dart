@@ -41,7 +41,7 @@ Footer generateFooter() {
         ],
       ),
       P.text(
-        "This website and BlueMap GUI are neither officially affiliated with Minecraft, Mojang, Microsoft or BlueMap.",
+        "This website and BlueMap GUI are neither officially affiliated with Minecraft, Mojang, Microsoft, or BlueMap.",
         classes: ["disclaimer"],
       ),
     ],
