@@ -23,10 +23,9 @@ class FatalConfigFileRunException implements FatalConfigFileLoadException {
   final String _stderr;
 
   FatalConfigFileRunException({
-    required int exitCode,
-    required String stderr,
-  }) : _exitCode = exitCode,
-       _stderr = stderr;
+    required this._exitCode,
+    required this._stderr,
+  });
 
   @override
   String getDetails() => _stderr;

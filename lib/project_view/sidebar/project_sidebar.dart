@@ -116,7 +116,7 @@ class _MapsTiles extends ConsumerWidget {
             shrinkWrap: true,
             itemCount: mapConfigs.length,
             itemBuilder: (context, index) => _buildMapTile(mapConfigs, index),
-            onReorder: (int oldIndex, int newIndex) {
+            onReorderItem: (int oldIndex, int newIndex) {
               ref.read(projectProviderNotifier).swapMaps(oldIndex, newIndex);
             },
             proxyDecorator: (child, index, animation) =>

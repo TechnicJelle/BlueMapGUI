@@ -148,9 +148,8 @@ class ProjectConfigsNotifier extends Notifier<ProjectConfigs?> {
   void swapMaps(int oldIndex, int newIndex) {
     final File? openConfig = state!.openConfig?.file;
     final List<ConfigFile<MapConfigModel>> maps = [...state!.mapConfigs];
-    final int localNewIndex = oldIndex < newIndex ? newIndex - 1 : newIndex;
     final removed = maps.removeAt(oldIndex);
-    maps.insert(localNewIndex, removed);
+    maps.insert(newIndex, removed);
     for (int i = 0; i < maps.length; i++) {
       final ConfigFile<MapConfigModel> mapConfig = maps[i];
       maps[i] = ConfigFile(

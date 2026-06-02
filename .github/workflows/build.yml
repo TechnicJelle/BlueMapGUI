@@ -9,7 +9,7 @@ on:
       - '.github/readme_assets/**'
 
 env:
-  FLUTTER_VERSION: '3.41.1'
+  FLUTTER_VERSION: '3.44.1'
 
 jobs:
   linux:
