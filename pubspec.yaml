@@ -42,7 +42,7 @@ dependencies:
   json_annotation: ^4.9.0
   meta: ^1.18.0
   path: ^1.9.1
-  path_provider: ^2.1.5
+  path_provider: ^2.1.6
   re_editor: ^0.9.0
   re_highlight: ^0.0.3
   rxdart: ^0.28.0
