@@ -290,11 +290,14 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
           return File(p.join(supportDir.path, filename));
         },
         onProgress: (double progress) {
+          if (!mounted) throw const HttpCancelException();
           setState(() {
             managedProgress = progress;
           });
         },
       );
+    } on HttpCancelException {
+      rethrow;
     } on IOException catch (e) {
       setState(() {
         managedRadioState = .errored;
