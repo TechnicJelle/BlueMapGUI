@@ -1,3 +1,4 @@
+import "dart:async";
 import "dart:io";
 
 import "package:crypto/crypto.dart";
@@ -107,14 +108,19 @@ class ProgressNotifier extends Notifier<double?> {
   }
 }
 
+class HttpCancelException extends HttpException {
+  const HttpCancelException() : super("Download cancelled.");
+}
+
 /// `progress` is a double between 0 and 1.
+/// `onProgress` may throw an [HttpCancelException] to cancel the download and delete the file.
 Future<NonHashedFile> downloadFile({
   required Uri uri,
   required File Function(HttpClientResponse response) outputFileGenerator,
   void Function(double progress)? onProgress,
 }) async {
   HttpClient? client;
-  final File outputFile;
+  File? outputFile;
   try {
     client = HttpClient()..userAgent = "BlueMap GUI $version";
     final request = await client.getUrl(uri);
@@ -133,6 +139,9 @@ Future<NonHashedFile> downloadFile({
       sink.add(buffer);
     });
     await sink.close();
+  } on HttpCancelException {
+    unawaited(outputFile?.delete());
+    rethrow;
   } on HttpException catch (e) {
     throw HttpException('Exception trying to download a file "$uri":\n$e');
   } finally {
