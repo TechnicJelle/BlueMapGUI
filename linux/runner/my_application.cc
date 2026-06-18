@@ -19,29 +19,50 @@ static void first_frame_cb(MyApplication* self, FlView* view) {
   gtk_widget_show(gtk_widget_get_toplevel(GTK_WIDGET(view)));
 }
 
+// Simple string contains check
+static gboolean str_contains_case_insensitive_ascii(const gchar* haystack, const gchar* needle) {
+  if (haystack == nullptr || needle == nullptr) return FALSE;
+
+  gchar* lower_haystack = g_ascii_strdown(haystack, -1);
+  gchar* lower_needle = g_ascii_strdown(needle, -1);
+  gboolean result = g_strrstr(lower_haystack, lower_needle) != nullptr;
+  g_free(lower_haystack);
+  g_free(lower_needle);
+  return result;
+}
+
 // Implements GApplication::activate.
 static void my_application_activate(GApplication* application) {
   MyApplication* self = MY_APPLICATION(application);
   GtkWindow* window =
       GTK_WINDOW(gtk_application_window_new(GTK_APPLICATION(application)));
 
-  // Use a header bar when running in GNOME as this is the common style used
-  // by applications and is the setup most users will be using (e.g. Ubuntu
-  // desktop).
-  // If running on X and not using GNOME then just use a traditional title bar
-  // in case the window manager does more exotic layout, e.g. tiling.
-  // If running on Wayland assume the header bar will work (may need changing
-  // if future cases occur).
-  gboolean use_header_bar = TRUE;
+  // On normal WMs, use a traditional title bar. On GNOME, use a header bar as this is the common style on that WM.
+  gboolean use_header_bar = FALSE;
+
+  // Check for GNOME on X11
 #ifdef GDK_WINDOWING_X11
   GdkScreen* screen = gtk_window_get_screen(window);
   if (GDK_IS_X11_SCREEN(screen)) {
     const gchar* wm_name = gdk_x11_screen_get_window_manager_name(screen);
-    if (g_strcmp0(wm_name, "GNOME Shell") != 0) {
-      use_header_bar = FALSE;
+    if (g_strcmp0(wm_name, "GNOME Shell") == 0) {
+      use_header_bar = TRUE;
     }
   }
 #endif
+  // Check for GNOME on Wayland
+  if (use_header_bar == FALSE) {
+    const gchar* current_desktop = g_getenv("XDG_CURRENT_DESKTOP");
+    const gchar* session_desktop = g_getenv("XDG_SESSION_DESKTOP");
+    const gchar* desktop_session = g_getenv("DESKTOP_SESSION");
+    gboolean isGnome = str_contains_case_insensitive_ascii(current_desktop, "gnome") ||
+                       str_contains_case_insensitive_ascii(session_desktop, "gnome") ||
+                       str_contains_case_insensitive_ascii(desktop_session, "gnome");
+    if (isGnome) {
+      use_header_bar = TRUE;
+    }
+  }
+
   if (use_header_bar) {
     GtkHeaderBar* header_bar = GTK_HEADER_BAR(gtk_header_bar_new());
     gtk_widget_show(GTK_WIDGET(header_bar));
