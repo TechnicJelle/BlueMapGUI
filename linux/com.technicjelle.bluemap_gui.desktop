@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=BlueMap GUI
+Comment=Launch BlueMap GUI, a wrapper around the BlueMap CLI, mainly to make using BlueMap easier to use on single player worlds.
+Exec=bluemap_gui
+Icon=com.technicjelle.bluemap_gui
+Terminal=false
+Categories=Utility;
+StartupNotify=true
+StartupWMClass=Com.technicjelle.bluemap_gui

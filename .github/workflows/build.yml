@@ -51,6 +51,31 @@ jobs:
           name: "BlueMapGUI_${{ env.GITHUB_SHA_SHORT }}_Linux_x64"
           path: './upload/'
 
+      - name: Prepare for AppImage
+        run: |
+          mv ./upload/BlueMapGUI_${{ env.GITHUB_SHA_SHORT }}_Linux_x64/ ./AppDir
+          rmdir upload
+          cp ./linux/com.technicjelle.bluemap_gui.desktop ./AppDir
+          cp ./linux/AppRun ./AppDir
+          cd AppDir
+          chmod +x ./AppRun
+          ln -s ./data/flutter_assets/assets/icon_256.png ./com.technicjelle.bluemap_gui.png
+          ln -s ./com.technicjelle.bluemap_gui.png ./.DirIcon
+
+      - name: Download AppImage Tool
+        run: |
+          wget https://github.com/AppImage/appimagetool/releases/download/1.9.1/appimagetool-x86_64.AppImage
+          chmod +x appimagetool-x86_64.AppImage
+
+      - name: Generate AppImage
+        run: ./appimagetool-x86_64.AppImage AppDir "BlueMapGUI_${{ env.GITHUB_SHA_SHORT }}_Linux_x64.AppImage"
+
+      - name: Upload AppImage artifact
+        uses: actions/upload-artifact@v7
+        with:
+          path: "BlueMapGUI*.AppImage"
+          archive: false
+
   windows:
     runs-on: windows-latest
     steps:
