@@ -13,8 +13,9 @@ const String _vDev = "development";
 const String version = String.fromEnvironment("version", defaultValue: _vDev);
 
 // == Java Managed ==
-const String javaManagedVersion = "jdk-25.0.2+10";
+// From https://adoptium.net/temurin/releases?version=25&os=any&arch=any
+const String javaManagedVersion = "jdk-25.0.3+9";
 const String javaManagedLinuxX64Hash =
-    "d6c89e08f42be94cd55eab20190958a35b993625018a3ac59cb3d16d8445cf98"; //SHA256
+    "487ad434d8b121ae3902d5ad9cb830cd8e1f75fefad6e2ba80f89d60e3db95d7"; //SHA256
 const String javaManagedWindowsX64Hash =
-    "1919e7e1603bc5937187139db2d65824f8d95ef42d0423ae9f9f1d9eb97842f6"; //SHA256
+    "a183e7280220ad5f6fe94ecbf025a5f10fc5797a0b18c600ed8f813c8158c530"; //SHA256
