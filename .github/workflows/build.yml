@@ -69,7 +69,7 @@ jobs:
           chmod +x appimagetool-x86_64.AppImage
 
       - name: Generate AppImage
-        run: ./appimagetool-x86_64.AppImage AppDir "$ARTIFACT_NAME.AppImage"
+        run: ./appimagetool-x86_64.AppImage AppDir "$ARTIFACT_NAME.AppImage" --no-appstream
 
       - name: Upload AppImage artifact
         uses: actions/upload-artifact@v7
