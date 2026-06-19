@@ -19,9 +19,51 @@ static void first_frame_cb(MyApplication* self, FlView* view) {
   gtk_widget_show(gtk_widget_get_toplevel(GTK_WIDGET(view)));
 }
 
+static void set_window_icons(GtkWindow* window) {
+  const gchar* icon_names[] = {
+    "icon_16.png",
+    "icon_24.png",
+    "icon_32.png",
+    "icon_48.png",
+    "icon_256.png",
+    "icon_1024.png",
+  };
+
+  GList* icons = nullptr;
+
+  for (const gchar* icon_name : icon_names) {
+    g_autofree gchar* debug_path = g_build_filename("assets", icon_name, nullptr);
+    g_autofree gchar* release_path = g_build_filename("data", "flutter_assets", "assets", icon_name, nullptr);
+
+    const gchar* path = nullptr;
+    if (g_file_test(debug_path, G_FILE_TEST_IS_REGULAR)) {
+      path = debug_path;
+    } else if (g_file_test(release_path, G_FILE_TEST_IS_REGULAR)) {
+      path = release_path;
+    }
+
+    if (path == nullptr) continue;
+
+    g_autoptr(GError) error = nullptr;
+    GdkPixbuf* icon_data = gdk_pixbuf_new_from_file(path, &error);
+    if (icon_data == nullptr) {
+      g_warning("Failed to load window icon %s: %s", path, error->message);
+      continue;
+    }
+
+    icons = g_list_append(icons, icon_data);
+  }
+
+  if (icons != nullptr) {
+    gtk_window_set_icon_list(window, icons);
+    g_list_free_full(icons, g_object_unref);
+  }
+}
+
 // Simple string contains check
 static gboolean str_contains_case_insensitive_ascii(const gchar* haystack, const gchar* needle) {
   if (haystack == nullptr || needle == nullptr) return FALSE;
+
 
   gchar* lower_haystack = g_ascii_strdown(haystack, -1);
   gchar* lower_needle = g_ascii_strdown(needle, -1);
@@ -75,11 +117,7 @@ static void my_application_activate(GApplication* application) {
 
   gtk_window_set_default_size(window, 1280, 720);
 
-  if (g_file_test("assets", G_FILE_TEST_IS_DIR)) {
-    gtk_window_set_icon_from_file(window, "assets/icon_1024.png", NULL); // For debug mode
-  } else {
-    gtk_window_set_icon_from_file(window, "data/flutter_assets/assets/icon_1024.png", NULL); // For release mode
-  }
+  set_window_icons(window);
 
   g_autoptr(FlDartProject) project = fl_dart_project_new();
   fl_dart_project_set_dart_entrypoint_arguments(project, self->dart_entrypoint_arguments);
