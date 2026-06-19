@@ -45,7 +45,7 @@ jobs:
       - name: Prepare for upload
         run: |
           mkdir upload
-          mv ./build/linux/x64/release/bundle/ ./upload/${{ env.ARTIFACT_NAME }}/
+          mv ./build/linux/x64/release/bundle/ "./upload/$ARTIFACT_NAME/"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
@@ -55,7 +55,7 @@ jobs:
 
       - name: Prepare for AppImage
         run: |
-          mv ./upload/${{ env.ARTIFACT_NAME }}/ ./AppDir
+          mv "./upload/$ARTIFACT_NAME/" ./AppDir
           rmdir upload
           cp ./linux/com.technicjelle.bluemap_gui.desktop ./AppDir
           cp ./linux/AppRun ./AppDir
@@ -70,7 +70,7 @@ jobs:
           chmod +x appimagetool-x86_64.AppImage
 
       - name: Generate AppImage
-        run: ./appimagetool-x86_64.AppImage AppDir "${{ env.ARTIFACT_NAME }}.AppImage"
+        run: ./appimagetool-x86_64.AppImage AppDir "$ARTIFACT_NAME.AppImage"
 
       - name: Upload AppImage artifact
         uses: actions/upload-artifact@v7
@@ -106,7 +106,7 @@ jobs:
       - name: Prepare for upload
         run: |
           New-Item -Path . -Name "upload" -ItemType "directory"
-          Move-Item -Path "./build/windows/x64/runner/Release/" -Destination "./upload/${{ env.ARTIFACT_NAME }}/"
+          Move-Item -Path "./build/windows/x64/runner/Release/" -Destination "./upload/$env:ARTIFACT_NAME/"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
