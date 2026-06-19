@@ -20,6 +20,7 @@ jobs:
       - name: Set GitHub Environment Variables
         run: |
           echo "GITHUB_SHA_SHORT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          echo "ARTIFACT_NAME=BlueMapGUI_${{ env.GITHUB_SHA_SHORT }}_Linux_x64" >> $GITHUB_ENV
 
       - name: Install system dependencies
         run: |
@@ -43,17 +44,17 @@ jobs:
       - name: Prepare for upload
         run: |
           mkdir upload
-          mv ./build/linux/x64/release/bundle/ ./upload/BlueMapGUI_${{ env.GITHUB_SHA_SHORT }}_Linux_x64/
+          mv ./build/linux/x64/release/bundle/ ./upload/${{ env.ARTIFACT_NAME }}/
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
-          name: "BlueMapGUI_${{ env.GITHUB_SHA_SHORT }}_Linux_x64"
+          name: "${{ env.ARTIFACT_NAME }}"
           path: './upload/'
 
       - name: Prepare for AppImage
         run: |
-          mv ./upload/BlueMapGUI_${{ env.GITHUB_SHA_SHORT }}_Linux_x64/ ./AppDir
+          mv ./upload/${{ env.ARTIFACT_NAME }}/ ./AppDir
           rmdir upload
           cp ./linux/com.technicjelle.bluemap_gui.desktop ./AppDir
           cp ./linux/AppRun ./AppDir
@@ -68,7 +69,7 @@ jobs:
           chmod +x appimagetool-x86_64.AppImage
 
       - name: Generate AppImage
-        run: ./appimagetool-x86_64.AppImage AppDir "BlueMapGUI_${{ env.GITHUB_SHA_SHORT }}_Linux_x64.AppImage"
+        run: ./appimagetool-x86_64.AppImage AppDir "${{ env.ARTIFACT_NAME }}.AppImage"
 
       - name: Upload AppImage artifact
         uses: actions/upload-artifact@v7
@@ -84,6 +85,7 @@ jobs:
       - name: Set GitHub Environment Variables
         run: |
           Add-Content -Path $env:GITHUB_ENV -Value "GITHUB_SHA_SHORT=$(git rev-parse --short HEAD)"
+          Add-Content -Path $env:GITHUB_ENV -Value "ARTIFACT_NAME=BlueMapGUI_${{ env.GITHUB_SHA_SHORT }}_Windows_x64"
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -102,10 +104,10 @@ jobs:
       - name: Prepare for upload
         run: |
           New-Item -Path . -Name "upload" -ItemType "directory"
-          Move-Item -Path "./build/windows/x64/runner/Release/" -Destination "./upload/BlueMapGUI_${{ env.GITHUB_SHA_SHORT }}_Windows_x64/"
+          Move-Item -Path "./build/windows/x64/runner/Release/" -Destination "./upload/${{ env.ARTIFACT_NAME }}/"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
-          name: "BlueMapGUI_${{ env.GITHUB_SHA_SHORT }}_Windows_x64"
+          name: "${{ env.ARTIFACT_NAME }}"
           path: './upload/'
