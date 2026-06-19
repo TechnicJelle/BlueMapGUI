@@ -44,19 +44,18 @@ jobs:
 
       - name: Prepare for upload
         run: |
-          mkdir upload
-          mv ./build/linux/x64/release/bundle/ "./upload/$ARTIFACT_NAME/"
+          mv ./build/linux/x64/release/bundle/ "./$ARTIFACT_NAME/"
+          zip -r "./$ARTIFACT_NAME.zip" "./$ARTIFACT_NAME/"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
-          name: "${{ env.ARTIFACT_NAME }}"
-          path: './upload/'
+          path: "./${{ env.ARTIFACT_NAME }}.zip"
+          archive: false
 
       - name: Prepare for AppImage
         run: |
-          mv "./upload/$ARTIFACT_NAME/" ./AppDir
-          rmdir upload
+          mv "./$ARTIFACT_NAME/" ./AppDir
           cp ./linux/com.technicjelle.bluemap_gui.desktop ./AppDir
           cp ./linux/AppRun ./AppDir
           cd AppDir
@@ -105,11 +104,11 @@ jobs:
 
       - name: Prepare for upload
         run: |
-          New-Item -Path . -Name "upload" -ItemType "directory"
-          Move-Item -Path "./build/windows/x64/runner/Release/" -Destination "./upload/$env:ARTIFACT_NAME/"
+          Move-Item -Path "./build/windows/x64/runner/Release/" -Destination "./$env:ARTIFACT_NAME/"
+          Compress-Archive -Path "./$env:ARTIFACT_NAME" -DestinationPath "./$env:ARTIFACT_NAME.zip"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
-          name: "${{ env.ARTIFACT_NAME }}"
-          path: './upload/'
+          path: "${{ env.ARTIFACT_NAME }}.zip"
+          archive: false
