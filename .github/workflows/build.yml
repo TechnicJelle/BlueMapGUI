@@ -45,7 +45,7 @@ jobs:
       - name: Prepare for upload
         run: |
           mv ./build/linux/x64/release/bundle/ "./$ARTIFACT_NAME/"
-          zip -r "./$ARTIFACT_NAME.zip" "./$ARTIFACT_NAME/"
+          zip -9 -r "./$ARTIFACT_NAME.zip" "./$ARTIFACT_NAME/"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
@@ -105,7 +105,7 @@ jobs:
       - name: Prepare for upload
         run: |
           Move-Item -Path "./build/windows/x64/runner/Release/" -Destination "./$env:ARTIFACT_NAME/"
-          Compress-Archive -Path "./$env:ARTIFACT_NAME" -DestinationPath "./$env:ARTIFACT_NAME.zip"
+          Compress-Archive -Path "./$env:ARTIFACT_NAME" -DestinationPath "./$env:ARTIFACT_NAME.zip" -CompressionLevel Optimal
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
