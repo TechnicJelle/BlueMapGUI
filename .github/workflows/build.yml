@@ -1,4 +1,4 @@
-name: Build Flutter Desktop
+name: Build Commits
 
 on:
   workflow_dispatch:
