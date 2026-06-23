@@ -16,4 +16,4 @@ dependencies:
       ref: boring-md
 
 dev_dependencies:
-  very_good_analysis: ^10.2.0
+  very_good_analysis: ^10.3.0
