@@ -37,9 +37,15 @@ jobs:
 
   linux:
     needs: check-version
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v7
+
+      - name: Set GitHub Environment Variables
+        run: |
+          GITHUB_TAG_NAME="${{ github.event.inputs.TAG_NAME }}"
+          echo "GITHUB_TAG_NAME=$GITHUB_TAG_NAME" >> $GITHUB_ENV
+          echo "ARTIFACT_NAME=BlueMapGUI_${GITHUB_TAG_NAME}_Linux_x64" >> $GITHUB_ENV
 
       - name: Install system dependencies
         run: |
@@ -58,24 +64,54 @@ jobs:
         run: flutter pub get
 
       - name: Build
-        run: flutter build linux --release --dart-define=version=${{ github.event.inputs.TAG_NAME }}
+        run: flutter build linux --release --dart-define=version=$GITHUB_TAG_NAME
 
       - name: Prepare for upload
         run: |
-          mkdir upload
-          mv ./build/linux/x64/release/bundle/ ./upload/BlueMapGUI_${{ github.event.inputs.TAG_NAME }}_Linux_x64/
+          mv ./build/linux/x64/release/bundle/ "./$ARTIFACT_NAME/"
+          zip -9 -r "./$ARTIFACT_NAME.zip" "./$ARTIFACT_NAME/"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
-          name: "BlueMapGUI_${{ github.event.inputs.TAG_NAME }}_Linux_x64"
-          path: './upload/'
+          path: "./${{ env.ARTIFACT_NAME }}.zip"
+          archive: false
+
+      - name: Prepare for AppImage
+        run: |
+          mv "./$ARTIFACT_NAME/" ./AppDir
+          cp ./linux/com.technicjelle.bluemap_gui.desktop ./AppDir
+          cp ./linux/AppRun ./AppDir
+          cd AppDir
+          chmod +x ./AppRun
+          ln -s ./data/flutter_assets/assets/icon_256.png ./com.technicjelle.bluemap_gui.png
+          ln -s ./com.technicjelle.bluemap_gui.png ./.DirIcon
+
+      - name: Download AppImage Tool
+        run: |
+          wget https://github.com/AppImage/appimagetool/releases/download/1.9.1/appimagetool-x86_64.AppImage
+          chmod +x appimagetool-x86_64.AppImage
+
+      - name: Generate AppImage
+        run: ./appimagetool-x86_64.AppImage AppDir "$ARTIFACT_NAME.AppImage" --no-appstream
+
+      - name: Upload AppImage artifact
+        uses: actions/upload-artifact@v7
+        with:
+          path: "BlueMapGUI*.AppImage"
+          archive: false
 
   windows:
     needs: check-version
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v7
+
+      - name: Set GitHub Environment Variables
+        run: |
+          $GITHUB_TAG_NAME = git rev-parse --short HEAD
+          Add-Content -Path $env:GITHUB_ENV -Value "GITHUB_TAG_NAME=$GITHUB_TAG_NAME"
+          Add-Content -Path $env:GITHUB_ENV -Value "ARTIFACT_NAME=BlueMapGUI_${GITHUB_TAG_NAME}_Windows_x64"
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -89,15 +125,15 @@ jobs:
         run: flutter pub get
 
       - name: Build
-        run: flutter build windows --release --dart-define=version=${{ github.event.inputs.TAG_NAME }}
+        run: flutter build windows --release --dart-define=version=$env:GITHUB_TAG_NAME
 
       - name: Prepare for upload
         run: |
-          New-Item -Path . -Name "upload" -ItemType "directory"
-          Move-Item -Path "./build/windows/x64/runner/Release/" -Destination "./upload/BlueMapGUI_${{ github.event.inputs.TAG_NAME }}_Windows_x64/"
+          Move-Item -Path "./build/windows/x64/runner/Release/" -Destination "./$env:ARTIFACT_NAME/"
+          Compress-Archive -Path "./$env:ARTIFACT_NAME" -DestinationPath "./$env:ARTIFACT_NAME.zip" -CompressionLevel Optimal
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
-          name: "BlueMapGUI_${{ github.event.inputs.TAG_NAME }}_Windows_x64"
-          path: './upload/'
+          path: "${{ env.ARTIFACT_NAME }}.zip"
+          archive: false
