@@ -109,7 +109,7 @@ jobs:
 
       - name: Set GitHub Environment Variables
         run: |
-          $GITHUB_TAG_NAME = git rev-parse --short HEAD
+          $GITHUB_TAG_NAME = "${{ github.event.inputs.TAG_NAME }}"
           Add-Content -Path $env:GITHUB_ENV -Value "GITHUB_TAG_NAME=$GITHUB_TAG_NAME"
           Add-Content -Path $env:GITHUB_ENV -Value "ARTIFACT_NAME=BlueMapGUI_${GITHUB_TAG_NAME}_Windows_x64"
 
