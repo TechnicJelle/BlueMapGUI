@@ -161,7 +161,7 @@ class _AdvancedEditorState extends ConsumerState<AdvancedEditor> {
         onChanged: (_) => hasChanged = true,
         controller: codeController,
         wordWrap: false,
-        sperator: const SizedBox(width: 12),
+        leadingDivider: const SizedBox(width: 12),
         scrollbarBuilder: (context, child, details) {
           return Scrollbar(controller: details.controller, child: child);
         },
