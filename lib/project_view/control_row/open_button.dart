@@ -1,4 +1,3 @@
-import "dart:async";
 import "dart:math";
 
 import "package:flutter/material.dart";
@@ -67,11 +66,11 @@ class _OpenButtonState extends ConsumerState<OpenButton> with TickerProviderStat
 
     ref.listen(processStateProvider, (previous, next) {
       if (next.value == .running) {
-        unawaited(_scaleController.forward(from: 0));
-        unawaited(_glowController.forward(from: 0));
+        _scaleController.forward(from: 0);
+        _glowController.forward(from: 0);
       }
       if (next.value == .stopping || next.value == .stopped) {
-        unawaited(_glowController.animateBack(0, duration: Durations.short4));
+        _glowController.animateBack(0, duration: Durations.short4);
       }
     });
 
@@ -83,7 +82,7 @@ class _OpenButtonState extends ConsumerState<OpenButton> with TickerProviderStat
         child: ElevatedButton.icon(
           onPressed: isRunning
               ? () async {
-                  unawaited(_glowController.animateBack(0, duration: Durations.short4));
+                  _glowController.animateBack(0, duration: Durations.short4);
                   final int port = ref.read(processProvider)?.port ?? 8100;
                   if (!await launchUrl(Uri.parse("http://localhost:$port"))) {
                     throw Exception("Could not launch url!");
