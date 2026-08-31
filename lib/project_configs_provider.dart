@@ -130,9 +130,9 @@ class ProjectConfigsNotifier extends Notifier<ProjectConfigs?> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       unawaited(mapConfigToDelete.file.delete());
 
-      final String mapID = mapConfigToDelete.name;
+      final String sanitisedMapID = mapConfigToDelete.sanitisedMapID;
       final Directory mapDirectory = Directory(
-        p.join(state!.projectLocation.path, "web", "maps", mapID),
+        p.join(state!.projectLocation.path, "web", "maps", sanitisedMapID),
       );
       if (mapDirectory.existsSync()) {
         unawaited(mapDirectory.delete(recursive: true));

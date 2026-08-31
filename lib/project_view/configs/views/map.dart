@@ -423,7 +423,7 @@ class _DangerZoneState extends ConsumerState<_DangerZone> {
   Widget build(BuildContext context) {
     final Directory projectDirectory = ref.watch(openProjectProvider)!;
     final Directory renderDataDirectory = Directory(
-      p.join(projectDirectory.path, "web", "maps", configFile.sanitisedMapId),
+      p.join(projectDirectory.path, "web", "maps", configFile.sanitisedMapID),
     );
     final renderDataDirectoryExists = renderDataDirectory.existsSync();
     return Padding(
