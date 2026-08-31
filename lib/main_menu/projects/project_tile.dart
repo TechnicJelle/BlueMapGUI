@@ -308,7 +308,7 @@ It will only be removed from the list.""",
       tempMapsDir = null;
     }
 
-    final ProcessResult run;
+    final JavaResult run;
     try {
       run = await javaPath.runJarTimeout(
         bluemapJar,
@@ -321,8 +321,8 @@ It will only be removed from the list.""",
           .error(error: .runFail, details: e.toString());
       return;
     }
-    final String stdout = run.stdout.toString();
-    final String stderr = run.stderr.toString();
+    final String stdout = run.stdout;
+    final String stderr = run.stderr;
 
     final bool startSuccess = stdout.contains("Generated default config files for you");
 

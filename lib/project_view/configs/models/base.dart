@@ -136,14 +136,14 @@ class ConfigFile<T extends BaseConfigModel> {
     }
 
     final List<String> args = files.map((f) => f.path).toList();
-    final ProcessResult result = await javaPath.runJar(_hoconFile!, processArgs: args);
+    final JavaResult result = await javaPath.runJar(_hoconFile!, processArgs: args);
 
     final int exitCode = result.exitCode;
-    final String stderr = result.stderr.toString();
+    final String stderr = result.stderr;
     if (exitCode != 0) {
       throw FatalConfigFileRunException(exitCode: exitCode, stderr: stderr);
     }
-    final String stdout = result.stdout.toString();
+    final String stdout = result.stdout;
     final List<String> jsons = stdout.split(String.fromCharCode(0));
 
     return List.generate(files.length, (int index) {

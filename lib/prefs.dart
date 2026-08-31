@@ -1,9 +1,12 @@
 import "dart:async";
 import "dart:io";
+import "dart:typed_data";
 
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:shared_preferences/shared_preferences.dart";
+
+import "utils.dart";
 
 late final SharedPreferencesWithCache _prefs;
 
@@ -24,24 +27,51 @@ Future<void> initPrefs() async {
 
 enum JavaPathMode { unset, system, managed, custom }
 
+final class JavaResult {
+  /// Exit code for the process.
+  ///
+  /// See [Process.exitCode] for more information in the exit code value.
+  final int exitCode;
+
+  /// Standard output from the process.
+  final String stdout;
+
+  /// Standard error from the process.
+  final String stderr;
+
+  /// Process id of the process.
+  final int pid;
+
+  JavaResult(this.pid, this.exitCode, Uint8List stdout, Uint8List stderr)
+    : stdout = processOutputToString(stdout),
+      stderr = processOutputToString(stderr);
+
+  JavaResult.from(ProcessResult processResult)
+    : pid = processResult.pid,
+      exitCode = processResult.exitCode,
+      stdout = processOutputToString(processResult.stdout),
+      stderr = processOutputToString(processResult.stderr);
+}
+
 class JavaPath {
   JavaPathMode type;
   String path;
 
   JavaPath(this.type, this.path);
 
-  Future<ProcessResult> run({
+  Future<JavaResult> run({
     required List<String> args,
     Directory? workingDirectory,
   }) async {
-    return Process.run(
+    final ProcessResult processResult = await Process.run(
       path,
       args,
       workingDirectory: workingDirectory?.path,
     );
+    return JavaResult.from(processResult);
   }
 
-  Future<ProcessResult> runJar(
+  Future<JavaResult> runJar(
     File jar, {
     List<String> jvmArgs = const [],
     List<String> processArgs = const [],
@@ -66,24 +96,24 @@ class JavaPath {
     );
   }
 
-  Future<ProcessResult> runJarTimeout(
+  Future<JavaResult> runJarTimeout(
     File jar,
     Duration timeout, {
     List<String> jvmArgs = const [],
     List<String> processArgs = const [],
     Directory? workingDirectory,
   }) async {
-    final StringBuffer stdoutBuffer = StringBuffer();
-    final StringBuffer stderrBuffer = StringBuffer();
-    final Process process =
-        await startJar(
-            jar,
-            jvmArgs: jvmArgs,
-            processArgs: processArgs,
-            workingDirectory: workingDirectory,
-          )
-          ..stdout.listen((List<int> e) => e.forEach(stdoutBuffer.writeCharCode))
-          ..stderr.listen((List<int> e) => e.forEach(stderrBuffer.writeCharCode));
+    // These are actually Uint8's (raw bytes 0..255 from the OS pipe)
+    final List<int> stdoutBuffer = [];
+    final List<int> stderrBuffer = [];
+    final Process process = await startJar(
+      jar,
+      jvmArgs: jvmArgs,
+      processArgs: processArgs,
+      workingDirectory: workingDirectory,
+    );
+    final stdoutSub = process.stdout.listen(stdoutBuffer.addAll);
+    final stderrSub = process.stderr.listen(stderrBuffer.addAll);
 
     //We kill the process after the duration
     bool wasKilled = false;
@@ -91,8 +121,13 @@ class JavaPath {
       if (process.kill()) wasKilled = true;
     });
 
-    //If the process has already stopped, we cancel the killer
+    // Wait for process to exit
     final int exitCode = await process.exitCode;
+    // Wait for stdStreams to drain
+    await Future.wait([stdoutSub.asFuture<void>(), stderrSub.asFuture<void>()]);
+    // Cancel the stream subscriptions
+    await Future.wait([stdoutSub.cancel(), stderrSub.cancel()]);
+    //If the process has already stopped, we cancel the killer
     killer.cancel();
 
     if (wasKilled) {
@@ -103,11 +138,11 @@ class JavaPath {
       );
     }
 
-    return ProcessResult(
+    return JavaResult(
       process.pid,
       exitCode,
-      stdoutBuffer.toString(),
-      stderrBuffer.toString(),
+      Uint8List.fromList(stdoutBuffer),
+      Uint8List.fromList(stderrBuffer),
     );
   }
 }

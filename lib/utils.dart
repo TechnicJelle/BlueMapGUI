@@ -1,5 +1,7 @@
 import "dart:async";
+import "dart:convert";
 import "dart:io";
+import "dart:typed_data";
 
 import "package:crypto/crypto.dart";
 import "package:flutter/material.dart";
@@ -68,6 +70,14 @@ Color colorFromHexColour(String hexString) {
   }
 
   throw Exception("Failed to parse colour code: $hexString");
+}
+
+String processOutputToString(dynamic stdStream) {
+  return switch (stdStream) {
+    final String s => s,
+    final Uint8List l => utf8.decode(l),
+    _ => throw UnsupportedError("Unknown Type: `${stdStream.runtimeType}`! Cannot process this type to a String!"),
+  };
 }
 
 /// Checks if the given file has the same SHA256 hash as the given hash.

@@ -30,9 +30,9 @@ Future<int> checkJavaVersion(JavaPath javaPath) async {
   }
 
   try {
-    final ProcessResult jv = await javaPath.run(args: ["-fullversion"]);
+    final JavaResult jv = await javaPath.run(args: ["-fullversion"]);
     final int exitCode = jv.exitCode;
-    final String stderr = jv.stderr.toString();
+    final String stderr = jv.stderr;
 
     if (exitCode != 0) {
       throw JavaVersionCheckException("Process exited with $exitCode.\n$stderr");
