@@ -89,6 +89,14 @@ class NonHashedFile {
       return null;
     }
   }
+
+  void deleteSync() {
+    _file.deleteSync();
+  }
+
+  Future<void> delete() async {
+    await _file.delete();
+  }
 }
 
 class ProgressNotifier extends Notifier<double?> {

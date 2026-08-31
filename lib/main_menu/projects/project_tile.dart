@@ -264,6 +264,7 @@ It will only be removed from the list.""",
       final File? hashedBlueMapJar = await susBlueMapJar.hashFile(blueMapCliJarHash);
       if (hashedBlueMapJar == null) {
         ref.read(_openingStateProvider.notifier).error(error: .wrongHash);
+        await susBlueMapJar.delete();
         return;
       }
       bluemapJar = hashedBlueMapJar;

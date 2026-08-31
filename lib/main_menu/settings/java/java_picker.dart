@@ -321,6 +321,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
             "The hash of the downloaded file does not match the expected hash.";
         managedProgress = null;
       });
+      await susManagedArchive.delete();
       return;
     }
     final File javaManagedArchive = hashedManagedArchive;
