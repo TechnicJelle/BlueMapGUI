@@ -247,8 +247,12 @@ It will only be removed from the list.""",
         susBlueMapJar = await downloadFile(
           uri: blueMapCliJarUrl,
           outputFileGenerator: (_) => getBlueMapJarFile(projectDirectory),
-          onProgress: (double progress) {
-            ref.read(_progressNotifier.notifier).set(progress);
+          onProgress: (double? progress) {
+            if (progress == null) {
+              ref.read(_progressNotifier.notifier).indeterminate();
+            } else {
+              ref.read(_progressNotifier.notifier).set(progress);
+            }
           },
         );
         ref.read(_progressNotifier.notifier).indeterminate();

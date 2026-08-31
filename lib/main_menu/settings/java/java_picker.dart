@@ -289,7 +289,7 @@ class _JavaPickerState extends ConsumerState<JavaPicker> {
           final String filename = response.redirects.first.location.getFileName();
           return File(p.join(supportDir.path, filename));
         },
-        onProgress: (double progress) {
+        onProgress: (double? progress) {
           if (!mounted) throw const HttpCancelException();
           setState(() {
             managedProgress = progress;

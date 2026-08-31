@@ -125,7 +125,7 @@ class HttpCancelException extends HttpException {
 Future<NonHashedFile> downloadFile({
   required Uri uri,
   required File Function(HttpClientResponse response) outputFileGenerator,
-  void Function(double progress)? onProgress,
+  void Function(double? progress)? onProgress,
 }) async {
   HttpClient? client;
   File? outputFile;
@@ -140,9 +140,13 @@ Future<NonHashedFile> downloadFile({
     int current = 0;
     await response.forEach((List<int> buffer) {
       if (onProgress != null) {
-        current += buffer.length;
-        final double progress = current.toDouble() / response.contentLength.toDouble();
-        onProgress(progress);
+        if (response.contentLength == -1) {
+          onProgress(null);
+        } else {
+          current += buffer.length;
+          final double progress = current.toDouble() / response.contentLength.toDouble();
+          onProgress(progress);
+        }
       }
       sink.add(buffer);
     });
