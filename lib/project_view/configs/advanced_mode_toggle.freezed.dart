@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'advanced_mode_toggle.dart';
@@ -9,6 +9,7 @@ part of 'advanced_mode_toggle.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -20,7 +21,7 @@ mixin _$AdvancedMode {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AdvancedMode);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is AdvancedMode);
 }
 
 
@@ -29,7 +30,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'AdvancedMode()';
+    return 'AdvancedMode()';
 }
 
 
@@ -190,16 +191,18 @@ $AdvancedModeDataCopyWith<AdvancedModeData> get copyWith => _$AdvancedModeDataCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AdvancedModeData&&(identical(other.value, value) || other.value == value));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is AdvancedModeData&&(identical(other.value, value) || other.value == value));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,value);
+int get hashCode {
+    return Object.hash(runtimeType,value);
+}
 
 @override
 String toString() {
-  return 'AdvancedMode.data(value: $value)';
+    return 'AdvancedMode.data(value: $value)';
 }
 
 
@@ -251,7 +254,7 @@ class AdvancedModeLoading implements AdvancedMode {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AdvancedModeLoading);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is AdvancedModeLoading);
 }
 
 
@@ -260,7 +263,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'AdvancedMode.loading()';
+    return 'AdvancedMode.loading()';
 }
 
 

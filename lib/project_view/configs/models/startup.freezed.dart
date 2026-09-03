@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'startup.dart';
@@ -9,6 +9,7 @@ part of 'startup.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $StartupConfigModelCopyWith<StartupConfigModel> get copyWith => _$StartupConfigM
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is StartupConfigModel&&(identical(other.modsPath, modsPath) || other.modsPath == modsPath)&&(identical(other.minecraftVersion, minecraftVersion) || other.minecraftVersion == minecraftVersion)&&(identical(other.maxRamLimit, maxRamLimit) || other.maxRamLimit == maxRamLimit));
+  final _this = this as StartupConfigModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is StartupConfigModel&&(identical(other.modsPath, _this.modsPath) || other.modsPath == _this.modsPath)&&(identical(other.minecraftVersion, _this.minecraftVersion) || other.minecraftVersion == _this.minecraftVersion)&&(identical(other.maxRamLimit, _this.maxRamLimit) || other.maxRamLimit == _this.maxRamLimit));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,modsPath,minecraftVersion,maxRamLimit);
+int get hashCode {
+  final _this = this as StartupConfigModel;
+  return Object.hash(runtimeType,_this.modsPath,_this.minecraftVersion,_this.maxRamLimit);
+}
 
 @override
 String toString() {
-  return 'StartupConfigModel(modsPath: $modsPath, minecraftVersion: $minecraftVersion, maxRamLimit: $maxRamLimit)';
+  final _this = this as StartupConfigModel;
+  return 'StartupConfigModel(modsPath: ${_this.modsPath}, minecraftVersion: ${_this.minecraftVersion}, maxRamLimit: ${_this.maxRamLimit})';
 }
 
 
@@ -66,7 +72,7 @@ class _$StartupConfigModelCopyWithImpl<$Res>
 /// Create a copy of StartupConfigModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? modsPath = null,Object? minecraftVersion = null,Object? maxRamLimit = null,}) {
-  return _then(_self.copyWith(
+  return _then(StartupConfigModel(
 modsPath: null == modsPath ? _self.modsPath : modsPath // ignore: cast_nullable_to_non_nullable
 as String,minecraftVersion: null == minecraftVersion ? _self.minecraftVersion : minecraftVersion // ignore: cast_nullable_to_non_nullable
 as String,maxRamLimit: null == maxRamLimit ? _self.maxRamLimit : maxRamLimit // ignore: cast_nullable_to_non_nullable
@@ -231,16 +237,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _StartupConfigModel&&(identical(other.modsPath, modsPath) || other.modsPath == modsPath)&&(identical(other.minecraftVersion, minecraftVersion) || other.minecraftVersion == minecraftVersion)&&(identical(other.maxRamLimit, maxRamLimit) || other.maxRamLimit == maxRamLimit));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _StartupConfigModel&&(identical(other.modsPath, modsPath) || other.modsPath == modsPath)&&(identical(other.minecraftVersion, minecraftVersion) || other.minecraftVersion == minecraftVersion)&&(identical(other.maxRamLimit, maxRamLimit) || other.maxRamLimit == maxRamLimit));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,modsPath,minecraftVersion,maxRamLimit);
+int get hashCode {
+    return Object.hash(runtimeType,modsPath,minecraftVersion,maxRamLimit);
+}
 
 @override
 String toString() {
-  return 'StartupConfigModel(modsPath: $modsPath, minecraftVersion: $minecraftVersion, maxRamLimit: $maxRamLimit)';
+    return 'StartupConfigModel(modsPath: $modsPath, minecraftVersion: $minecraftVersion, maxRamLimit: $maxRamLimit)';
 }
 
 

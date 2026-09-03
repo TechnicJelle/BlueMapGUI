@@ -20,7 +20,7 @@ class UpdateChecker {
        _url = Uri.parse("https://github.com/$author/$repoName/releases/latest");
 
   Future<bool> isUpdateAvailable() async {
-    return await getLatestVersion() != _currentVersion;
+    return (await getLatestVersion()) != _currentVersion;
   }
 
   Future<String> getLatestVersion() async {

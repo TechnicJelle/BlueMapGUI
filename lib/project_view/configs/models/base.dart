@@ -56,9 +56,6 @@ class FatalConfigProblemException implements FatalConfigFileLoadException {
 }
 
 // "Problem" so that they cannot be accidentally thrown
-
-// I want to be able to call getDetails() even when I don't know exactly which one it is:
-// ignore: one_member_abstracts
 abstract interface class FileConfigFileLoadProblem {
   String getDetails();
 }

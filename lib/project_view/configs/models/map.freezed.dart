@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'map.dart';
@@ -9,6 +9,7 @@ part of 'map.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $Vector2XZCopyWith<Vector2XZ> get copyWith => _$Vector2XZCopyWithImpl<Vector2XZ>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Vector2XZ&&(identical(other.x, x) || other.x == x)&&(identical(other.z, z) || other.z == z));
+  final _this = this as Vector2XZ;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Vector2XZ&&(identical(other.x, _this.x) || other.x == _this.x)&&(identical(other.z, _this.z) || other.z == _this.z));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,x,z);
+int get hashCode {
+  final _this = this as Vector2XZ;
+  return Object.hash(runtimeType,_this.x,_this.z);
+}
 
 @override
 String toString() {
-  return 'Vector2XZ(x: $x, z: $z)';
+  final _this = this as Vector2XZ;
+  return 'Vector2XZ(x: ${_this.x}, z: ${_this.z})';
 }
 
 
@@ -66,7 +72,7 @@ class _$Vector2XZCopyWithImpl<$Res>
 /// Create a copy of Vector2XZ
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? x = null,Object? z = null,}) {
-  return _then(_self.copyWith(
+  return _then(Vector2XZ(
 x: null == x ? _self.x : x // ignore: cast_nullable_to_non_nullable
 as int,z: null == z ? _self.z : z // ignore: cast_nullable_to_non_nullable
 as int,
@@ -229,16 +235,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Vector2XZ&&(identical(other.x, x) || other.x == x)&&(identical(other.z, z) || other.z == z));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Vector2XZ&&(identical(other.x, x) || other.x == x)&&(identical(other.z, z) || other.z == z));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,x,z);
+int get hashCode {
+    return Object.hash(runtimeType,x,z);
+}
 
 @override
 String toString() {
-  return 'Vector2XZ(x: $x, z: $z)';
+    return 'Vector2XZ(x: $x, z: $z)';
 }
 
 
@@ -294,16 +302,21 @@ $MapConfigModelCopyWith<MapConfigModel> get copyWith => _$MapConfigModelCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MapConfigModel&&(identical(other.world, world) || other.world == world)&&(identical(other.dimension, dimension) || other.dimension == dimension)&&(identical(other.name, name) || other.name == name)&&(identical(other.sorting, sorting) || other.sorting == sorting)&&(identical(other.startPos, startPos) || other.startPos == startPos)&&(identical(other.skyColor, skyColor) || other.skyColor == skyColor)&&(identical(other.voidColor, voidColor) || other.voidColor == voidColor)&&(identical(other.skyLight, skyLight) || other.skyLight == skyLight)&&(identical(other.ambientLight, ambientLight) || other.ambientLight == ambientLight)&&(identical(other.removeCavesBelowY, removeCavesBelowY) || other.removeCavesBelowY == removeCavesBelowY)&&(identical(other.caveDetectionOceanFloor, caveDetectionOceanFloor) || other.caveDetectionOceanFloor == caveDetectionOceanFloor)&&(identical(other.caveDetectionUsesBlockLight, caveDetectionUsesBlockLight) || other.caveDetectionUsesBlockLight == caveDetectionUsesBlockLight)&&(identical(other.minInhabitedTime, minInhabitedTime) || other.minInhabitedTime == minInhabitedTime)&&(identical(other.enablePerspectiveView, enablePerspectiveView) || other.enablePerspectiveView == enablePerspectiveView)&&(identical(other.enableFlatView, enableFlatView) || other.enableFlatView == enableFlatView)&&(identical(other.enableFreeFlightView, enableFreeFlightView) || other.enableFreeFlightView == enableFreeFlightView)&&(identical(other.enableHires, enableHires) || other.enableHires == enableHires)&&(identical(other.ignoreMissingLightData, ignoreMissingLightData) || other.ignoreMissingLightData == ignoreMissingLightData));
+  final _this = this as MapConfigModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MapConfigModel&&(identical(other.world, _this.world) || other.world == _this.world)&&(identical(other.dimension, _this.dimension) || other.dimension == _this.dimension)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.sorting, _this.sorting) || other.sorting == _this.sorting)&&(identical(other.startPos, _this.startPos) || other.startPos == _this.startPos)&&(identical(other.skyColor, _this.skyColor) || other.skyColor == _this.skyColor)&&(identical(other.voidColor, _this.voidColor) || other.voidColor == _this.voidColor)&&(identical(other.skyLight, _this.skyLight) || other.skyLight == _this.skyLight)&&(identical(other.ambientLight, _this.ambientLight) || other.ambientLight == _this.ambientLight)&&(identical(other.removeCavesBelowY, _this.removeCavesBelowY) || other.removeCavesBelowY == _this.removeCavesBelowY)&&(identical(other.caveDetectionOceanFloor, _this.caveDetectionOceanFloor) || other.caveDetectionOceanFloor == _this.caveDetectionOceanFloor)&&(identical(other.caveDetectionUsesBlockLight, _this.caveDetectionUsesBlockLight) || other.caveDetectionUsesBlockLight == _this.caveDetectionUsesBlockLight)&&(identical(other.minInhabitedTime, _this.minInhabitedTime) || other.minInhabitedTime == _this.minInhabitedTime)&&(identical(other.enablePerspectiveView, _this.enablePerspectiveView) || other.enablePerspectiveView == _this.enablePerspectiveView)&&(identical(other.enableFlatView, _this.enableFlatView) || other.enableFlatView == _this.enableFlatView)&&(identical(other.enableFreeFlightView, _this.enableFreeFlightView) || other.enableFreeFlightView == _this.enableFreeFlightView)&&(identical(other.enableHires, _this.enableHires) || other.enableHires == _this.enableHires)&&(identical(other.ignoreMissingLightData, _this.ignoreMissingLightData) || other.ignoreMissingLightData == _this.ignoreMissingLightData));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,world,dimension,name,sorting,startPos,skyColor,voidColor,skyLight,ambientLight,removeCavesBelowY,caveDetectionOceanFloor,caveDetectionUsesBlockLight,minInhabitedTime,enablePerspectiveView,enableFlatView,enableFreeFlightView,enableHires,ignoreMissingLightData);
+int get hashCode {
+  final _this = this as MapConfigModel;
+  return Object.hash(runtimeType,_this.world,_this.dimension,_this.name,_this.sorting,_this.startPos,_this.skyColor,_this.voidColor,_this.skyLight,_this.ambientLight,_this.removeCavesBelowY,_this.caveDetectionOceanFloor,_this.caveDetectionUsesBlockLight,_this.minInhabitedTime,_this.enablePerspectiveView,_this.enableFlatView,_this.enableFreeFlightView,_this.enableHires,_this.ignoreMissingLightData);
+}
 
 @override
 String toString() {
-  return 'MapConfigModel(world: $world, dimension: $dimension, name: $name, sorting: $sorting, startPos: $startPos, skyColor: $skyColor, voidColor: $voidColor, skyLight: $skyLight, ambientLight: $ambientLight, removeCavesBelowY: $removeCavesBelowY, caveDetectionOceanFloor: $caveDetectionOceanFloor, caveDetectionUsesBlockLight: $caveDetectionUsesBlockLight, minInhabitedTime: $minInhabitedTime, enablePerspectiveView: $enablePerspectiveView, enableFlatView: $enableFlatView, enableFreeFlightView: $enableFreeFlightView, enableHires: $enableHires, ignoreMissingLightData: $ignoreMissingLightData)';
+  final _this = this as MapConfigModel;
+  return 'MapConfigModel(world: ${_this.world}, dimension: ${_this.dimension}, name: ${_this.name}, sorting: ${_this.sorting}, startPos: ${_this.startPos}, skyColor: ${_this.skyColor}, voidColor: ${_this.voidColor}, skyLight: ${_this.skyLight}, ambientLight: ${_this.ambientLight}, removeCavesBelowY: ${_this.removeCavesBelowY}, caveDetectionOceanFloor: ${_this.caveDetectionOceanFloor}, caveDetectionUsesBlockLight: ${_this.caveDetectionUsesBlockLight}, minInhabitedTime: ${_this.minInhabitedTime}, enablePerspectiveView: ${_this.enablePerspectiveView}, enableFlatView: ${_this.enableFlatView}, enableFreeFlightView: ${_this.enableFreeFlightView}, enableHires: ${_this.enableHires}, ignoreMissingLightData: ${_this.ignoreMissingLightData})';
 }
 
 
@@ -332,7 +345,7 @@ class _$MapConfigModelCopyWithImpl<$Res>
 /// Create a copy of MapConfigModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? world = null,Object? dimension = null,Object? name = null,Object? sorting = null,Object? startPos = freezed,Object? skyColor = null,Object? voidColor = null,Object? skyLight = freezed,Object? ambientLight = null,Object? removeCavesBelowY = null,Object? caveDetectionOceanFloor = null,Object? caveDetectionUsesBlockLight = null,Object? minInhabitedTime = null,Object? enablePerspectiveView = freezed,Object? enableFlatView = freezed,Object? enableFreeFlightView = freezed,Object? enableHires = freezed,Object? ignoreMissingLightData = null,}) {
-  return _then(_self.copyWith(
+  return _then(MapConfigModel(
 world: null == world ? _self.world : world // ignore: cast_nullable_to_non_nullable
 as String,dimension: null == dimension ? _self.dimension : dimension // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -539,16 +552,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MapConfigModel&&(identical(other.world, world) || other.world == world)&&(identical(other.dimension, dimension) || other.dimension == dimension)&&(identical(other.name, name) || other.name == name)&&(identical(other.sorting, sorting) || other.sorting == sorting)&&(identical(other.startPos, startPos) || other.startPos == startPos)&&(identical(other.skyColor, skyColor) || other.skyColor == skyColor)&&(identical(other.voidColor, voidColor) || other.voidColor == voidColor)&&(identical(other.skyLight, skyLight) || other.skyLight == skyLight)&&(identical(other.ambientLight, ambientLight) || other.ambientLight == ambientLight)&&(identical(other.removeCavesBelowY, removeCavesBelowY) || other.removeCavesBelowY == removeCavesBelowY)&&(identical(other.caveDetectionOceanFloor, caveDetectionOceanFloor) || other.caveDetectionOceanFloor == caveDetectionOceanFloor)&&(identical(other.caveDetectionUsesBlockLight, caveDetectionUsesBlockLight) || other.caveDetectionUsesBlockLight == caveDetectionUsesBlockLight)&&(identical(other.minInhabitedTime, minInhabitedTime) || other.minInhabitedTime == minInhabitedTime)&&(identical(other.enablePerspectiveView, enablePerspectiveView) || other.enablePerspectiveView == enablePerspectiveView)&&(identical(other.enableFlatView, enableFlatView) || other.enableFlatView == enableFlatView)&&(identical(other.enableFreeFlightView, enableFreeFlightView) || other.enableFreeFlightView == enableFreeFlightView)&&(identical(other.enableHires, enableHires) || other.enableHires == enableHires)&&(identical(other.ignoreMissingLightData, ignoreMissingLightData) || other.ignoreMissingLightData == ignoreMissingLightData));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _MapConfigModel&&(identical(other.world, world) || other.world == world)&&(identical(other.dimension, dimension) || other.dimension == dimension)&&(identical(other.name, name) || other.name == name)&&(identical(other.sorting, sorting) || other.sorting == sorting)&&(identical(other.startPos, startPos) || other.startPos == startPos)&&(identical(other.skyColor, skyColor) || other.skyColor == skyColor)&&(identical(other.voidColor, voidColor) || other.voidColor == voidColor)&&(identical(other.skyLight, skyLight) || other.skyLight == skyLight)&&(identical(other.ambientLight, ambientLight) || other.ambientLight == ambientLight)&&(identical(other.removeCavesBelowY, removeCavesBelowY) || other.removeCavesBelowY == removeCavesBelowY)&&(identical(other.caveDetectionOceanFloor, caveDetectionOceanFloor) || other.caveDetectionOceanFloor == caveDetectionOceanFloor)&&(identical(other.caveDetectionUsesBlockLight, caveDetectionUsesBlockLight) || other.caveDetectionUsesBlockLight == caveDetectionUsesBlockLight)&&(identical(other.minInhabitedTime, minInhabitedTime) || other.minInhabitedTime == minInhabitedTime)&&(identical(other.enablePerspectiveView, enablePerspectiveView) || other.enablePerspectiveView == enablePerspectiveView)&&(identical(other.enableFlatView, enableFlatView) || other.enableFlatView == enableFlatView)&&(identical(other.enableFreeFlightView, enableFreeFlightView) || other.enableFreeFlightView == enableFreeFlightView)&&(identical(other.enableHires, enableHires) || other.enableHires == enableHires)&&(identical(other.ignoreMissingLightData, ignoreMissingLightData) || other.ignoreMissingLightData == ignoreMissingLightData));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,world,dimension,name,sorting,startPos,skyColor,voidColor,skyLight,ambientLight,removeCavesBelowY,caveDetectionOceanFloor,caveDetectionUsesBlockLight,minInhabitedTime,enablePerspectiveView,enableFlatView,enableFreeFlightView,enableHires,ignoreMissingLightData);
+int get hashCode {
+    return Object.hash(runtimeType,world,dimension,name,sorting,startPos,skyColor,voidColor,skyLight,ambientLight,removeCavesBelowY,caveDetectionOceanFloor,caveDetectionUsesBlockLight,minInhabitedTime,enablePerspectiveView,enableFlatView,enableFreeFlightView,enableHires,ignoreMissingLightData);
+}
 
 @override
 String toString() {
-  return 'MapConfigModel(world: $world, dimension: $dimension, name: $name, sorting: $sorting, startPos: $startPos, skyColor: $skyColor, voidColor: $voidColor, skyLight: $skyLight, ambientLight: $ambientLight, removeCavesBelowY: $removeCavesBelowY, caveDetectionOceanFloor: $caveDetectionOceanFloor, caveDetectionUsesBlockLight: $caveDetectionUsesBlockLight, minInhabitedTime: $minInhabitedTime, enablePerspectiveView: $enablePerspectiveView, enableFlatView: $enableFlatView, enableFreeFlightView: $enableFreeFlightView, enableHires: $enableHires, ignoreMissingLightData: $ignoreMissingLightData)';
+    return 'MapConfigModel(world: $world, dimension: $dimension, name: $name, sorting: $sorting, startPos: $startPos, skyColor: $skyColor, voidColor: $voidColor, skyLight: $skyLight, ambientLight: $ambientLight, removeCavesBelowY: $removeCavesBelowY, caveDetectionOceanFloor: $caveDetectionOceanFloor, caveDetectionUsesBlockLight: $caveDetectionUsesBlockLight, minInhabitedTime: $minInhabitedTime, enablePerspectiveView: $enablePerspectiveView, enableFlatView: $enableFlatView, enableFreeFlightView: $enableFreeFlightView, enableHires: $enableHires, ignoreMissingLightData: $ignoreMissingLightData)';
 }
 
 

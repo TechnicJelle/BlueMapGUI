@@ -76,25 +76,21 @@ class JavaPath {
     List<String> jvmArgs = const [],
     List<String> processArgs = const [],
     Directory? workingDirectory,
-  }) async {
-    return run(
-      args: ["-jar", ...jvmArgs, jar.path, ...processArgs],
-      workingDirectory: workingDirectory,
-    );
-  }
+  }) => run(
+    args: ["-jar", ...jvmArgs, jar.path, ...processArgs],
+    workingDirectory: workingDirectory,
+  );
 
   Future<Process> startJar(
     File jar, {
     List<String> jvmArgs = const [],
     List<String> processArgs = const [],
     Directory? workingDirectory,
-  }) async {
-    return Process.start(
-      path,
-      ["-jar", ...jvmArgs, jar.path, ...processArgs],
-      workingDirectory: workingDirectory?.path,
-    );
-  }
+  }) => Process.start(
+    path,
+    ["-jar", ...jvmArgs, jar.path, ...processArgs],
+    workingDirectory: workingDirectory?.path,
+  );
 
   Future<JavaResult> runJarTimeout(
     File jar,

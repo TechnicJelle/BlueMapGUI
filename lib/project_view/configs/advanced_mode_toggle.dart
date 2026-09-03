@@ -32,7 +32,7 @@ class AdvancedModeNotifier extends Notifier<AdvancedMode> {
       // advanced mode was just disabled, so we need to re-read the file into the models again
       state = const .loading();
       // wait a frame for the file to be properly saved on dispose of the advanced editor
-      // this cannot be called there, because it's not allowed to red.read in a dispose()
+      // this cannot be called there, because it's not allowed to ref.read in a dispose()
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         final ConfigFile openConfig = ref.read(openConfigProvider)!;
         await ref.read(projectProviderNotifier).refreshConfigFile(openConfig.file);

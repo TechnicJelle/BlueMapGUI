@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'project_configs_provider.dart';
@@ -9,12 +9,13 @@ part of 'project_configs_provider.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ProjectConfigs {
 
- Directory get projectLocation; List<ConfigFile<BaseConfigModel>> get mainConfigs; List<ConfigFile<MapConfigModel>> get mapConfigs; ConfigFile? get openConfig;
+ Directory get projectLocation; List<ConfigFile<BaseConfigModel>> get mainConfigs; List<ConfigFile<MapConfigModel>> get mapConfigs; ConfigFile<BaseConfigModel>? get openConfig;
 /// Create a copy of ProjectConfigs
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +26,21 @@ $ProjectConfigsCopyWith<ProjectConfigs> get copyWith => _$ProjectConfigsCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProjectConfigs&&(identical(other.projectLocation, projectLocation) || other.projectLocation == projectLocation)&&const DeepCollectionEquality().equals(other.mainConfigs, mainConfigs)&&const DeepCollectionEquality().equals(other.mapConfigs, mapConfigs)&&(identical(other.openConfig, openConfig) || other.openConfig == openConfig));
+  final _this = this as ProjectConfigs;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProjectConfigs&&(identical(other.projectLocation, _this.projectLocation) || other.projectLocation == _this.projectLocation)&&const DeepCollectionEquality().equals(other.mainConfigs, _this.mainConfigs)&&const DeepCollectionEquality().equals(other.mapConfigs, _this.mapConfigs)&&(identical(other.openConfig, _this.openConfig) || other.openConfig == _this.openConfig));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,projectLocation,const DeepCollectionEquality().hash(mainConfigs),const DeepCollectionEquality().hash(mapConfigs),openConfig);
+int get hashCode {
+  final _this = this as ProjectConfigs;
+  return Object.hash(runtimeType,_this.projectLocation,const DeepCollectionEquality().hash(_this.mainConfigs),const DeepCollectionEquality().hash(_this.mapConfigs),_this.openConfig);
+}
 
 @override
 String toString() {
-  return 'ProjectConfigs(projectLocation: $projectLocation, mainConfigs: $mainConfigs, mapConfigs: $mapConfigs, openConfig: $openConfig)';
+  final _this = this as ProjectConfigs;
+  return 'ProjectConfigs(projectLocation: ${_this.projectLocation}, mainConfigs: ${_this.mainConfigs}, mapConfigs: ${_this.mapConfigs}, openConfig: ${_this.openConfig})';
 }
 
 
@@ -45,7 +51,7 @@ abstract mixin class $ProjectConfigsCopyWith<$Res>  {
   factory $ProjectConfigsCopyWith(ProjectConfigs value, $Res Function(ProjectConfigs) _then) = _$ProjectConfigsCopyWithImpl;
 @useResult
 $Res call({
- Directory projectLocation, List<ConfigFile<BaseConfigModel>> mainConfigs, List<ConfigFile<MapConfigModel>> mapConfigs, ConfigFile? openConfig
+ Directory projectLocation, List<ConfigFile<BaseConfigModel>> mainConfigs, List<ConfigFile<MapConfigModel>> mapConfigs, ConfigFile<BaseConfigModel>? openConfig
 });
 
 
@@ -63,12 +69,12 @@ class _$ProjectConfigsCopyWithImpl<$Res>
 /// Create a copy of ProjectConfigs
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? projectLocation = null,Object? mainConfigs = null,Object? mapConfigs = null,Object? openConfig = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(ProjectConfigs(
 projectLocation: null == projectLocation ? _self.projectLocation : projectLocation // ignore: cast_nullable_to_non_nullable
 as Directory,mainConfigs: null == mainConfigs ? _self.mainConfigs : mainConfigs // ignore: cast_nullable_to_non_nullable
 as List<ConfigFile<BaseConfigModel>>,mapConfigs: null == mapConfigs ? _self.mapConfigs : mapConfigs // ignore: cast_nullable_to_non_nullable
 as List<ConfigFile<MapConfigModel>>,openConfig: freezed == openConfig ? _self.openConfig : openConfig // ignore: cast_nullable_to_non_nullable
-as ConfigFile?,
+as ConfigFile<BaseConfigModel>?,
   ));
 }
 
@@ -153,7 +159,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Directory projectLocation,  List<ConfigFile<BaseConfigModel>> mainConfigs,  List<ConfigFile<MapConfigModel>> mapConfigs,  ConfigFile? openConfig)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Directory projectLocation,  List<ConfigFile<BaseConfigModel>> mainConfigs,  List<ConfigFile<MapConfigModel>> mapConfigs,  ConfigFile<BaseConfigModel>? openConfig)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ProjectConfigs() when $default != null:
 return $default(_that.projectLocation,_that.mainConfigs,_that.mapConfigs,_that.openConfig);case _:
@@ -174,7 +180,7 @@ return $default(_that.projectLocation,_that.mainConfigs,_that.mapConfigs,_that.o
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Directory projectLocation,  List<ConfigFile<BaseConfigModel>> mainConfigs,  List<ConfigFile<MapConfigModel>> mapConfigs,  ConfigFile? openConfig)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Directory projectLocation,  List<ConfigFile<BaseConfigModel>> mainConfigs,  List<ConfigFile<MapConfigModel>> mapConfigs,  ConfigFile<BaseConfigModel>? openConfig)  $default,) {final _that = this;
 switch (_that) {
 case _ProjectConfigs():
 return $default(_that.projectLocation,_that.mainConfigs,_that.mapConfigs,_that.openConfig);case _:
@@ -194,7 +200,7 @@ return $default(_that.projectLocation,_that.mainConfigs,_that.mapConfigs,_that.o
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Directory projectLocation,  List<ConfigFile<BaseConfigModel>> mainConfigs,  List<ConfigFile<MapConfigModel>> mapConfigs,  ConfigFile? openConfig)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Directory projectLocation,  List<ConfigFile<BaseConfigModel>> mainConfigs,  List<ConfigFile<MapConfigModel>> mapConfigs,  ConfigFile<BaseConfigModel>? openConfig)?  $default,) {final _that = this;
 switch (_that) {
 case _ProjectConfigs() when $default != null:
 return $default(_that.projectLocation,_that.mainConfigs,_that.mapConfigs,_that.openConfig);case _:
@@ -209,7 +215,7 @@ return $default(_that.projectLocation,_that.mainConfigs,_that.mapConfigs,_that.o
 
 
 class _ProjectConfigs implements ProjectConfigs {
-  const _ProjectConfigs({required this.projectLocation, required final  List<ConfigFile<BaseConfigModel>> mainConfigs, required final  List<ConfigFile<MapConfigModel>> mapConfigs, required this.openConfig}): _mainConfigs = mainConfigs,_mapConfigs = mapConfigs;
+  const _ProjectConfigs({required this.projectLocation, required  List<ConfigFile<BaseConfigModel>> mainConfigs, required  List<ConfigFile<MapConfigModel>> mapConfigs, required this.openConfig}): _mainConfigs = mainConfigs,_mapConfigs = mapConfigs;
   
 
 @override final  Directory projectLocation;
@@ -227,7 +233,7 @@ class _ProjectConfigs implements ProjectConfigs {
   return EqualUnmodifiableListView(_mapConfigs);
 }
 
-@override final  ConfigFile? openConfig;
+@override final  ConfigFile<BaseConfigModel>? openConfig;
 
 /// Create a copy of ProjectConfigs
 /// with the given fields replaced by the non-null parameter values.
@@ -239,16 +245,18 @@ _$ProjectConfigsCopyWith<_ProjectConfigs> get copyWith => __$ProjectConfigsCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProjectConfigs&&(identical(other.projectLocation, projectLocation) || other.projectLocation == projectLocation)&&const DeepCollectionEquality().equals(other._mainConfigs, _mainConfigs)&&const DeepCollectionEquality().equals(other._mapConfigs, _mapConfigs)&&(identical(other.openConfig, openConfig) || other.openConfig == openConfig));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProjectConfigs&&(identical(other.projectLocation, projectLocation) || other.projectLocation == projectLocation)&&const DeepCollectionEquality().equals(other.mainConfigs, _mainConfigs)&&const DeepCollectionEquality().equals(other.mapConfigs, _mapConfigs)&&(identical(other.openConfig, openConfig) || other.openConfig == openConfig));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,projectLocation,const DeepCollectionEquality().hash(_mainConfigs),const DeepCollectionEquality().hash(_mapConfigs),openConfig);
+int get hashCode {
+    return Object.hash(runtimeType,projectLocation,const DeepCollectionEquality().hash(_mainConfigs),const DeepCollectionEquality().hash(_mapConfigs),openConfig);
+}
 
 @override
 String toString() {
-  return 'ProjectConfigs(projectLocation: $projectLocation, mainConfigs: $mainConfigs, mapConfigs: $mapConfigs, openConfig: $openConfig)';
+    return 'ProjectConfigs(projectLocation: $projectLocation, mainConfigs: $mainConfigs, mapConfigs: $mapConfigs, openConfig: $openConfig)';
 }
 
 
@@ -259,7 +267,7 @@ abstract mixin class _$ProjectConfigsCopyWith<$Res> implements $ProjectConfigsCo
   factory _$ProjectConfigsCopyWith(_ProjectConfigs value, $Res Function(_ProjectConfigs) _then) = __$ProjectConfigsCopyWithImpl;
 @override @useResult
 $Res call({
- Directory projectLocation, List<ConfigFile<BaseConfigModel>> mainConfigs, List<ConfigFile<MapConfigModel>> mapConfigs, ConfigFile? openConfig
+ Directory projectLocation, List<ConfigFile<BaseConfigModel>> mainConfigs, List<ConfigFile<MapConfigModel>> mapConfigs, ConfigFile<BaseConfigModel>? openConfig
 });
 
 
@@ -282,7 +290,7 @@ projectLocation: null == projectLocation ? _self.projectLocation : projectLocati
 as Directory,mainConfigs: null == mainConfigs ? _self._mainConfigs : mainConfigs // ignore: cast_nullable_to_non_nullable
 as List<ConfigFile<BaseConfigModel>>,mapConfigs: null == mapConfigs ? _self._mapConfigs : mapConfigs // ignore: cast_nullable_to_non_nullable
 as List<ConfigFile<MapConfigModel>>,openConfig: freezed == openConfig ? _self.openConfig : openConfig // ignore: cast_nullable_to_non_nullable
-as ConfigFile?,
+as ConfigFile<BaseConfigModel>?,
   ));
 }
 
