@@ -150,6 +150,10 @@ class _AdvancedEditorState extends ConsumerState<AdvancedEditor> {
           );
         },
         style: CodeEditorStyle(
+          textColor: switch (brightness) {
+            Brightness.dark => Colors.white,
+            Brightness.light => Colors.black,
+          },
           fontFamily: pixelCode200.fontFamily,
           fontSize: pixelCode200.fontSize,
           fontHeight: pixelCode200.height,
