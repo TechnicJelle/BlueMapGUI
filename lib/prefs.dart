@@ -106,14 +106,25 @@ class JavaPath {
     // These are actually Uint8's (raw bytes 0..255 from the OS pipe)
     final List<int> stdoutBuffer = [];
     final List<int> stderrBuffer = [];
+
+    // Track stream completion to ensure all output is captured (see Process.exitCode's docs' last paragraph)
+    final stdoutDone = Completer<void>();
+    final stderrDone = Completer<void>();
+
     final Process process = await startJar(
       jar,
       jvmArgs: jvmArgs,
       processArgs: processArgs,
       workingDirectory: workingDirectory,
     );
-    final stdoutSub = process.stdout.listen(stdoutBuffer.addAll);
-    final stderrSub = process.stderr.listen(stderrBuffer.addAll);
+    final stdoutSub = process.stdout.listen(
+      stdoutBuffer.addAll,
+      onDone: stdoutDone.complete,
+    );
+    final stderrSub = process.stderr.listen(
+      stderrBuffer.addAll,
+      onDone: stderrDone.complete,
+    );
 
     //We kill the process after the duration
     bool wasKilled = false;
@@ -124,7 +135,7 @@ class JavaPath {
     // Wait for process to exit
     final int exitCode = await process.exitCode;
     // Wait for stdStreams to drain
-    await Future.wait([stdoutSub.asFuture<void>(), stderrSub.asFuture<void>()]);
+    await Future.wait([stdoutDone.future, stderrDone.future]);
     // Cancel the stream subscriptions
     await Future.wait([stdoutSub.cancel(), stderrSub.cancel()]);
     //If the process has already stopped, we cancel the killer
