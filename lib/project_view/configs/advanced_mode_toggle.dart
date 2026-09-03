@@ -1,6 +1,6 @@
-import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:freezed_annotation/freezed_annotation.dart";
+import "package:material_ui/material_ui.dart";
 
 import "../../project_configs_provider.dart";
 import "models/base.dart";
