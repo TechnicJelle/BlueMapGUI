@@ -49,29 +49,25 @@ Future<void> createHomePage() async {
                 id: "downloads",
                 classes: ["download-buttons"],
                 children: [
-                  A(
-                    href: url(latestVersion, platform: "Windows_x64"),
-                    children: [
-                      Image(
-                        src: "icons/windows.svg",
-                        alt: "Windows icon",
-                        height: 32,
-                        width: 36,
-                      ),
-                      T("Windows"),
-                    ],
+                  _createDownloadButton(
+                    url: url(latestVersion, platform: "Windows_x64"),
+                    image: Image(
+                      src: "icons/windows.svg",
+                      alt: "Windows icon",
+                      height: 32,
+                      width: 36,
+                    ),
+                    label: "Windows",
                   ),
-                  A(
-                    href: url(latestVersion, platform: "Linux_x64"),
-                    children: [
-                      Image(
-                        src: "icons/linux.svg",
-                        alt: "Linux icon",
-                        height: 32,
-                        width: 27,
-                      ),
-                      T("Linux"),
-                    ],
+                  _createDownloadButton(
+                    url: url(latestVersion, platform: "Linux_x64"),
+                    image: Image(
+                      src: "icons/linux.svg",
+                      alt: "Linux icon",
+                      height: 32,
+                      width: 27,
+                    ),
+                    label: "Linux",
                   ),
                 ],
               ),
@@ -153,7 +149,7 @@ Future<void> createHomePage() async {
             children: [
               Span.text("Are you convinced, yet?"),
               Br(),
-              A.text("Download", href: "#downloads"),
+              _createDownloadButton(label: "Download", url: "#downloads"),
             ],
           ),
         ],
@@ -163,6 +159,26 @@ Future<void> createHomePage() async {
   ).build();
 
   File(p.join(dirBuild.path, "index.html")).writeAsStringSync(html);
+}
+
+A _createDownloadButton({
+  required String url,
+  required String label,
+  Image? image,
+}) {
+  return A(
+    href: url,
+    classes: ["download-button"],
+    children: [
+      ?image,
+      Span(
+        classes: ["download-label"],
+        children: [
+          T(label),
+        ],
+      ),
+    ],
+  );
 }
 
 Section _two(List<Element> aside, Picture picture) {

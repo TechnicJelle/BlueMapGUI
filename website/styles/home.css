@@ -35,8 +35,7 @@ picture > img {
 	gap: 1em;
 }
 
-.final-download a,
-.download-buttons a {
+a.download-button {
 	display: inline-flex;
 	align-items: center;
 	gap: 0.5em;
@@ -54,15 +53,12 @@ picture > img {
 	font-weight: 500;
 }
 
-.final-download a:hover,
-.final-download a:focus-visible,
-.download-buttons a:hover,
-.download-buttons a:focus-visible {
+a.download-button:hover,
+a.download-button:focus-visible {
 	background-color: var(--primary-hover);
 }
 
-.final-download a:focus-visible,
-.download-buttons a:focus-visible {
+a.download-button:focus-visible {
 	outline: 1px solid light-dark(black, white);
 }
 
@@ -79,12 +75,12 @@ picture > img {
 	text-align: center;
 }
 
-.final-download span {
+.final-download > span {
 	font-size: 1.1em;
 	font-weight: 500;
 }
 
-.final-download a {
+.final-download .download-button {
 	margin-top: 0.5em;
 }
 
