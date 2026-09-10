@@ -170,7 +170,7 @@ Section _two(List<Element> aside, Picture picture) {
     classes: ["two"],
     children: [
       Div(children: aside),
-      A.newTab(href: picture.image.src, children: [picture]),
+      A.newTab(href: picture.image.src, children: [picture])..args = {"tabindex": "-1"},
     ],
   );
 }
