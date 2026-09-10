@@ -53,6 +53,14 @@ a.download-button {
 	font-weight: 500;
 }
 
+.download-label:has(.download-label-small) {
+	line-height: 0.7;
+}
+
+.download-label-small {
+	font-size: 0.5em;
+}
+
 a.download-button:hover,
 a.download-button:focus-visible {
 	background-color: var(--primary-hover);

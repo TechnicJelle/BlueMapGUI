@@ -58,6 +58,7 @@ Future<void> createHomePage() async {
                       width: 36,
                     ),
                     label: "Windows",
+                    subLabel: "Zip",
                   ),
                   _createDownloadButton(
                     url: url(latestVersion, platform: "Linux_x64"),
@@ -68,6 +69,18 @@ Future<void> createHomePage() async {
                       width: 27,
                     ),
                     label: "Linux",
+                    subLabel: "Zip",
+                  ),
+                  _createDownloadButton(
+                    url: url(latestVersion, platform: "Linux_x64", ext: "AppImage"),
+                    image: Image(
+                      src: "icons/linux.svg",
+                      alt: "Linux icon",
+                      height: 32,
+                      width: 27,
+                    ),
+                    label: "Linux",
+                    subLabel: "AppImage",
                   ),
                 ],
               ),
@@ -165,6 +178,7 @@ A _createDownloadButton({
   required String url,
   required String label,
   Image? image,
+  String? subLabel,
 }) {
   return A(
     href: url,
@@ -175,6 +189,10 @@ A _createDownloadButton({
         classes: ["download-label"],
         children: [
           T(label),
+          if (subLabel != null) ...[
+            Br(),
+            Span.text(subLabel, classes: ["download-label-small"]),
+          ],
         ],
       ),
     ],
@@ -191,5 +209,5 @@ Section _two(List<Element> aside, Picture picture) {
   );
 }
 
-String url(String latestVersion, {required String platform}) =>
-    "$repo/releases/download/v$latestVersion/BlueMapGUI_v${latestVersion}_$platform.zip";
+String url(String latestVersion, {required String platform, String ext = "zip"}) =>
+    "$repo/releases/download/v$latestVersion/BlueMapGUI_v${latestVersion}_$platform.$ext";
