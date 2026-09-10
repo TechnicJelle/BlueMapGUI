@@ -110,7 +110,7 @@ packages:
     description:
       path: "."
       ref: boring-md
-      resolved-ref: "2aaecc3bad9381bfd3eb9005565303ac7788f9b2"
+      resolved-ref: "5ca0ee67f31d340686f44c6307d202c6c411afb4"
       url: "https://github.com/TechnicJelle/techs_html_bindings.git"
     source: git
     version: "1.0.0"
