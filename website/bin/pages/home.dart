@@ -42,7 +42,9 @@ Future<void> createHomePage() async {
                   T(" with the ease of simple buttons!"),
                 ],
               ),
-              P.text("With this desktop program, you can render your Minecraft worlds and view them in your browser."),
+              P.text(
+                "With this desktop program, you can render your Minecraft worlds and view them in your browser.",
+              ),
               P(
                 id: "downloads",
                 classes: ["download-buttons"],
