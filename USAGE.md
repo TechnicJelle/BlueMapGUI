@@ -54,7 +54,15 @@ You now need to tell BlueMap where on your computer your world is,
 so click the `Pick world folder` button in the top right,
 use the file picker to navigate to where your world is, and select it.
 
-### 3.c (OPTIONAL) Setting up resource-packs & data-packs
+### 3.c (OPTIONAL) Minecraft version
+If your world is not on the latest version of Minecraft,
+you can set the **Minecraft Version** option in the `Startup` config tab in the sidebar.
+
+Note that this option applies to all maps in this project,
+so you should only add maps of worlds that all use the same Minecraft Version in each project.  
+You can make new projects for different versions.
+
+### 3.d (OPTIONAL) Setting up resource-packs & data-packs
 To make BlueMap use your preferred resource-packs and data-packs,
 click the `Open in file manager` button in the top right.
 
@@ -66,7 +74,7 @@ You can read more about how to set these up [on the BlueMap wiki](https://bluema
 
 _Managing resource-packs and data-packs will be made nicer [in the future](https://github.com/TechnicJelle/BlueMapGUI/issues/13)._
 
-### 3.d (OPTIONAL) Setting up mods
+### 3.e (OPTIONAL) Setting up mods
 To make modded blocks show up correctly, BlueMap needs to know which mods you're using.
 
 To tell BlueMap about your mods, go to the `Startup` config tab in the sidebar,
@@ -86,14 +94,6 @@ BlueMap will now re-render the map with the new settings.
 Note that this option applies to all maps in this project,
 so you should only add maps of worlds that all use the same mods in each project.  
 You can make new projects for different modpacks.
-
-### 3.e (OPTIONAL) Minecraft version
-If your world is not on the latest version of Minecraft,
-you can set the **Minecraft Version** option in the `Startup` config tab in the sidebar.
-
-Note that this option applies to all maps in this project,
-so you should only add maps of worlds that all use the same Minecraft Version in each project.  
-You can make new projects for different versions.
 
 ## 4. Starting BlueMap
 Once you've set up all the maps you want to render,
