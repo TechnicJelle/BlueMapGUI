@@ -56,16 +56,16 @@ Aside _toc() {
                     type: .lowercaseLetters,
                     items: [
                       _li(
-                        "#3a-accepting-the-download",
+                        "#3-a-accepting-the-download",
                         "Accepting the download",
                       ),
-                      _li("#3b-configuring-your-maps", "Configuring your maps"),
+                      _li("#3-b-configuring-your-maps", "Configuring your maps"),
                       _li(
-                        "#3c-optional-setting-up-resourcepacks-datapacks",
-                        "Resource-packs & Data-packs",
+                        "#3-c-optional-minecraft-version",
+                        "Minecraft Version",
                       ),
-                      _li("#3d-optional-setting-up-mods", "Mods"),
-                      _li("#3e-optional-minecraft-version", "Minecraft Version"),
+                      _li("#3-d-optional-setting-up-resource-packs-data-packs", "Resource-packs & Data-packs"),
+                      _li("#3-e-optional-setting-up-mods", "Mods"),
                     ],
                   ),
                 ],
