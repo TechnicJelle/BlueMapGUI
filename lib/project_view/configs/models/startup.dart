@@ -15,8 +15,7 @@ abstract class StartupConfigModel extends BaseConfigModel with _$StartupConfigMo
 
   const new _();
 
-  factory fromJson(Map<String, Object?> json) =>
-      _$StartupConfigModelFromJson(json);
+  factory fromJson(Map<String, Object?> json) => _$StartupConfigModelFromJson(json);
 }
 
 typedef StartupConfigKeys = _$StartupConfigModelJsonKeys;

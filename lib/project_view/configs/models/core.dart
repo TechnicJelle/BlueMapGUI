@@ -14,8 +14,7 @@ abstract class CoreConfigModel extends BaseConfigModel with _$CoreConfigModel {
 
   const new _();
 
-  factory fromJson(Map<String, Object?> json) =>
-      _$CoreConfigModelFromJson(json);
+  factory fromJson(Map<String, Object?> json) => _$CoreConfigModelFromJson(json);
 }
 
 typedef CoreConfigKeys = _$CoreConfigModelJsonKeys;

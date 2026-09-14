@@ -64,8 +64,7 @@ abstract class MapConfigModel extends BaseConfigModel with _$MapConfigModel {
 
   const new _();
 
-  factory fromJson(Map<String, Object?> json) =>
-      _$MapConfigModelFromJson(json);
+  factory fromJson(Map<String, Object?> json) => _$MapConfigModelFromJson(json);
 
   String skyLightHocon() => _lightHocon(skyLight!);
 

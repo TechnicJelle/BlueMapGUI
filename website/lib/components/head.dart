@@ -4,8 +4,7 @@ import "package:techs_html_bindings/elements.dart";
 
 Head generateHead({
   String? pageTitle,
-  String pageDescription =
-      "A GUI wrapper around the BlueMap CLI, mainly to make using BlueMap easier to use on single player worlds.",
+  String pageDescription = "A GUI wrapper around the BlueMap CLI, mainly to make using BlueMap easier to use on single player worlds.",
   String relativeToRoot = "",
   Iterable<Style> extraStyles = const Iterable.empty(),
 }) {

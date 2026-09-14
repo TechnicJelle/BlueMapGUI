@@ -13,8 +13,7 @@ abstract class WebserverConfigModel extends BaseConfigModel with _$WebserverConf
 
   const new _();
 
-  factory fromJson(Map<String, Object?> json) =>
-      _$WebserverConfigModelFromJson(json);
+  factory fromJson(Map<String, Object?> json) => _$WebserverConfigModelFromJson(json);
 }
 
 typedef WebserverConfigKeys = _$WebserverConfigModelJsonKeys;

@@ -186,8 +186,7 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
         ),
         TextFieldOption(
           title: "Map Name",
-          description:
-              "The display name of this map (how this map will be named on the website).",
+          description: "The display name of this map (how this map will be named on the website).",
           controller: nameController,
           hintText: "Must not be empty!",
           onChanged: (_) => _saveName(),
@@ -195,8 +194,7 @@ class _MapConfigViewState extends ConsumerState<MapConfigView> {
         ),
         Vector2XZOption(
           title: "Start Position",
-          description:
-              "The position in the world where the map will be centered on when you open it.",
+          description: "The position in the world where the map will be centered on when you open it.",
           controllerX: startPosXController,
           controllerZ: startPosZController,
           onChanged: null,

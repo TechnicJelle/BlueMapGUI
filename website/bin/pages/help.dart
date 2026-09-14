@@ -64,7 +64,10 @@ Aside _toc() {
                         "#3-c-optional-minecraft-version",
                         "Minecraft Version",
                       ),
-                      _li("#3-d-optional-setting-up-resource-packs-data-packs", "Resource-packs & Data-packs"),
+                      _li(
+                        "#3-d-optional-setting-up-resource-packs-data-packs",
+                        "Resource-packs & Data-packs",
+                      ),
                       _li("#3-e-optional-setting-up-mods", "Mods"),
                     ],
                   ),

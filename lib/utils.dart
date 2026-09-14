@@ -76,7 +76,9 @@ String processOutputToString(dynamic stdStream) {
   return switch (stdStream) {
     final String s => s,
     final Uint8List l => utf8.decode(l),
-    _ => throw UnsupportedError("Unknown Type: `${stdStream.runtimeType}`! Cannot process this type to a String!"),
+    _ => throw UnsupportedError(
+      "Unknown Type: `${stdStream.runtimeType}`! Cannot process this type to a String!",
+    ),
   };
 }
 

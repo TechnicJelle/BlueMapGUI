@@ -13,8 +13,7 @@ abstract class WebappConfigModel extends BaseConfigModel with _$WebappConfigMode
 
   const new _();
 
-  factory fromJson(Map<String, Object?> json) =>
-      _$WebappConfigModelFromJson(json);
+  factory fromJson(Map<String, Object?> json) => _$WebappConfigModelFromJson(json);
 }
 
 typedef WebappConfigKeys = _$WebappConfigModelJsonKeys;

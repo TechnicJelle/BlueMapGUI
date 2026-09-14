@@ -35,8 +35,7 @@ class _WebappConfigViewState extends ConsumerState<WebappConfigView> {
       children: [
         ToggleOption(
           title: "Default to Flat View",
-          description:
-              "Whether the webapp will default to flat-view instead of perspective-view.",
+          description: "Whether the webapp will default to flat-view instead of perspective-view.",
           value: model.defaultToFlatView,
           onChanged: (bool? value) {
             if (value == null) return;
