@@ -15,6 +15,7 @@ class CloseProjectButton extends ConsumerWidget {
         showConfirmationDialog(
           context: context,
           title: "Close project",
+          dangerous: false,
           content: const [
             Text("Are you sure you want to close this project?"),
             Text("You can always open it again later."),

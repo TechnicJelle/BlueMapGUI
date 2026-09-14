@@ -2,9 +2,11 @@ import "dart:async";
 
 import "package:material_ui/material_ui.dart";
 
+///if [dangerous], the default option is the is cancel button
 void showConfirmationDialog({
   required BuildContext context,
   required String title,
+  required bool dangerous,
   required List<Widget> content,
   required String confirmAction,
   required void Function() onConfirmed,
@@ -14,6 +16,7 @@ void showConfirmationDialog({
       context: context,
       builder: (context) => _ConfirmationDialog(
         title: title,
+        dangerous: dangerous,
         content: content,
         confirmAction: confirmAction,
       ),
@@ -24,17 +27,12 @@ void showConfirmationDialog({
   );
 }
 
-class _ConfirmationDialog extends StatelessWidget {
-  final String title;
-  final List<Widget> content;
-  final String confirmAction;
-
-  const new({
-    required this.title,
-    required this.content,
-    required this.confirmAction,
-  });
-
+class const _ConfirmationDialog({
+  required final String title,
+  required final bool dangerous,
+  required final List<Widget> content,
+  required final String confirmAction,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -44,23 +42,34 @@ class _ConfirmationDialog extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: content,
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(true),
-          style: TextButton.styleFrom(
-            foregroundColor: Colors.red,
-            textStyle: TextTheme.of(context).bodyLarge?.copyWith(
-              fontWeight: .bold,
-              fontSize: 15,
-            ),
-          ),
-          child: Text(confirmAction),
-        ),
-        ElevatedButton(
-          onPressed: () => Navigator.of(context).pop(false),
-          child: const Text("Cancel"),
-        ),
-      ],
+      actions: dangerous
+          ? [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.red,
+                  textStyle: TextTheme.of(context).bodyLarge?.copyWith(
+                    fontWeight: .bold,
+                    fontSize: 15,
+                  ),
+                ),
+                child: Text(confirmAction),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text("Cancel"),
+              ),
+            ]
+          : [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text("Cancel"),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: Text(confirmAction),
+              ),
+            ],
     );
   }
 }

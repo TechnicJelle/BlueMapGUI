@@ -199,6 +199,7 @@ class _PathPickerButtonState extends ConsumerState<ProjectTile> {
     showConfirmationDialog(
       context: context,
       title: "Remove Project",
+      dangerous: true,
       content: [
         Text(
           """
@@ -207,7 +208,7 @@ This will not delete the project directory from your disk.
 It will only be removed from the list.""",
         ),
       ],
-      confirmAction: "Yes",
+      confirmAction: "Remove",
       onConfirmed: () =>
           ref.read(knownProjectsProvider.notifier).removeProject(projectDirectory),
     );

@@ -474,6 +474,7 @@ Your actual world files will not be affected!
                     showConfirmationDialog(
                       context: context,
                       title: "Delete map",
+                      dangerous: true,
                       content: [
                         Wrap(
                           children: [
