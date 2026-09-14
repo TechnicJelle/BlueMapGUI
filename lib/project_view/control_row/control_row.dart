@@ -65,7 +65,7 @@ class RunningProcess with WindowListener {
 
   bool _shownSpeedupTip = false;
 
-  RunningProcess(this._projectDirectory, this._javaPath) {
+  new(this._projectDirectory, this._javaPath) {
     windowManager.addListener(this);
     // Add this line to override the default close handler
     unawaited(windowManager.setPreventClose(true));
@@ -300,7 +300,7 @@ class RunningProcess with WindowListener {
 }
 
 class ControlRow extends StatelessWidget {
-  const ControlRow({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {

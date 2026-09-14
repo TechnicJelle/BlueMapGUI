@@ -21,7 +21,7 @@ enum _ManagedRadioState { empty, downloading, hashing, unpacking, success, error
 enum _CustomRadioState { empty, success, errored }
 
 class JavaPicker extends ConsumerStatefulWidget {
-  const JavaPicker({super.key});
+  const new({super.key});
 
   @override
   ConsumerState<JavaPicker> createState() => _JavaPickerState();

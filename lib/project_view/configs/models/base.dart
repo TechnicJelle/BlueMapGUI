@@ -22,7 +22,7 @@ class FatalConfigFileRunException implements FatalConfigFileLoadException {
   final int _exitCode;
   final String _stderr;
 
-  FatalConfigFileRunException({
+  new({
     required this._exitCode,
     required this._stderr,
   });
@@ -36,7 +36,7 @@ class FatalConfigFileRunException implements FatalConfigFileLoadException {
 class FatalConfigFileConcludeException implements FatalConfigFileLoadException {
   final String _message;
 
-  FatalConfigFileConcludeException({
+  new({
     required File file,
   }) : _message = "Could not conclude what type of config this is: ${file.path}";
 
@@ -47,7 +47,7 @@ class FatalConfigFileConcludeException implements FatalConfigFileLoadException {
 class FatalConfigProblemException implements FatalConfigFileLoadException {
   final String _message;
 
-  FatalConfigProblemException({
+  new({
     required FileConfigFileLoadProblem problem,
   }) : _message = problem.getDetails();
 
@@ -63,7 +63,7 @@ abstract interface class FileConfigFileLoadProblem {
 class FileConfigFileCastProblem implements FileConfigFileLoadProblem {
   final String _message;
 
-  FileConfigFileCastProblem({
+  new({
     required TypeError typeError,
   }) : _message = typeError.toString().trim();
 
@@ -74,7 +74,7 @@ class FileConfigFileCastProblem implements FileConfigFileLoadProblem {
 class FileConfigFileParseProblem implements FileConfigFileLoadProblem {
   final String _message;
 
-  FileConfigFileParseProblem({
+  new({
     required String message,
   }) : _message = message.trim();
 
@@ -107,7 +107,7 @@ class ConfigFile<T extends BaseConfigModel> {
   final File file;
   Either<FileConfigFileLoadProblem, T> modelOrProblem;
 
-  ConfigFile(this.file, this.modelOrProblem);
+  new(this.file, this.modelOrProblem);
 
   late String path = file.path;
 
@@ -236,5 +236,5 @@ class ConfigFile<T extends BaseConfigModel> {
 typedef _ConfigFileCallback = ConfigFile Function();
 
 abstract class BaseConfigModel {
-  const BaseConfigModel();
+  const new();
 }

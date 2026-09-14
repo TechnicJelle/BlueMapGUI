@@ -7,7 +7,7 @@ import "setting_heading.dart";
 import "theme_mode_picker.dart";
 
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {

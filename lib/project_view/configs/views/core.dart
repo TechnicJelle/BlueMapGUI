@@ -11,7 +11,7 @@ import "../models/core.dart";
 import "base.dart";
 
 class CoreConfigView extends ConsumerStatefulWidget {
-  const CoreConfigView({super.key});
+  const new({super.key});
 
   @override
   ConsumerState<CoreConfigView> createState() => _CoreConfigViewState();

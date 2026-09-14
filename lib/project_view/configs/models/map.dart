@@ -9,14 +9,14 @@ part "map.g.dart";
 
 @freezed
 abstract class Vector2XZ with _$Vector2XZ {
-  const factory Vector2XZ({
+  const factory({
     required int x,
     required int z,
   }) = _Vector2XZ;
 
-  const Vector2XZ._();
+  const new _();
 
-  factory Vector2XZ.fromJson(Map<String, Object?> json) => _$Vector2XZFromJson(json);
+  factory fromJson(Map<String, Object?> json) => _$Vector2XZFromJson(json);
 
   static final RegExp _jsonToHoconRegex = RegExp(r'{"x":(-?\d+),"z":(-?\d+)}');
 
@@ -32,7 +32,7 @@ typedef Vector2XZKeys = _$Vector2XZJsonKeys;
 abstract class MapConfigModel extends BaseConfigModel with _$MapConfigModel {
   static const int cavesEnabledY = -10000;
 
-  const factory MapConfigModel({
+  const factory({
     required String world,
     required String dimension,
 
@@ -62,9 +62,9 @@ abstract class MapConfigModel extends BaseConfigModel with _$MapConfigModel {
     required bool ignoreMissingLightData,
   }) = _MapConfigModel;
 
-  const MapConfigModel._();
+  const new _();
 
-  factory MapConfigModel.fromJson(Map<String, Object?> json) =>
+  factory fromJson(Map<String, Object?> json) =>
       _$MapConfigModelFromJson(json);
 
   String skyLightHocon() => _lightHocon(skyLight!);

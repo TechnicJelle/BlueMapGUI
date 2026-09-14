@@ -6,7 +6,7 @@ import "package:material_ui/material_ui.dart";
 import "../new_map_dialog.dart";
 
 class NewMapButton extends ConsumerWidget {
-  const NewMapButton({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

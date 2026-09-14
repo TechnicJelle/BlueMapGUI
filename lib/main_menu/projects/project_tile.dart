@@ -91,7 +91,7 @@ final _progressNotifier = NotifierProvider(ProgressNotifier.new);
 class ProjectTile extends ConsumerStatefulWidget {
   final Directory projectDirectory;
 
-  const ProjectTile(this.projectDirectory, {super.key});
+  const new(this.projectDirectory, {super.key});
 
   @override
   ConsumerState<ProjectTile> createState() => _PathPickerButtonState();
@@ -439,7 +439,7 @@ It will only be removed from the list.""",
 }
 
 class _OpenProjectDialog extends ConsumerWidget {
-  const _OpenProjectDialog();
+  const new();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

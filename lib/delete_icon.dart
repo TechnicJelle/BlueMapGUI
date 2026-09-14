@@ -1,7 +1,7 @@
 import "package:material_ui/material_ui.dart";
 
 class DeleteIcon extends StatefulWidget {
-  const DeleteIcon({super.key});
+  const new({super.key});
 
   @override
   State<DeleteIcon> createState() => _DeleteIconState();

@@ -9,7 +9,7 @@ class UpdateChecker {
 
   String? _latestVersion;
 
-  UpdateChecker({
+  new({
     required String author,
     required String repoName,
     required String currentVersion,

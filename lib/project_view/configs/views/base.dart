@@ -24,7 +24,7 @@ import "webserver.dart";
 class BaseConfigView<T extends BaseConfigModel> extends StatelessWidget {
   final ConfigFile<T> config;
 
-  const BaseConfigView(this.config, {super.key});
+  const new(this.config, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +55,7 @@ class BaseConfigView<T extends BaseConfigModel> extends StatelessWidget {
 class _OpenErrorDisplay extends ConsumerWidget {
   final String errorString;
 
-  const _OpenErrorDisplay(this.errorString);
+  const new(this.errorString);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -92,7 +92,7 @@ class PathPickerButton extends StatelessWidget {
   final void Function(String path) onPicked;
   final String initialDirectory;
 
-  const PathPickerButton({
+  const new({
     required this.purpose,
     required this.onPicked,
     required this.initialDirectory,
@@ -140,7 +140,7 @@ class ConfigOptionsList extends StatelessWidget {
   final String title;
   final List<Widget> children;
 
-  const ConfigOptionsList({required this.title, required this.children, super.key});
+  const new({required this.title, required this.children, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -184,7 +184,7 @@ class _Option extends StatefulWidget {
   final bool enabled;
   final GestureTapCallback? onTap;
 
-  const _Option({
+  const new({
     required this.title,
     required this.descriptionList,
     required this.controlsMultipleOptions,
@@ -256,7 +256,7 @@ class IntSliderOption extends StatelessWidget {
   final Color? sliderColor;
   final Text? warning;
 
-  IntSliderOption({
+  new({
     required this.title,
     required String description,
     required this.value,
@@ -269,7 +269,7 @@ class IntSliderOption extends StatelessWidget {
     super.key,
   }) : descriptionList = [SettingsBodyText(description)];
 
-  const IntSliderOption.customDescription({
+  const new customDescription({
     required this.title,
     required this.descriptionList,
     required this.value,
@@ -330,7 +330,7 @@ class DoubleSliderOption extends StatelessWidget {
   final Color? sliderColor;
   final Text? warning;
 
-  DoubleSliderOption({
+  new({
     required this.title,
     required String description,
     required this.value,
@@ -343,7 +343,7 @@ class DoubleSliderOption extends StatelessWidget {
     super.key,
   }) : descriptionList = [SettingsBodyText(description)];
 
-  const DoubleSliderOption.customDescription({
+  const new customDescription({
     required this.title,
     required this.descriptionList,
     required this.value,
@@ -404,7 +404,7 @@ class TextFieldOption extends StatelessWidget {
   final TextInputFormatter? inputFormatter;
   final FormFieldValidator<String>? warningValidator;
 
-  TextFieldOption({
+  new({
     required this.title,
     required String description,
     required this.controller,
@@ -418,7 +418,7 @@ class TextFieldOption extends StatelessWidget {
     super.key,
   }) : descriptionList = [SettingsBodyText(description)];
 
-  const TextFieldOption.customDescription({
+  const new customDescription({
     required this.title,
     required this.descriptionList,
     required this.controller,
@@ -472,7 +472,7 @@ class Vector2XZOption extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final VoidCallback onEditingComplete;
 
-  Vector2XZOption({
+  new({
     required this.title,
     required String description,
     required this.controllerX,
@@ -482,7 +482,7 @@ class Vector2XZOption extends StatelessWidget {
     super.key,
   }) : descriptionList = [SettingsBodyText(description)];
 
-  const Vector2XZOption.customDescription({
+  const new customDescription({
     required this.title,
     required this.descriptionList,
     required this.controllerX,
@@ -562,7 +562,7 @@ class ToggleOption extends StatelessWidget {
   final bool? value;
   final ValueChanged<bool> onChanged;
 
-  ToggleOption({
+  new({
     required this.title,
     required String description,
     required this.value,
@@ -570,7 +570,7 @@ class ToggleOption extends StatelessWidget {
     super.key,
   }) : descriptionList = [SettingsBodyText(description)];
 
-  const ToggleOption.customDescription({
+  const new customDescription({
     required this.title,
     required this.descriptionList,
     required this.value,
@@ -611,7 +611,7 @@ class ColourOption extends StatelessWidget {
   final String label;
   final void Function(Color colour, String hex) onPicked;
 
-  ColourOption({
+  new({
     required this.title,
     required String description,
     required this.colour,
@@ -620,7 +620,7 @@ class ColourOption extends StatelessWidget {
     super.key,
   }) : descriptionList = [SettingsBodyText(description)];
 
-  const ColourOption.customDescription({
+  const new customDescription({
     required this.title,
     required this.descriptionList,
     required this.colour,
@@ -724,7 +724,7 @@ class BoolListOption extends StatelessWidget {
   final BoxConstraints? buttonSize;
   final double? horizontalPadding;
 
-  BoolListOption({
+  new({
     required this.title,
     required String description,
     required this.breakpoint,
@@ -734,7 +734,7 @@ class BoolListOption extends StatelessWidget {
     super.key,
   }) : descriptionList = [SettingsBodyText(description)];
 
-  const BoolListOption.customDescription({
+  const new customDescription({
     required this.title,
     required this.descriptionList,
     required this.breakpoint,

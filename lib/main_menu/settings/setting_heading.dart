@@ -10,7 +10,7 @@ class SettingHeading extends StatelessWidget {
   final EdgeInsets padding;
   final bool strikeThroughTitle;
 
-  SettingHeading(
+  new(
     BuildContext context,
     this.title,
     List<SettingsBodyBase> text, {
@@ -23,7 +23,7 @@ class SettingHeading extends StatelessWidget {
     }
   }
 
-  SettingHeading.text(
+  new text(
     BuildContext context,
     this.title,
     String text, {
@@ -64,7 +64,7 @@ class SettingHeading extends StatelessWidget {
 }
 
 abstract class SettingsBodyBase {
-  const SettingsBodyBase();
+  const new();
 
   TextTheme getTextTheme(BuildContext context) => Theme.of(context).textTheme;
 
@@ -88,7 +88,7 @@ abstract class SettingsBodyBase {
 class SettingsBodyText extends SettingsBodyBase {
   final String text;
 
-  const SettingsBodyText(this.text);
+  const new(this.text);
 
   @override
   TextSpan build(BuildContext context) {
@@ -99,7 +99,7 @@ class SettingsBodyText extends SettingsBodyBase {
 class SettingsBodyCode extends SettingsBodyBase {
   final String text;
 
-  const SettingsBodyCode(this.text);
+  const new(this.text);
 
   @override
   TextSpan build(BuildContext context) {
@@ -111,7 +111,7 @@ class SettingsBodyLink extends SettingsBodyBase {
   final String text;
   final String url;
 
-  const SettingsBodyLink(this.text, this.url);
+  const new(this.text, this.url);
 
   @override
   TextSpan build(BuildContext context) {
@@ -131,7 +131,7 @@ class SettingsBodyLink extends SettingsBodyBase {
 }
 
 class _LinkSpan extends TextSpan {
-  _LinkSpan(String text, String url, TextStyle? style)
+  new(String text, String url, TextStyle? style)
     : super(
         text: text,
         style: style,

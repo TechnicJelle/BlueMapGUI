@@ -7,7 +7,7 @@ import "package:url_launcher/url_launcher.dart";
 import "control_row.dart";
 
 class OpenButton extends ConsumerStatefulWidget {
-  const OpenButton({super.key});
+  const new({super.key});
 
   @override
   ConsumerState<OpenButton> createState() => _OpenButtonState();
@@ -102,7 +102,7 @@ class AnimatedGlow extends StatelessWidget {
   final Animation<double> animation;
   final Widget child;
 
-  const AnimatedGlow({
+  const new({
     required this.controller,
     required this.animation,
     required this.child,

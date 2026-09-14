@@ -8,7 +8,7 @@ import "package:url_launcher/url_launcher.dart";
 import "../project_configs_provider.dart";
 
 class OpenInFileManagerButton extends ConsumerWidget {
-  const OpenInFileManagerButton({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

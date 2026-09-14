@@ -11,7 +11,7 @@ import "new_project_dialog.dart";
 import "project_tile.dart";
 
 class ProjectsScreen extends ConsumerStatefulWidget {
-  const ProjectsScreen({super.key});
+  const new({super.key});
 
   @override
   ConsumerState<ProjectsScreen> createState() => _ProjectsScreenState();
@@ -144,7 +144,7 @@ class _ProjectsScreenState extends ConsumerState<ProjectsScreen> {
 class _JavaError extends StatelessWidget {
   final String message;
 
-  const _JavaError(this.message);
+  const new(this.message);
 
   @override
   Widget build(BuildContext context) {

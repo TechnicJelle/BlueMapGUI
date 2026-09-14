@@ -5,7 +5,7 @@ import "../../prefs.dart";
 import "../../utils.dart";
 
 class ThemeModePicker extends ConsumerWidget {
-  const ThemeModePicker({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

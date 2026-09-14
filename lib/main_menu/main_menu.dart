@@ -8,7 +8,7 @@ import "settings/settings_screen.dart";
 enum MainMenuState { projects, settings }
 
 class MainMenu extends ConsumerStatefulWidget {
-  const MainMenu({super.key});
+  const new({super.key});
 
   @override
   ConsumerState<MainMenu> createState() => _MainMenuState();

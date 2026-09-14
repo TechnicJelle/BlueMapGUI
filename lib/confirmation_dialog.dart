@@ -29,7 +29,7 @@ class _ConfirmationDialog extends StatelessWidget {
   final List<Widget> content;
   final String confirmAction;
 
-  const _ConfirmationDialog({
+  const new({
     required this.title,
     required this.content,
     required this.confirmAction,

@@ -4,7 +4,7 @@ import "package:material_ui/material_ui.dart";
 import "../../prefs.dart";
 
 class RenderCavesDefaultPicker extends ConsumerWidget {
-  const RenderCavesDefaultPicker({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

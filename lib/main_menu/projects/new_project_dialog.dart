@@ -12,7 +12,7 @@ import "../../prefs.dart";
 final RegExp _regexDirNameSafeCharacters = RegExp(r"^[ a-zA-Z0-9_-]+$");
 
 class NewProjectDialog extends ConsumerStatefulWidget {
-  const NewProjectDialog({super.key});
+  const new({super.key});
 
   @override
   NewProjectDialogState createState() => NewProjectDialogState();

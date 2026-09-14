@@ -11,9 +11,9 @@ part "advanced_mode_toggle.freezed.dart";
 sealed class AdvancedMode with _$AdvancedMode {
   // The function name and lack of other parameters makes it clear enough
   // ignore: avoid_positional_boolean_parameters
-  const factory AdvancedMode.data(bool value) = AdvancedModeData;
+  const factory data(bool value) = AdvancedModeData;
 
-  const factory AdvancedMode.loading() = AdvancedModeLoading;
+  const factory loading() = AdvancedModeLoading;
 }
 
 class AdvancedModeNotifier extends Notifier<AdvancedMode> {
@@ -47,7 +47,7 @@ class AdvancedModeNotifier extends Notifier<AdvancedMode> {
 final advancedModeProvider = NotifierProvider(AdvancedModeNotifier.new);
 
 class AdvancedModeToggle extends ConsumerWidget {
-  const AdvancedModeToggle({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

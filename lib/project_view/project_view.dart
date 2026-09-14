@@ -10,7 +10,7 @@ import "control_panel.dart";
 import "sidebar/project_sidebar.dart";
 
 class ProjectView extends ConsumerWidget {
-  const ProjectView({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

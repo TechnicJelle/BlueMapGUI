@@ -7,13 +7,13 @@ part "webapp.g.dart";
 
 @freezed
 abstract class WebappConfigModel extends BaseConfigModel with _$WebappConfigModel {
-  const factory WebappConfigModel({
+  const factory({
     required bool defaultToFlatView,
   }) = _WebappConfigModel;
 
-  const WebappConfigModel._();
+  const new _();
 
-  factory WebappConfigModel.fromJson(Map<String, Object?> json) =>
+  factory fromJson(Map<String, Object?> json) =>
       _$WebappConfigModelFromJson(json);
 }
 

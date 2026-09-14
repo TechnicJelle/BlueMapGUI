@@ -42,11 +42,11 @@ final class JavaResult {
   /// Process id of the process.
   final int pid;
 
-  JavaResult(this.pid, this.exitCode, Uint8List stdout, Uint8List stderr)
+  new(this.pid, this.exitCode, Uint8List stdout, Uint8List stderr)
     : stdout = processOutputToString(stdout),
       stderr = processOutputToString(stderr);
 
-  JavaResult.from(ProcessResult processResult)
+  new from(ProcessResult processResult)
     : pid = processResult.pid,
       exitCode = processResult.exitCode,
       stdout = processOutputToString(processResult.stdout),
@@ -57,7 +57,7 @@ class JavaPath {
   JavaPathMode type;
   String path;
 
-  JavaPath(this.type, this.path);
+  new(this.type, this.path);
 
   Future<JavaResult> run({
     required List<String> args,

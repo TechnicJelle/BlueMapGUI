@@ -33,7 +33,7 @@ Future<void> main() async {
 }
 
 class MyApp extends ConsumerWidget {
-  const MyApp({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -49,7 +49,7 @@ class MyApp extends ConsumerWidget {
 }
 
 class MyHomePage extends ConsumerWidget {
-  const MyHomePage({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -95,7 +95,7 @@ class MyHomePage extends ConsumerWidget {
 }
 
 class _VersionText extends StatelessWidget {
-  const _VersionText();
+  const new();
 
   @override
   Widget build(BuildContext context) {

@@ -3,7 +3,7 @@ import "package:material_ui/material_ui.dart";
 class Sidebar extends StatelessWidget {
   final List<Widget> children;
 
-  const Sidebar({required this.children, super.key});
+  const new({required this.children, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,7 @@ class SidebarTab extends StatelessWidget {
   final Widget? trailing;
   final double? minTileHeight;
 
-  const SidebarTab({
+  const new({
     required this.title,
     required this.selected,
     required this.onTap,

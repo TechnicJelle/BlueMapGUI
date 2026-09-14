@@ -13,7 +13,7 @@ import "configs/models/base.dart";
 import "configs/models/map.dart";
 
 class NewMapDialog extends ConsumerStatefulWidget {
-  const NewMapDialog({super.key});
+  const new({super.key});
 
   @override
   ConsumerState<NewMapDialog> createState() => _NewMapDialogState();

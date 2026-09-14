@@ -11,7 +11,7 @@ import "config_tile.dart";
 import "new_map_button.dart";
 
 class ProjectSidebar extends ConsumerWidget {
-  const ProjectSidebar({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -33,7 +33,7 @@ class ProjectSidebar extends ConsumerWidget {
 class _SidebarHeading extends StatelessWidget {
   final String text;
 
-  const _SidebarHeading(this.text);
+  const new(this.text);
 
   static const configHeadingPadding = EdgeInsets.only(left: 14, top: 32, bottom: 8);
   static const configHeadingStyle = TextStyle(fontSize: 20, fontWeight: .w400);
@@ -48,7 +48,7 @@ class _SidebarHeading extends StatelessWidget {
 }
 
 class _ControlPanelTile extends ConsumerWidget {
-  const _ControlPanelTile();
+  const new();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -97,7 +97,7 @@ class AllowMapReorderingNotifier extends Notifier<bool> {
 final allowMapReorderingProvider = NotifierProvider(AllowMapReorderingNotifier.new);
 
 class _MapsTiles extends ConsumerWidget {
-  const _MapsTiles();
+  const new();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

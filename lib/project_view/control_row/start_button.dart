@@ -8,7 +8,7 @@ import "../console.dart";
 import "control_row.dart";
 
 class StartButton extends ConsumerWidget {
-  const StartButton({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

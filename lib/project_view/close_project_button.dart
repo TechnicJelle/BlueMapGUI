@@ -5,7 +5,7 @@ import "../confirmation_dialog.dart";
 import "../project_configs_provider.dart";
 
 class CloseProjectButton extends ConsumerWidget {
-  const CloseProjectButton({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

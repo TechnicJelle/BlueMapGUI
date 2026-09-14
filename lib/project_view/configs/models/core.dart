@@ -7,14 +7,14 @@ part "core.g.dart";
 
 @freezed
 abstract class CoreConfigModel extends BaseConfigModel with _$CoreConfigModel {
-  const factory CoreConfigModel({
+  const factory({
     required bool acceptDownload,
     required int renderThreadCount,
   }) = _CoreConfigModel;
 
-  const CoreConfigModel._();
+  const new _();
 
-  factory CoreConfigModel.fromJson(Map<String, Object?> json) =>
+  factory fromJson(Map<String, Object?> json) =>
       _$CoreConfigModelFromJson(json);
 }
 

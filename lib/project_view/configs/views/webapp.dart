@@ -9,7 +9,7 @@ import "../models/webapp.dart";
 import "base.dart";
 
 class WebappConfigView extends ConsumerStatefulWidget {
-  const WebappConfigView({super.key});
+  const new({super.key});
 
   @override
   ConsumerState<WebappConfigView> createState() => _WebappConfigViewState();

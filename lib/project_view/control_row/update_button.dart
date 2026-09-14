@@ -33,7 +33,7 @@ final updateProvider = FutureProvider.autoDispose<String?>((ref) async {
 });
 
 class UpdateButton extends ConsumerWidget {
-  const UpdateButton({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

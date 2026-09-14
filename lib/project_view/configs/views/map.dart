@@ -14,7 +14,7 @@ import "../models/map.dart";
 import "base.dart";
 
 class MapConfigView extends ConsumerStatefulWidget {
-  const MapConfigView({super.key});
+  const new({super.key});
 
   @override
   ConsumerState<MapConfigView> createState() => _MapConfigViewState();
@@ -410,7 +410,7 @@ Changing this requires a re-render of the map."""),
 class _DangerZone extends ConsumerStatefulWidget {
   final ConfigFile configFile;
 
-  const _DangerZone(this.configFile);
+  const new(this.configFile);
 
   @override
   ConsumerState<_DangerZone> createState() => _DangerZoneState();
@@ -522,7 +522,7 @@ class _DangerButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final String? buttonTooltip;
 
-  const _DangerButton({
+  const new({
     required this.title,
     required this.text,
     required this.buttonLabel,

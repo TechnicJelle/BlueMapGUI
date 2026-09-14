@@ -16,7 +16,7 @@ import "models/base.dart";
 class AdvancedEditor extends ConsumerStatefulWidget {
   final ConfigFile openConfig;
 
-  const AdvancedEditor(this.openConfig, {super.key});
+  const new(this.openConfig, {super.key});
 
   @override
   ConsumerState<AdvancedEditor> createState() => _AdvancedEditorState();
@@ -178,7 +178,7 @@ class _ProblemWrapper extends StatelessWidget {
   final Text? problemText;
   final CodeEditor child;
 
-  const _ProblemWrapper({
+  const new({
     required this.problemText,
     required this.child,
   });

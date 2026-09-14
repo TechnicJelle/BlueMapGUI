@@ -7,13 +7,13 @@ part "webserver.g.dart";
 
 @freezed
 abstract class WebserverConfigModel extends BaseConfigModel with _$WebserverConfigModel {
-  const factory WebserverConfigModel({
+  const factory({
     required int port,
   }) = _WebserverConfigModel;
 
-  const WebserverConfigModel._();
+  const new _();
 
-  factory WebserverConfigModel.fromJson(Map<String, Object?> json) =>
+  factory fromJson(Map<String, Object?> json) =>
       _$WebserverConfigModelFromJson(json);
 }
 

@@ -11,7 +11,7 @@ import "../configs/models/map.dart";
 class ConfigTile extends ConsumerWidget {
   final ConfigFile configFile;
 
-  const ConfigTile(this.configFile, {super.key});
+  const new(this.configFile, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

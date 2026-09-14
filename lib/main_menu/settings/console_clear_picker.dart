@@ -4,7 +4,7 @@ import "package:material_ui/material_ui.dart";
 import "../../prefs.dart";
 
 class ConsoleClearPicker extends ConsumerWidget {
-  const ConsoleClearPicker({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

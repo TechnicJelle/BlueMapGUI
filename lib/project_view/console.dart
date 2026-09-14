@@ -40,7 +40,7 @@ class OutputNotifier extends Notifier<List<String>> {
 final outputNotifierProvider = NotifierProvider(OutputNotifier.new);
 
 class Console extends ConsumerStatefulWidget {
-  const Console({super.key});
+  const new({super.key});
 
   @override
   ConsumerState<Console> createState() => _ConsoleState();

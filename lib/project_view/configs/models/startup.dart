@@ -7,15 +7,15 @@ part "startup.g.dart";
 
 @freezed
 abstract class StartupConfigModel extends BaseConfigModel with _$StartupConfigModel {
-  const factory StartupConfigModel({
+  const factory({
     required String modsPath,
     required String minecraftVersion,
     required String maxRamLimit,
   }) = _StartupConfigModel;
 
-  const StartupConfigModel._();
+  const new _();
 
-  factory StartupConfigModel.fromJson(Map<String, Object?> json) =>
+  factory fromJson(Map<String, Object?> json) =>
       _$StartupConfigModelFromJson(json);
 }
 

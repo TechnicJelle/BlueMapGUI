@@ -7,7 +7,7 @@ const int _minJavaVersion = 25;
 class JavaVersionCheckException implements Exception {
   final String message;
 
-  JavaVersionCheckException(this.message);
+  new(this.message);
 }
 
 /// Checks the Java version at the given path.

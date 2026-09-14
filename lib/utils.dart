@@ -90,7 +90,7 @@ Future<bool> checkHash(File file, String validHash) async {
 class NonHashedFile {
   final File _file;
 
-  NonHashedFile(this._file);
+  new(this._file);
 
   Future<File?> hashFile(String validHash) async {
     if (await checkHash(_file, validHash)) {
@@ -127,7 +127,7 @@ class ProgressNotifier extends Notifier<double?> {
 }
 
 class HttpCancelException extends HttpException {
-  const HttpCancelException() : super("Download cancelled.");
+  const new() : super("Download cancelled.");
 }
 
 /// `progress` is a double between 0 and 1.

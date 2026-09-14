@@ -10,7 +10,7 @@ import "../models/webserver.dart";
 import "base.dart";
 
 class WebserverConfigView extends ConsumerStatefulWidget {
-  const WebserverConfigView({super.key});
+  const new({super.key});
 
   @override
   ConsumerState<WebserverConfigView> createState() => _WebserverConfigViewState();

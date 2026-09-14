@@ -16,7 +16,7 @@ part "project_configs_provider.freezed.dart";
 
 @freezed
 abstract class ProjectConfigs with _$ProjectConfigs {
-  const factory ProjectConfigs({
+  const factory({
     required Directory projectLocation,
     required List<ConfigFile<BaseConfigModel>> mainConfigs,
     required List<ConfigFile<MapConfigModel>> mapConfigs,

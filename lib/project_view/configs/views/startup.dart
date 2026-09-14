@@ -11,7 +11,7 @@ import "../models/startup.dart";
 import "base.dart";
 
 class StartupConfigView extends ConsumerStatefulWidget {
-  const StartupConfigView({super.key});
+  const new({super.key});
 
   @override
   ConsumerState<StartupConfigView> createState() => _StartupConfigViewState();
