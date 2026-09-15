@@ -127,11 +127,9 @@ class _ProjectsScreenState extends ConsumerState<ProjectsScreen> {
           child: FloatingActionButton(
             child: const Icon(Icons.add),
             onPressed: () {
-              unawaited(
-                showDialog<void>(
-                  context: context,
-                  builder: (context) => const NewProjectDialog(),
-                ),
+              showDialog<void>(
+                context: context,
+                builder: (context) => const NewProjectDialog(),
               );
             },
           ),

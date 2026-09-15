@@ -220,12 +220,10 @@ It will only be removed from the list.""",
     ref.read(_progressNotifier.notifier).indeterminate();
 
     // == Open opening progress dialog ==
-    unawaited(
-      showDialog<void>(
-        context: context,
-        builder: (context) => const _OpenProjectDialog(),
-        barrierDismissible: false,
-      ),
+    showDialog<void>(
+      context: context,
+      builder: (context) => const _OpenProjectDialog(),
+      barrierDismissible: false,
     );
 
     // == Check if project directory exists ==

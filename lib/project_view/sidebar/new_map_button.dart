@@ -1,5 +1,3 @@
-import "dart:async";
-
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:material_ui/material_ui.dart";
 
@@ -29,11 +27,9 @@ class NewMapButton extends ConsumerWidget {
           ],
         ),
         onTap: () {
-          unawaited(
-            showDialog<void>(
-              context: context,
-              builder: (context) => const NewMapDialog(),
-            ),
+          showDialog<void>(
+            context: context,
+            builder: (context) => const NewMapDialog(),
           );
         },
       ),
