@@ -485,7 +485,7 @@ The hash of the jar file does not match the expected hash.""",
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    "You can open the project folder, delete the jar file, "
+                    "To re-download, you can open the project folder, delete the jar file, "
                     "and try to open the project again.",
                   ),
                 ],

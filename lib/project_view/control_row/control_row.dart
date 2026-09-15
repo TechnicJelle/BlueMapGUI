@@ -202,7 +202,8 @@ class RunningProcess with WindowListener {
           case FileWrongHash():
             _consoleOutputController.add("""
 [ERROR] BlueMap CLI JAR hash is not valid.
-        Your BlueMap CLI JAR may be modified, corrupted or outdated.""");
+        Your BlueMap CLI JAR may be modified, corrupted or outdated.
+        To re-download, you can open the project folder, delete the jar file, and click Start again.""");
           case DownloadWrongHash():
             _consoleOutputController.add("""
 [WARNING] Downloaded BlueMap CLI JAR hash is not valid. Cannot proceed with a wrong download.
