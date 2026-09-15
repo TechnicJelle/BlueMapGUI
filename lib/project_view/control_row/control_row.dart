@@ -160,7 +160,8 @@ class RunningProcess with WindowListener {
       },
       onDownloadProgress: (double? progress) {
         //only log sometimes, otherwise the console gets spammed to heck
-        if (Random().nextDouble() < 0.01) {
+        //and if progress is 100%, we don't log (the 100% log is hardcoded further down)
+        if (Random().nextDouble() < 0.01 && progress != 1) {
           if (progress != null) {
             _consoleOutputController.add(
               "[INFO] Downloading BlueMap $blueMapTag: ${(progress * 100).round()}%",
