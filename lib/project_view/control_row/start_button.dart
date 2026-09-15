@@ -24,7 +24,7 @@ class StartButton extends ConsumerWidget {
               ref.read(outputNotifierProvider.notifier).clear();
             }
 
-            unawaited(ref.read(processProvider)?.start());
+            unawaited(ref.read(processProvider)?.start(context));
           },
           .running => () => ref.read(processProvider)?.stop(),
           _ => null,

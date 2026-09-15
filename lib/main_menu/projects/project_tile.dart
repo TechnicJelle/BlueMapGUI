@@ -4,6 +4,7 @@ import "dart:io";
 
 import "package:flutter/services.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:fpdart/fpdart.dart";
 import "package:material_ui/material_ui.dart";
 import "package:path/path.dart" as p;
 import "package:url_launcher/url_launcher.dart";
@@ -31,8 +32,9 @@ enum _OpeningStep {
 
 enum _OpenError {
   directoryNotFound,
+  fileWrongHash,
   downloadFailed,
-  wrongHash,
+  downloadWrongHash,
   runFail,
   copyFail,
   openFail,
@@ -235,44 +237,40 @@ It will only be removed from the list.""",
 
     // == Checking for BlueMap CLI JAR ==
     ref.read(_openingStateProvider.notifier).set(.checking);
-    final File potentialBlueMapJar = getBlueMapJarFile(projectDirectory);
-
-    final File bluemapJar;
-    // == If needed, download BlueMap CLI JAR ==
-    if (potentialBlueMapJar.existsSync()) {
-      bluemapJar = potentialBlueMapJar;
-    } else {
-      ref.read(_openingStateProvider.notifier).set(.downloading);
-      final NonHashedFile susBlueMapJar;
-      try {
-        susBlueMapJar = await downloadFile(
-          uri: blueMapCliJarUrl,
-          outputFileGenerator: (_) => getBlueMapJarFile(projectDirectory),
-          onProgress: (double? progress) {
-            if (progress == null) {
-              ref.read(_progressNotifier.notifier).indeterminate();
-            } else {
-              ref.read(_progressNotifier.notifier).set(progress);
-            }
-          },
-        );
+    final Either<GetJarError, File> potentialBlueMapJar = await getBlueMapJarFile(
+      context: context,
+      projectDirectory: projectDirectory,
+      onStartDownloading: () {
+        ref.read(_openingStateProvider.notifier).set(.downloading);
+      },
+      onDownloadProgress: (double? progress) {
+        if (progress == null) {
+          ref.read(_progressNotifier.notifier).indeterminate();
+        } else {
+          ref.read(_progressNotifier.notifier).set(progress);
+        }
+      },
+      onStartHashing: ({required bool afterDownload}) {
         ref.read(_progressNotifier.notifier).indeterminate();
-      } on IOException catch (e) {
-        ref
-            .read(_openingStateProvider.notifier)
-            .error(error: .downloadFailed, details: e.toString());
+        ref.read(_openingStateProvider.notifier).set(.hashing);
+      },
+    );
+    final File bluemapJar;
+    switch (potentialBlueMapJar) {
+      case Right<GetJarError, File>(:final File value):
+        bluemapJar = value;
+      case Left<GetJarError, File>(:final GetJarError value):
+        switch (value) {
+          case FileWrongHash():
+            ref.read(_openingStateProvider.notifier).error(error: .fileWrongHash);
+          case DownloadWrongHash():
+            ref.read(_openingStateProvider.notifier).error(error: .downloadWrongHash);
+          case DownloadFailed(:final IOException e):
+            ref
+                .read(_openingStateProvider.notifier)
+                .error(error: .downloadFailed, details: e.toString());
+        }
         return;
-      }
-
-      // == Verify BlueMap CLI JAR hash ==
-      ref.read(_openingStateProvider.notifier).set(.hashing);
-      final File? hashedBlueMapJar = await susBlueMapJar.hashFile(blueMapCliJarHash);
-      if (hashedBlueMapJar == null) {
-        ref.read(_openingStateProvider.notifier).error(error: .wrongHash);
-        await susBlueMapJar.delete();
-        return;
-      }
-      bluemapJar = hashedBlueMapJar;
     }
 
     // == Run BlueMap CLI JAR to generate default configs ==
@@ -479,6 +477,18 @@ class _OpenProjectDialog extends ConsumerWidget {
                   const SizedBox(height: 8),
                   const Text("Try removing it from the list and recreating it."),
                 ],
+                .fileWrongHash => [
+                  const Text(
+                    """
+Could not verify the BlueMap CLI JAR's integrity!
+The hash of the jar file does not match the expected hash.""",
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    "You can open the project folder, delete the jar file, "
+                    "and try to open the project again.",
+                  ),
+                ],
                 .downloadFailed => [
                   const Text(
                     """
@@ -489,7 +499,7 @@ Check your internet connection and try again.
                   const SizedBox(height: 8),
                   ?ref.read(_openingStateProvider.notifier).getErrorDetails(context),
                 ],
-                .wrongHash => [
+                .downloadWrongHash => [
                   const Text(
                     """
 Could not verify the downloaded BlueMap CLI JAR's integrity!

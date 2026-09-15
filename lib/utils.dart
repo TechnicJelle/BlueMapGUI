@@ -6,10 +6,13 @@ import "dart:typed_data";
 import "package:crypto/crypto.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:fpdart/fpdart.dart";
+import "package:freezed_annotation/freezed_annotation.dart";
 import "package:material_ui/material_ui.dart";
 import "package:path/path.dart" as p;
 
 import "versions.dart";
+
+part "utils.freezed.dart";
 
 extension StringExtension on String {
   String capitalize() {
@@ -21,10 +24,6 @@ extension UriExtension on Uri {
   String getFileName() {
     return p.basename(path);
   }
-}
-
-File getBlueMapJarFile(Directory projectDirectory) {
-  return File(p.join(projectDirectory.path, blueMapCliJarUrl.getFileName()));
 }
 
 Directory getMapTemplatesDirectory(Directory projectDirectory) {
@@ -92,7 +91,7 @@ Future<bool> checkHash(File file, String validHash) async {
 class NonHashedFile {
   final File _file;
 
-  new(this._file);
+  new _(this._file);
 
   Future<File?> hashFile(String validHash) async {
     if (await checkHash(_file, validHash)) {
@@ -171,7 +170,99 @@ Future<NonHashedFile> downloadFile({
   } finally {
     client?.close();
   }
-  return NonHashedFile(outputFile);
+  return NonHashedFile._(outputFile);
+}
+
+@freezed
+sealed class GetJarError with _$GetJarError {
+  const factory fileWrongHash() = FileWrongHash;
+
+  const factory downloadWrongHash() = DownloadWrongHash;
+
+  const factory downloadFailed(IOException e) = DownloadFailed;
+}
+
+Future<Either<GetJarError, File>> getBlueMapJarFile({
+  required BuildContext context,
+  required Directory projectDirectory,
+  required void Function() onStartDownloading,
+  required void Function(double? progress) onDownloadProgress,
+  required void Function({required bool afterDownload}) onStartHashing,
+  void Function()? onProceed,
+}) async {
+  final potential = File(p.join(projectDirectory.path, blueMapCliJarUrl.getFileName()));
+  if (potential.existsSync()) {
+    final NonHashedFile nonHashedBlueMapJar = NonHashedFile._(potential);
+    onStartHashing(afterDownload: false);
+    final File? hashedBlueMapJar = await nonHashedBlueMapJar.hashFile(blueMapCliJarHash);
+    if (hashedBlueMapJar == null) {
+      if (context.mounted) {
+        final bool? proceed = await showDialog<bool>(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext dialogContext) {
+            return AlertDialog(
+              title: const Text(
+                "Unverified BlueMap jar",
+                style: TextStyle(color: Colors.deepOrange),
+              ),
+              content: const Text(
+                """
+The authenticity of the BlueMap jar in this project could not be verified.
+It may be corrupt, or even tampered with!
+Are you sure you want to run this jar?
+This might be unsafe!""",
+              ),
+              actions: [
+                TextButton(
+                  style: TextButton.styleFrom(foregroundColor: Colors.deepOrangeAccent),
+                  child: const Text("Proceed"),
+                  onPressed: () {
+                    Navigator.of(dialogContext).pop(true);
+                  },
+                ),
+                ElevatedButton(
+                  child: const Text("Cancel"),
+                  onPressed: () {
+                    Navigator.of(dialogContext).pop(false);
+                  },
+                ),
+              ],
+            );
+          },
+        );
+        if (proceed == true) {
+          onProceed?.call();
+          return Either.right(potential);
+        }
+      }
+      return Either.left(const .fileWrongHash());
+    } else {
+      return Either.right(hashedBlueMapJar);
+    }
+  } else {
+    // Download BlueMap
+    onStartDownloading();
+    final NonHashedFile susBlueMapJar;
+    try {
+      susBlueMapJar = await downloadFile(
+        uri: blueMapCliJarUrl,
+        outputFileGenerator: (_) => potential,
+        onProgress: onDownloadProgress,
+      );
+    } on IOException catch (e) {
+      return Either.left(.downloadFailed(e));
+    }
+
+    // Hash downloaded BlueMap Jar file
+    onStartHashing(afterDownload: true);
+    final File? hashedBlueMapJar = await susBlueMapJar.hashFile(blueMapCliJarHash);
+    if (hashedBlueMapJar == null) {
+      await susBlueMapJar.delete();
+      return Either.left(const .downloadWrongHash());
+    }
+    return Either.right(hashedBlueMapJar);
+  }
 }
 
 /// If the [Either] is [Right], then change its value from type `R` to

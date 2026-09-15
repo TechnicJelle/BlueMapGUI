@@ -1,9 +1,11 @@
 import "dart:async";
 import "dart:convert";
 import "dart:io";
+import "dart:math";
 
 import "package:async/async.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:fpdart/fpdart.dart";
 import "package:material_ui/material_ui.dart";
 import "package:path/path.dart" as p;
 import "package:rxdart/rxdart.dart";
@@ -145,27 +147,70 @@ class RunningProcess with WindowListener {
     }
   }
 
-  Future<void> start() async {
+  Future<void> start(BuildContext context) async {
     setState(RunningProcessState.starting);
 
-    final File bluemapJar = getBlueMapJarFile(_projectDirectory);
-
-    if (!bluemapJar.existsSync()) {
-      _consoleOutputController.add("""
-[ERROR] BlueMap CLI JAR not found.
-        Try closing and re-opening the project to re-download it.""");
-      setState(RunningProcessState.stopped);
-      return;
+    final Either<GetJarError, File> potentialBlueMapJar = await getBlueMapJarFile(
+      context: context,
+      projectDirectory: _projectDirectory,
+      onStartDownloading: () {
+        _consoleOutputController.add(
+          "[INFO] Downloading BlueMap $blueMapTag...",
+        );
+      },
+      onDownloadProgress: (double? progress) {
+        //only log sometimes, otherwise the console gets spammed to heck
+        if (Random().nextDouble() < 0.01) {
+          if (progress != null) {
+            _consoleOutputController.add(
+              "[INFO] Downloading BlueMap $blueMapTag: ${(progress * 100).round()}%",
+            );
+          } else {
+            _consoleOutputController.add(
+              "[INFO] Downloading BlueMap $blueMapTag${"." * (Random().nextInt(3) + 1)}",
+            );
+          }
+        }
+      },
+      onStartHashing: ({required bool afterDownload}) {
+        if (afterDownload) {
+          _consoleOutputController.add(
+            """
+[INFO] Downloading BlueMap $blueMapTag: 100%
+[INFO] Downloaded BlueMap $blueMapTag!
+[INFO] Hashing ${blueMapCliJarUrl.getFileName()}..."""
+                .trim(),
+          );
+        }
+      },
+      onProceed: () {
+        _consoleOutputController.add(
+          "[WARNING] Running with a potentially modified, corrupted or outdated BlueMap jar.",
+        );
+      },
+    );
+    final File bluemapJar;
+    switch (potentialBlueMapJar) {
+      case Right<GetJarError, File>(:final File value):
+        bluemapJar = value;
+      case Left<GetJarError, File>(:final GetJarError value):
+        switch (value) {
+          case FileWrongHash():
+            _consoleOutputController.add("""
+[ERROR] BlueMap CLI JAR hash is not valid.
+        Your BlueMap CLI JAR may be modified, corrupted or outdated.""");
+          case DownloadWrongHash():
+            _consoleOutputController.add("""
+[WARNING] Downloaded BlueMap CLI JAR hash is not valid. Cannot proceed with a wrong download.
+          Please try again later or download the file manually""");
+          case DownloadFailed(:final IOException e):
+            _consoleOutputController.add("""
+[ERROR] BlueMap CLI JAR download failed!
+        $e""");
+        }
+        setState(RunningProcessState.stopped);
+        return;
     }
-
-    final NonHashedFile nonHashedBlueMapJar = NonHashedFile(bluemapJar);
-    final File? hashedBlueMapJar = await nonHashedBlueMapJar.hashFile(blueMapCliJarHash);
-    if (hashedBlueMapJar == null) {
-      _consoleOutputController.add("""
-[WARNING] BlueMap CLI JAR hash is not valid.
-          Your BlueMap CLI JAR may be modified, corrupted or outdated.""");
-    }
-
     final List<String> jvmArgs = [];
     final List<String> bluemapArgs = ["--render", "--watch", "--webserver"];
     try {

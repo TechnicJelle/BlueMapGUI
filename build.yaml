@@ -13,6 +13,7 @@ targets:
           - lib/project_view/configs/models/*.dart
       freezed:
         generate_for:
+          - lib/utils.dart
           - lib/project_configs_provider.dart
           - lib/project_view/configs/models/*.dart
           - lib/project_view/configs/advanced_mode_toggle.dart
