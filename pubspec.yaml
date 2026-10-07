@@ -48,7 +48,7 @@ dependencies:
   re_highlight: ^0.0.3
   rxdart: ^0.28.0
   shared_preferences: ^2.5.5
-  url_launcher: ^6.3.2
+  url_launcher: ^6.3.3
   window_manager: ^0.5.2
 
 dev_dependencies:
