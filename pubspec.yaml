@@ -29,7 +29,7 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   animated_visibility: ^0.0.4
-  archive: ^4.3.0
+  archive: ^4.5.2
   async: ^2.13.1
   crypto: ^3.0.7
   file_picker: ^13.1.0
