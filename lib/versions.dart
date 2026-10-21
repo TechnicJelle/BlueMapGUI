@@ -1,7 +1,7 @@
 // == Hardcoded BlueMap CLI JAR download URL and hash ==
-const blueMapTag = "5.28";
+const blueMapTag = "5.29";
 const blueMapCliJarHash =
-    "c6868465f8f972a64a3f2acc32112cab8560339045747f81359bdea6959f7ac2"; //SHA256
+    "e830767fa6364b52b9310fb598508ebde7eec5ebe8360a989e240d991af89a3a"; //SHA256
 
 // == Derived variables ==
 final blueMapCliJarUrl = Uri.https(
