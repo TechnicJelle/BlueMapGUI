@@ -47,7 +47,7 @@ final processStateProvider = StreamProvider<RunningProcessState>((ref) async* {
 
 enum RunningProcessState { stopped, starting, running, stopping }
 
-class RunningProcess with WindowListener {
+class RunningProcess {
   final Directory _projectDirectory;
   final JavaPath _javaPath;
 
@@ -67,17 +67,16 @@ class RunningProcess with WindowListener {
 
   bool _shownSpeedupTip = false;
 
+  late final int windowListener;
+
   new(this._projectDirectory, this._javaPath) {
-    windowManager.addListener(this);
-    // Add this line to override the default close handler
-    unawaited(windowManager.setPreventClose(true));
+    windowListener = WindowManager.instance.getCurrent()!.addListener(windowEvents);
   }
 
   /// "destructor"
   /// Actually called by the managing Provider
   void dispose() {
-    unawaited(windowManager.setPreventClose(false));
-    windowManager.removeListener(this);
+    WindowManager.instance.getCurrent()!.removeListener(windowListener);
 
     //Stop the process when the project is closed
     if (state.value != RunningProcessState.stopped) {
@@ -85,10 +84,8 @@ class RunningProcess with WindowListener {
     }
   }
 
-  @override
-  Future<void> onWindowClose() async {
-    final bool isPreventClose = await windowManager.isPreventClose();
-    if (isPreventClose) {
+  Future<void> windowEvents(WindowEvent windowEvent) async {
+    if (windowEvent is WindowCloseRequestedEvent) {
       if (_stateController.value != RunningProcessState.stopped) {
         //start looking for state to change to stopped
         final stopFuture = _stateController.stream.firstWhere(
@@ -107,8 +104,6 @@ class RunningProcess with WindowListener {
         //allow user to read the "Stopped." message
         await Future<void>.delayed(const Duration(seconds: 1));
       }
-      await windowManager.setPreventClose(false);
-      await windowManager.close();
     }
   }
 

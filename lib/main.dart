@@ -21,13 +21,10 @@ Future<void> main() async {
   await initPrefs();
 
   WidgetsFlutterBinding.ensureInitialized();
-  await windowManager.ensureInitialized();
 
-  const WindowOptions windowOptions = WindowOptions(minimumSize: Size(600, 300));
-  await windowManager.waitUntilReadyToShow(windowOptions, () async {
-    await windowManager.show();
-    await windowManager.focus();
-  });
+  WindowManager.instance.getCurrent()!
+    ..minimumSize = const Size(600, 300).toNative()
+    ..show();
 
   runApp(const ProviderScope(child: MyApp()));
 }
